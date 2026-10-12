@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trang Chủ - Bài Trắc Nghiệm</title>
+    <title>Hệ thống Ôn tập & Kiểm tra</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -13,47 +13,64 @@
             align-items: center;
             height: 100vh;
             margin: 0;
-            text-align: center;
         }
-        .container {
+        .menu-container {
             background-color: white;
             padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            max-width: 500px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 600px;
             width: 90%;
         }
         h1 {
             color: #333;
-            margin-bottom: 20px;
-        }
-        p {
-            color: #666;
             margin-bottom: 30px;
+            font-size: 24px;
+        }
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
         }
         .btn {
-            display: inline-block;
-            padding: 12px 24px;
-            background-color: #2ea44f; /* Màu xanh giống nút GitHub */
-            color: white;
+            display: block;
+            padding: 18px 20px;
             text-decoration: none;
-            border-radius: 6px;
-            font-size: 16px;
+            border-radius: 8px;
+            font-size: 18px;
             font-weight: bold;
-            transition: background-color 0.3s;
+            color: white;
+            transition: all 0.3s ease;
         }
         .btn:hover {
-            background-color: #22863a;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        .btn-exam { 
+            background-color: #2ea44f; /* Màu xanh lá cây cho bài thi */
+        } 
+        .btn-theory { 
+            background-color: #0366d6; /* Màu xanh dương cho lý thuyết */
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>Chào mừng bạn!</h1>
-        <p>Hệ thống bài tập trắc nghiệm trực tuyến.</p>
-        <!-- Link trỏ tới file trắc nghiệm hiện có của bạn -->
-        <a href="tracnghiemlo.html" class="btn">Bắt đầu làm bài</a>
+    <div class="menu-container">
+        <h1>Chào mừng bạn đến với hệ thống ôn tập</h1>
+        
+        <div class="button-group">
+            <!-- Bấm vào đây sẽ mở file thi trắc nghiệm -->
+            <a href="tracnghiemlo.html" class="btn btn-exam">
+                📝 Vào phần Thi Trắc Nghiệm
+            </a>
+            
+            <!-- Bấm vào đây sẽ mở file lý thuyết an toàn -->
+            <a href="lythuyet.html" class="btn btn-theory">
+                📚 Vào phần Lý Thuyết An Toàn
+            </a>
+        </div>
     </div>
 
 </body>

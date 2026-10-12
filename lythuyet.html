@@ -1,0 +1,1287 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lý thuyết An toàn – Trang chủ</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  :root{--primary:#0b3d6e;--primary-2:#1a5fa0;--text:#1a2b3c;--muted:#6b7a90;--border:#dce9f5;}
+  html,body{height:100%;}
+  body{font-family:'Segoe UI',system-ui,-apple-system,'Helvetica Neue',Arial,sans-serif;
+    background:linear-gradient(180deg,#eef3fb 0%,#e4ecf8 100%);color:var(--text);line-height:1.65;overflow-x:hidden;}
+
+  /* ==================================================
+     QUAN TRỌNG: hai view loại trừ nhau, không dùng chung display
+     ================================================== */
+  #homeView{display:block;}
+  #homeView.hidden{display:none;}
+  #readerView{display:none;}
+  #readerView.active{display:flex;position:fixed;inset:0;overflow:hidden;z-index:100;}
+
+  /* ============================================================
+     HOME VIEW
+     ============================================================ */
+  .home-hero{
+    position:relative;overflow:hidden;
+    background:linear-gradient(135deg,#0b3d6e 0%,#3b1a70 55%,#6a3bb8 100%);
+    color:#fff;padding:50px 20px 70px;
+    border-radius:0 0 32px 32px;
+    box-shadow:0 24px 60px rgba(15,40,90,.28);
+  }
+  .home-hero::before{
+    content:'';position:absolute;top:-30%;right:-10%;width:520px;height:520px;border-radius:50%;
+    background:radial-gradient(circle,rgba(255,255,255,.12),transparent 70%);
+    animation:floatOrb 12s ease-in-out infinite;pointer-events:none;
+  }
+  .home-hero::after{
+    content:'';position:absolute;bottom:-40%;left:-10%;width:480px;height:480px;border-radius:50%;
+    background:radial-gradient(circle,rgba(255,255,255,.08),transparent 70%);
+    animation:floatOrb 15s ease-in-out infinite reverse;pointer-events:none;
+  }
+  @keyframes floatOrb{0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(20px,-20px) scale(1.05);}}
+
+  .hero-inner{
+    max-width:1140px;margin:0 auto;position:relative;z-index:2;
+    display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:center;
+  }
+
+  /* ==== Mascot ==== */
+  .mascot-stage{position:relative;display:flex;align-items:center;justify-content:center;min-height:420px;}
+  .mascot-glow{
+    position:absolute;width:320px;height:320px;border-radius:50%;
+    background:radial-gradient(circle,rgba(255,193,7,.35),transparent 65%);
+    filter:blur(30px);top:50%;left:50%;transform:translate(-50%,-50%);
+    animation:pulseGlow 3.5s ease-in-out infinite;pointer-events:none;
+  }
+  @keyframes pulseGlow{0%,100%{opacity:.75;transform:translate(-50%,-50%) scale(1);}50%{opacity:1;transform:translate(-50%,-50%) scale(1.12);}}
+  .mascot-3d{
+    position:relative;width:280px;height:370px;
+    animation:mascotIdle 3.2s ease-in-out infinite;
+    filter:drop-shadow(0 20px 40px rgba(0,0,0,.35));z-index:2;
+  }
+  @keyframes mascotIdle{0%,100%{transform:translateY(0) rotate(-1deg);}50%{transform:translateY(-10px) rotate(1deg);}}
+  .mascot-3d svg{width:100%;height:100%;display:block;overflow:visible;}
+  .mascot-3d .arm-wave{transform-origin:88px 175px;animation:waveHand 2s ease-in-out infinite;}
+  @keyframes waveHand{0%,100%{transform:rotate(0);}25%{transform:rotate(-18deg);}75%{transform:rotate(12deg);}}
+
+  .float-icon{position:absolute;pointer-events:none;z-index:3;filter:drop-shadow(0 10px 20px rgba(0,0,0,.3));animation:floatY 4s ease-in-out infinite;}
+  @keyframes floatY{0%,100%{transform:translateY(0) rotate(-3deg);}50%{transform:translateY(-16px) rotate(3deg);}}
+  .fi-1{top:6%;left:5%;animation-delay:-.5s;}
+  .fi-2{top:14%;right:2%;animation-delay:-1.2s;}
+  .fi-3{bottom:10%;left:2%;animation-delay:-2s;}
+  .fi-4{bottom:16%;right:5%;animation-delay:-1.6s;}
+  .fi-5{top:44%;left:-2%;animation-delay:-2.4s;}
+
+  /* ==== Hero text ==== */
+  .hero-text{color:#fff;}
+  .hero-tag{
+    display:inline-block;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28);
+    padding:7px 20px;border-radius:999px;font-size:.78rem;font-weight:800;letter-spacing:1.2px;
+    text-transform:uppercase;margin-bottom:18px;
+  }
+  .hero-text h1{font-size:clamp(1.6rem,3.2vw,2.3rem);font-weight:800;line-height:1.22;margin-bottom:14px;letter-spacing:.2px;}
+  .hero-text h1 span{background:linear-gradient(135deg,#ffd54f,#ffb300);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+  .hero-text p.sub{font-size:.98rem;opacity:.9;line-height:1.7;margin-bottom:20px;max-width:520px;}
+  .hero-features{display:flex;flex-wrap:wrap;gap:10px;}
+  .hero-feat{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.24);border-radius:11px;padding:8px 14px;font-size:.82rem;font-weight:700;display:inline-flex;align-items:center;gap:7px;}
+
+  /* ==== Stats bar ==== */
+  .stats-bar{max-width:1140px;margin:-28px auto 0;padding:0 20px;position:relative;z-index:5;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+  .stat-card{background:#fff;border-radius:16px;padding:16px 18px;box-shadow:0 12px 30px rgba(15,40,90,.12);border:1px solid #e2ecf7;display:flex;align-items:center;gap:13px;}
+  .stat-icon{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:1.35rem;background:linear-gradient(135deg,#eaf1fb,#d0e4fb);color:var(--primary);flex-shrink:0;}
+  .stat-text .n{font-size:1.3rem;font-weight:800;color:var(--primary);line-height:1;}
+  .stat-text .l{font-size:.72rem;color:var(--muted);font-weight:700;margin-top:3px;text-transform:uppercase;letter-spacing:.4px;}
+
+  /* ==== Section chuyên đề ==== */
+  .home-section{max-width:1140px;margin:0 auto;padding:46px 20px 60px;}
+  .home-section-head{display:flex;align-items:center;gap:14px;margin-bottom:22px;flex-wrap:wrap;}
+  .home-section-head h2{font-size:1.3rem;font-weight:800;color:var(--primary);letter-spacing:.1px;}
+  .home-section-head .line{flex:1;height:2px;background:linear-gradient(90deg,#d8e6f5,transparent);border-radius:2px;min-width:20px;}
+  .home-search{flex:0 0 300px;display:flex;align-items:center;gap:10px;background:#fff;border-radius:12px;padding:9px 14px;border:1px solid #dce9f5;box-shadow:0 4px 12px rgba(15,40,90,.06);}
+  .home-search span{opacity:.5;}
+  .home-search input{flex:1;border:none;outline:none;font-family:inherit;font-size:.9rem;color:var(--text);background:transparent;}
+
+  .topics-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .topic-card{
+    position:relative;overflow:hidden;background:#fff;border-radius:16px;
+    padding:20px 20px 18px;border:1px solid #dce9f5;cursor:pointer;
+    box-shadow:0 6px 18px rgba(20,50,90,.06);
+    transition:transform .25s,box-shadow .25s,border-color .25s;
+    display:flex;flex-direction:column;gap:12px;
+  }
+  .topic-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:5px;background:linear-gradient(180deg,var(--accent-1,#0b3d6e),var(--accent-2,#1a5fa0));transition:width .25s;}
+  .topic-card:hover{transform:translateY(-5px);box-shadow:0 20px 42px rgba(20,50,90,.16);border-color:#b7d1ec;}
+  .topic-card:hover::before{width:7px;}
+
+  .tc-top{display:flex;align-items:center;gap:12px;}
+  .tc-icon{flex:0 0 48px;height:48px;border-radius:14px;display:grid;place-items:center;font-size:1.5rem;background:linear-gradient(135deg,var(--accent-1,#0b3d6e),var(--accent-2,#1a5fa0));color:#fff;box-shadow:0 8px 18px rgba(0,0,0,.16);}
+  .tc-num{font-size:.68rem;font-weight:800;letter-spacing:1.2px;color:var(--muted);text-transform:uppercase;margin-bottom:3px;}
+  .tc-title{font-size:.94rem;font-weight:800;color:#0b2b52;line-height:1.35;letter-spacing:.1px;}
+  .tc-desc{font-size:.83rem;color:#5a6c85;line-height:1.55;flex:1;}
+  .tc-foot{display:flex;align-items:center;justify-content:space-between;padding-top:11px;border-top:1px dashed #e3edf7;}
+  .tc-ref{font-size:.68rem;font-weight:800;color:#4a6a92;background:#eef4fc;padding:3px 10px;border-radius:6px;letter-spacing:.2px;}
+  .tc-go{font-size:.78rem;font-weight:800;color:var(--primary-2);display:inline-flex;align-items:center;gap:5px;transition:gap .2s;}
+  .topic-card:hover .tc-go{gap:9px;}
+
+  .ac-blue{--accent-1:#0b3d6e;--accent-2:#1a5fa0;}
+  .ac-purple{--accent-1:#3b1a70;--accent-2:#6a3bb8;}
+  .ac-red{--accent-1:#7a1212;--accent-2:#b82323;}
+  .ac-orange{--accent-1:#8a2e00;--accent-2:#d9540a;}
+  .ac-amber{--accent-1:#8a4b00;--accent-2:#d97706;}
+  .ac-teal{--accent-1:#054b7a;--accent-2:#0a7ab8;}
+
+  .home-footer{text-align:center;padding:20px 20px 50px;color:#8096b0;font-size:.82rem;font-weight:600;line-height:1.75;}
+  .home-footer strong{color:#3a5a80;}
+
+  /* ============================================================
+     READER VIEW
+     ============================================================ */
+  .sidebar{flex:0 0 320px;background:linear-gradient(180deg,#0b3d6e 0%,#1a5fa0 100%);color:#fff;overflow-y:auto;padding:0;box-shadow:4px 0 20px rgba(10,30,70,.15);position:relative;z-index:10;}
+  .sidebar::-webkit-scrollbar{width:8px;}
+  .sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,.22);border-radius:4px;}
+  .sb-header{padding:20px 20px 18px;border-bottom:1px solid rgba(255,255,255,.14);}
+  .home-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:11px 14px;border-radius:11px;background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;border:none;cursor:pointer;font-family:inherit;font-size:.85rem;font-weight:800;letter-spacing:.3px;box-shadow:0 6px 16px rgba(22,163,74,.35);transition:.2s;margin-bottom:16px;}
+  .home-btn:hover{transform:translateY(-2px);box-shadow:0 10px 22px rgba(22,163,74,.5);}
+  .home-btn:active{transform:scale(.97);}
+  .sb-title-block h1{font-size:1rem;font-weight:800;line-height:1.3;letter-spacing:.2px;}
+  .sb-title-block p{font-size:.72rem;opacity:.78;margin-top:4px;line-height:1.5;}
+  .sb-search{padding:12px 18px 6px;}
+  .sb-search input{width:100%;padding:9px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.10);color:#fff;font-family:inherit;font-size:.85rem;outline:none;transition:.2s;}
+  .sb-search input::placeholder{color:rgba(255,255,255,.55);}
+  .sb-search input:focus{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.45);}
+  .sb-list{list-style:none;padding:8px 10px 24px;}
+  .sb-item{display:flex;align-items:flex-start;gap:11px;padding:10px 12px;border-radius:10px;cursor:pointer;transition:.15s;margin-bottom:3px;border:1px solid transparent;}
+  .sb-item:hover{background:rgba(255,255,255,.09);}
+  .sb-item.active{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.28);box-shadow:0 4px 12px rgba(0,0,0,.15);}
+  .sb-num{flex:0 0 26px;height:26px;border-radius:7px;background:rgba(255,255,255,.18);display:grid;place-items:center;font-size:.7rem;font-weight:800;letter-spacing:.3px;border:1px solid rgba(255,255,255,.22);}
+  .sb-item.active .sb-num{background:#ffc107;color:#0b3d6e;border-color:#ffc107;}
+  .sb-text{flex:1;min-width:0;}
+  .sb-text h4{font-size:.8rem;font-weight:700;line-height:1.4;}
+  .sb-text .sb-sub{font-size:.66rem;opacity:.72;margin-top:2px;}
+
+  .main{flex:1;overflow-y:auto;overflow-x:hidden;position:relative;scroll-behavior:smooth;background:#eef3fb;}
+  .main::-webkit-scrollbar{width:10px;}
+  .main::-webkit-scrollbar-thumb{background:#b7cbe4;border-radius:5px;}
+  .main-inner{max-width:1000px;margin:0 auto;padding:26px 32px 80px;}
+
+  .topic{display:none;animation:fadeIn .25s ease;}
+  .topic.active{display:block;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+
+  .topic-header{background:linear-gradient(135deg,var(--accent) 0%,#3b1a70 100%);color:#fff;padding:28px 32px;border-radius:18px;margin-bottom:22px;position:relative;overflow:hidden;box-shadow:0 16px 40px rgba(20,50,120,.2);}
+  .topic-header::after{content:'';position:absolute;top:-50%;right:-20%;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.12),transparent 70%);pointer-events:none;}
+  .topic-header .th-tag{display:inline-block;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.28);padding:4px 14px;border-radius:999px;font-size:.7rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;position:relative;z-index:1;}
+  .topic-header h2{font-size:1.4rem;font-weight:800;line-height:1.3;letter-spacing:.2px;position:relative;z-index:1;margin-bottom:8px;}
+  .topic-header .th-sub{font-size:.86rem;opacity:.9;position:relative;z-index:1;line-height:1.5;}
+  .topic-header .th-badge{display:inline-block;margin-top:14px;background:#ffc107;color:#0b3d6e;padding:5px 14px;border-radius:7px;font-weight:800;font-size:.76rem;position:relative;z-index:1;}
+
+  .intro-box{background:#eef7ff;border-left:5px solid var(--accent);padding:16px 20px;border-radius:0 10px 10px 0;margin-bottom:22px;font-size:.92rem;color:#2a4a6b;line-height:1.7;}
+  .intro-box strong{color:#0b3d6e;}
+
+  .section{margin-bottom:28px;}
+  .section-header{display:flex;align-items:center;gap:13px;margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid #d0e2f5;}
+  .section-num{background:linear-gradient(135deg,var(--accent),#3b1a70);color:#fff;min-width:42px;height:42px;padding:0 12px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.92rem;flex-shrink:0;box-shadow:0 4px 12px rgba(26,95,160,.3);}
+  .section-header h3{font-size:1.08rem;font-weight:800;color:#0b2b52;line-height:1.4;}
+  .sub-section{margin-bottom:20px;}
+  .sub-section h4{font-size:.98rem;font-weight:800;color:var(--accent);margin-bottom:11px;border-left:4px solid var(--accent);padding-left:12px;line-height:1.4;}
+
+  .item-list{list-style:none;padding:0;}
+  .item-list > li{background:#fff;border:1px solid #dce9f5;border-radius:12px;padding:14px 18px;margin-bottom:9px;position:relative;padding-left:48px;transition:.2s;font-size:.9rem;color:#3a5a7a;box-shadow:0 2px 8px rgba(20,50,90,.04);}
+  .item-list > li:hover{border-color:#a8c8e8;box-shadow:0 6px 18px rgba(26,95,160,.09);transform:translateX(2px);}
+  .item-list > li::before{content:'';position:absolute;left:20px;top:20px;width:10px;height:10px;background:var(--accent);border-radius:50%;box-shadow:0 0 0 4px rgba(26,95,160,.14);}
+  .item-list > li[data-num]::before{content:attr(data-num);width:26px;height:26px;top:14px;left:14px;display:grid;place-items:center;font-size:.74rem;font-weight:800;color:#fff;background:linear-gradient(135deg,var(--accent),#3b1a70);border-radius:50%;box-shadow:0 3px 8px rgba(26,95,160,.28);}
+  .item-list > li[data-num]{padding-left:52px;}
+  .item-title{font-weight:800;color:#0b2b52;display:block;margin-bottom:3px;font-size:.92rem;}
+  .item-desc{color:#3a5a7a;font-size:.88rem;line-height:1.65;}
+  .item-list strong{color:#0b3d6e;}
+
+  .sub-list{list-style:none;padding:0;margin-top:6px;}
+  .sub-list li{background:transparent;border:none;padding:4px 0 4px 22px;margin:0;position:relative;font-size:.86rem;color:#3a5a7a;border-radius:0;box-shadow:none;}
+  .sub-list li::before{content:'▸';position:absolute;left:6px;top:4px;color:var(--accent);font-size:.85rem;}
+  .sub-list li[data-letter]::before{content:attr(data-letter);width:18px;height:18px;left:0;top:4px;display:grid;place-items:center;background:#dce9f5;color:#0b3d6e;border-radius:50%;font-size:.66rem;font-weight:800;}
+  .sub-list li[data-letter]{padding-left:24px;}
+
+  .danger-box{background:linear-gradient(135deg,#ffebee,#ffcdd2);border:1px solid #ef9a9a;border-radius:12px;padding:16px 20px;margin-top:16px;position:relative;}
+  .danger-box::before{content:'⛔';position:absolute;top:-12px;left:20px;background:#d32f2f;color:#fff;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:.78rem;box-shadow:0 2px 6px rgba(211,47,47,.4);}
+  .danger-box p{color:#7a1a1a;font-size:.89rem;margin:0;line-height:1.65;}
+  .danger-box strong{color:#5a0a0a;}
+
+  .highlight-box{background:linear-gradient(135deg,#fff8e1,#fff3cd);border:1px solid #ffe082;border-radius:12px;padding:16px 20px;margin-top:16px;position:relative;}
+  .highlight-box::before{content:'⚠';position:absolute;top:-12px;left:20px;background:#ffc107;color:#7a2000;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:.85rem;box-shadow:0 2px 6px rgba(255,193,7,.4);}
+  .highlight-box p{color:#6b5200;font-size:.89rem;margin:0;line-height:1.65;}
+  .highlight-box strong{color:#4a3900;}
+
+  .data-table{width:100%;border-collapse:separate;border-spacing:0;border-radius:12px;overflow:hidden;border:1px solid #dce9f5;margin-top:11px;background:#fff;font-size:.86rem;}
+  .data-table thead th{background:linear-gradient(135deg,var(--accent),#3b1a70);color:#fff;padding:11px 14px;font-weight:700;font-size:.82rem;text-align:left;letter-spacing:.2px;}
+  .data-table tbody td{padding:11px 14px;color:#3a5a7a;border-bottom:1px solid #eaf1fa;vertical-align:top;}
+  .data-table tbody tr:last-child td{border-bottom:none;}
+  .data-table tbody tr:nth-child(even){background:#f7fbff;}
+  .data-table tbody tr:hover{background:#eef6fd;}
+
+  .badge{display:inline-block;padding:3px 10px;border-radius:6px;font-weight:800;font-size:.76rem;}
+  .badge.blue{background:#e0eefc;color:#0b3d6e;}
+  .badge.green{background:#e8f7e8;color:#1a5c1a;}
+  .badge.red{background:#fde8e8;color:#8a1a1a;}
+  .badge.orange{background:#fff2e0;color:#8a4b00;}
+  .badge.purple{background:#f3edfc;color:#3b1a70;}
+
+  .menu-btn{display:none;position:fixed;bottom:22px;right:22px;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#0b3d6e,#3b1a70);color:#fff;border:none;cursor:pointer;box-shadow:0 8px 24px rgba(11,61,110,.35);font-size:1.3rem;z-index:100;align-items:center;justify-content:center;}
+  .overlay{display:none;position:fixed;inset:0;background:rgba(10,20,40,.5);z-index:50;backdrop-filter:blur(2px);}
+  .overlay.show{display:block;}
+
+  /* ============================================================
+     RESPONSIVE
+     ============================================================ */
+  @media(max-width:1000px){
+    .topics-grid{grid-template-columns:repeat(2,1fr);}
+    .stats-bar{grid-template-columns:repeat(2,1fr);}
+    .hero-inner{grid-template-columns:1fr;text-align:center;gap:20px;}
+    .hero-text p.sub{margin-left:auto;margin-right:auto;}
+    .hero-features{justify-content:center;}
+    .mascot-stage{min-height:340px;}
+    .mascot-3d{width:220px;height:295px;}
+    .mascot-glow{width:250px;height:250px;}
+  }
+  @media(max-width:900px){
+    .sidebar{position:fixed;top:0;left:0;bottom:0;transform:translateX(-100%);transition:transform .28s ease;width:300px;flex:none;z-index:99;}
+    .sidebar.open{transform:translateX(0);}
+    .menu-btn{display:flex;}
+    .main-inner{padding:20px 18px 90px;}
+    .topic-header{padding:22px 20px;}
+    .topic-header h2{font-size:1.18rem;}
+    .section-num{min-width:36px;height:36px;font-size:.82rem;}
+    .section-header h3{font-size:.98rem;}
+    .item-list > li{padding:12px 14px 12px 42px;font-size:.86rem;}
+    .item-list > li::before{left:16px;top:16px;width:8px;height:8px;}
+    .item-list > li[data-num]{padding-left:48px;}
+    .item-list > li[data-num]::before{left:12px;top:12px;width:24px;height:24px;}
+    .data-table{font-size:.78rem;}
+    .data-table thead th,.data-table tbody td{padding:8px 10px;}
+  }
+  @media(max-width:700px){
+    .home-hero{padding:36px 16px 56px;border-radius:0 0 22px 22px;}
+    .topics-grid{grid-template-columns:1fr;gap:13px;}
+    .stats-bar{grid-template-columns:1fr;}
+    .home-search{flex:1 1 100%;}
+    .mascot-3d{width:190px;height:255px;}
+    .fi-1,.fi-5{display:none;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     HOME VIEW
+     ============================================================ -->
+<div id="homeView">
+
+  <header class="home-hero">
+    <div class="hero-inner">
+
+      <!-- ==== Mascot 3D ==== -->
+      <div class="mascot-stage">
+        <div class="mascot-glow"></div>
+
+        <!-- Icon bay lơ lửng -->
+        <svg class="float-icon fi-1" width="64" height="64" viewBox="0 0 70 70">
+          <defs><linearGradient id="wG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd54f"/><stop offset="1" stop-color="#ffa000"/></linearGradient></defs>
+          <path d="M35 6 L64 58 L6 58 Z" fill="url(#wG)" stroke="#8a4b00" stroke-width="3" stroke-linejoin="round"/>
+          <text x="35" y="48" font-size="26" font-weight="900" fill="#8a4b00" text-anchor="middle" font-family="Arial">!</text>
+        </svg>
+
+        <svg class="float-icon fi-2" width="56" height="56" viewBox="0 0 62 62">
+          <defs><linearGradient id="hG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe082"/><stop offset="1" stop-color="#f9a825"/></linearGradient></defs>
+          <path d="M10 38 Q10 12 31 12 Q52 12 52 38 Z" fill="url(#hG)" stroke="#8a4b00" stroke-width="3" stroke-linejoin="round"/>
+          <rect x="4" y="36" width="54" height="8" rx="4" fill="#e0a800" stroke="#8a4b00" stroke-width="2.5"/>
+          <rect x="26" y="14" width="10" height="22" fill="#fff" opacity=".35"/>
+        </svg>
+
+        <svg class="float-icon fi-3" width="54" height="54" viewBox="0 0 60 60">
+          <defs><radialGradient id="fG" cx=".4" cy=".3" r=".8"><stop offset="0" stop-color="#ff7043"/><stop offset="1" stop-color="#b71c1c"/></radialGradient></defs>
+          <circle cx="30" cy="30" r="26" fill="url(#fG)" stroke="#7a1212" stroke-width="3"/>
+          <path d="M22 34 Q22 22 30 20 Q28 28 34 26 Q36 32 30 38 Q28 36 22 34 Z" fill="#ffe082" opacity=".9"/>
+        </svg>
+
+        <svg class="float-icon fi-4" width="58" height="58" viewBox="0 0 66 66">
+          <defs><linearGradient id="gG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#42a5f5"/><stop offset="1" stop-color="#1565c0"/></linearGradient></defs>
+          <path d="M20 50 Q14 48 14 40 L14 22 Q14 18 18 18 Q22 18 22 22 L22 30 L24 16 Q24 12 28 12 Q32 12 32 16 L34 26 L36 14 Q36 10 40 10 Q44 10 44 14 L46 28 L48 22 Q48 18 52 18 Q56 18 56 22 L56 44 Q56 54 46 56 L30 56 Q22 56 20 50 Z" fill="url(#gG)" stroke="#0d47a1" stroke-width="2.5" stroke-linejoin="round"/>
+        </svg>
+
+        <svg class="float-icon fi-5" width="52" height="52" viewBox="0 0 58 58">
+          <defs><linearGradient id="sG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#66bb6a"/><stop offset="1" stop-color="#2e7d32"/></linearGradient></defs>
+          <path d="M29 4 L50 12 L50 30 Q50 46 29 54 Q8 46 8 30 L8 12 Z" fill="url(#sG)" stroke="#1b5e20" stroke-width="3" stroke-linejoin="round"/>
+          <path d="M20 30 L26 36 L38 22" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+
+        <!-- Nhân vật 3D -->
+        <div class="mascot-3d">
+          <svg viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <radialGradient id="skinGrad" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#ffd9b3"/><stop offset="1" stop-color="#f0b380"/></radialGradient>
+              <linearGradient id="hatGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe082"/><stop offset="1" stop-color="#f9a825"/></linearGradient>
+              <linearGradient id="vestGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff8f00"/><stop offset="1" stop-color="#e65100"/></linearGradient>
+              <linearGradient id="pantsGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#37474f"/><stop offset="1" stop-color="#1c2529"/></linearGradient>
+              <linearGradient id="shoeGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a3a3a"/><stop offset="1" stop-color="#1a1a1a"/></linearGradient>
+            </defs>
+            <ellipse cx="150" cy="385" rx="100" ry="14" fill="rgba(0,0,0,.28)"/>
+            <!-- Chân -->
+            <rect x="105" y="300" width="38" height="75" rx="14" fill="url(#pantsGrad)" stroke="#0f1619" stroke-width="2"/>
+            <rect x="157" y="300" width="38" height="75" rx="14" fill="url(#pantsGrad)" stroke="#0f1619" stroke-width="2"/>
+            <rect x="110" y="305" width="10" height="50" rx="5" fill="#fff" opacity=".10"/>
+            <rect x="162" y="305" width="10" height="50" rx="5" fill="#fff" opacity=".10"/>
+            <!-- Giày -->
+            <ellipse cx="124" cy="375" rx="32" ry="14" fill="url(#shoeGrad)" stroke="#000" stroke-width="2.5"/>
+            <ellipse cx="186" cy="375" rx="32" ry="14" fill="url(#shoeGrad)" stroke="#000" stroke-width="2.5"/>
+            <ellipse cx="124" cy="371" rx="26" ry="6" fill="#fff" opacity=".12"/>
+            <ellipse cx="186" cy="371" rx="26" ry="6" fill="#fff" opacity=".12"/>
+            <!-- Thân -->
+            <path d="M88 175 Q88 152 112 146 L188 146 Q212 152 212 175 L220 305 Q220 316 205 316 L95 316 Q80 316 80 305 Z" fill="url(#vestGrad)" stroke="#8a3000" stroke-width="3" stroke-linejoin="round"/>
+            <path d="M95 175 Q95 160 112 155 L120 155 L120 310 L95 310 Q92 310 92 305 Z" fill="#fff" opacity=".14"/>
+            <rect x="80" y="210" width="140" height="10" fill="#e0ff4d" opacity=".95" rx="2"/>
+            <rect x="80" y="210" width="140" height="4" fill="#fff" opacity=".45" rx="2"/>
+            <rect x="80" y="265" width="140" height="10" fill="#e0ff4d" opacity=".95" rx="2"/>
+            <rect x="80" y="265" width="140" height="4" fill="#fff" opacity=".45" rx="2"/>
+            <rect x="147" y="150" width="6" height="160" fill="#8a3000" opacity=".6"/>
+            <rect x="100" y="185" width="30" height="20" rx="4" fill="#8a3000" opacity=".45" stroke="#5a1f00" stroke-width="1.5"/>
+            <!-- Tay trái vẫy -->
+            <g class="arm-wave">
+              <path d="M88 175 L48 155 Q36 148 32 132 L28 92 Q28 80 40 78 Q52 76 56 88 L60 122 L78 138 L88 152 Z" fill="url(#vestGrad)" stroke="#8a3000" stroke-width="2.8" stroke-linejoin="round"/>
+              <circle cx="34" cy="86" r="18" fill="url(#skinGrad)" stroke="#dd6b20" stroke-width="2.5"/>
+              <ellipse cx="24" cy="72" rx="5" ry="9" fill="#ffd9b3" stroke="#dd6b20" stroke-width="2"/>
+              <ellipse cx="34" cy="67" rx="5" ry="10" fill="#ffd9b3" stroke="#dd6b20" stroke-width="2"/>
+              <ellipse cx="44" cy="70" rx="5" ry="9" fill="#ffd9b3" stroke="#dd6b20" stroke-width="2"/>
+            </g>
+            <!-- Tay phải cầm bảng -->
+            <g>
+              <path d="M212 175 L242 200 L252 245 Q254 258 244 262 Q232 266 228 254 L220 220 L206 200 Z" fill="url(#vestGrad)" stroke="#8a3000" stroke-width="2.8" stroke-linejoin="round"/>
+              <circle cx="248" cy="250" r="15" fill="url(#skinGrad)" stroke="#dd6b20" stroke-width="2.5"/>
+              <rect x="228" y="240" width="70" height="90" rx="6" fill="#fff" stroke="#0b3d6e" stroke-width="3.5" transform="rotate(8 263 285)"/>
+              <rect x="238" y="252" width="50" height="6" rx="3" fill="#0b3d6e" opacity=".7" transform="rotate(8 263 285)"/>
+              <rect x="238" y="268" width="42" height="5" rx="2.5" fill="#4a6a92" opacity=".5" transform="rotate(8 263 285)"/>
+              <rect x="238" y="282" width="50" height="5" rx="2.5" fill="#4a6a92" opacity=".5" transform="rotate(8 263 285)"/>
+              <rect x="238" y="296" width="38" height="5" rx="2.5" fill="#4a6a92" opacity=".5" transform="rotate(8 263 285)"/>
+              <circle cx="248" cy="315" r="6" fill="#16a34a" transform="rotate(8 263 285)"/>
+            </g>
+            <!-- Cổ -->
+            <rect x="135" y="128" width="30" height="22" fill="#f0b380"/>
+            <!-- Đầu -->
+            <ellipse cx="150" cy="96" rx="58" ry="62" fill="url(#skinGrad)" stroke="#dd6b20" stroke-width="2.5"/>
+            <ellipse cx="120" cy="80" rx="20" ry="24" fill="#fff" opacity=".25"/>
+            <!-- Tai -->
+            <ellipse cx="94" cy="102" rx="9" ry="13" fill="url(#skinGrad)" stroke="#dd6b20" stroke-width="2"/>
+            <ellipse cx="206" cy="102" rx="9" ry="13" fill="url(#skinGrad)" stroke="#dd6b20" stroke-width="2"/>
+            <!-- Mũ -->
+            <path d="M88 84 Q88 28 150 28 Q212 28 212 84 Z" fill="url(#hatGrad)" stroke="#8a4b00" stroke-width="3" stroke-linejoin="round"/>
+            <path d="M100 82 Q100 44 130 34 Q112 42 108 82 Z" fill="#fff" opacity=".35"/>
+            <rect x="78" y="80" width="144" height="14" rx="7" fill="#e0a800" stroke="#8a4b00" stroke-width="3"/>
+            <rect x="82" y="82" width="136" height="4" fill="#fff" opacity=".35" rx="2"/>
+            <rect x="144" y="30" width="12" height="52" fill="#fff" opacity=".28"/>
+            <!-- Lông mày -->
+            <path d="M118 88 Q126 82 136 88" stroke="#5a3a1a" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <path d="M164 88 Q174 82 182 88" stroke="#5a3a1a" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <!-- Mắt -->
+            <ellipse cx="128" cy="100" rx="7" ry="10" fill="#1a1a1a"/>
+            <ellipse cx="172" cy="100" rx="7" ry="10" fill="#1a1a1a"/>
+            <circle cx="126" cy="97" r="2.8" fill="#fff"/>
+            <circle cx="170" cy="97" r="2.8" fill="#fff"/>
+            <circle cx="130" cy="103" r="1.4" fill="#fff" opacity=".7"/>
+            <circle cx="174" cy="103" r="1.4" fill="#fff" opacity=".7"/>
+            <!-- Má -->
+            <ellipse cx="108" cy="118" rx="10" ry="6" fill="#fc8181" opacity=".55"/>
+            <ellipse cx="192" cy="118" rx="10" ry="6" fill="#fc8181" opacity=".55"/>
+            <!-- Miệng -->
+            <path d="M130 122 Q150 148 170 122 Q150 136 130 122 Z" fill="#e53e3e" stroke="#1a202c" stroke-width="2.5" stroke-linejoin="round"/>
+            <path d="M136 128 Q150 134 164 128" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Hero text -->
+      <div class="hero-text">
+        <span class="hero-tag">👷 Kỹ sư An Toàn 3D</span>
+        <h1>Xin chào! Tôi là <span>Kỹ sư An Toàn</span> của bạn</h1>
+        <p class="sub">Tôi sẽ đồng hành cùng bạn tìm hiểu <strong>12 chuyên đề an toàn</strong> quan trọng nhất trong nhà máy nhiệt điện. Kích vào bất kỳ chuyên đề nào bên dưới để bắt đầu bài học nhé!</p>
+        <div class="hero-features">
+          <span class="hero-feat">📚 12 chuyên đề</span>
+          <span class="hero-feat">⚙️ 5 lĩnh vực</span>
+          <span class="hero-feat">🎯 Chuẩn EVN</span>
+        </div>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Stats -->
+  <div class="stats-bar">
+    <div class="stat-card"><div class="stat-icon">📚</div><div class="stat-text"><div class="n">12</div><div class="l">Chuyên đề</div></div></div>
+    <div class="stat-card"><div class="stat-icon">⚙️</div><div class="stat-text"><div class="n">05</div><div class="l">Lĩnh vực an toàn</div></div></div>
+    <div class="stat-card"><div class="stat-icon">📋</div><div class="stat-text"><div class="n">100%</div><div class="l">Theo quy chuẩn</div></div></div>
+    <div class="stat-card"><div class="stat-icon">🎓</div><div class="stat-text"><div class="n">Huấn luyện</div><div class="l">Nội bộ</div></div></div>
+  </div>
+
+  <!-- Danh mục -->
+  <section class="home-section">
+    <div class="home-section-head">
+      <h2>📖 Danh mục chuyên đề an toàn</h2>
+      <div class="line"></div>
+      <div class="home-search"><span>🔍</span><input id="homeSearch" type="text" placeholder="Tìm chuyên đề…"></div>
+    </div>
+
+    <div class="topics-grid" id="topicsGrid">
+      <div class="topic-card ac-blue" data-topic="t1" data-search="pct thủ tục cho phép bàn giao điều 6 điều 7 nghỉ giải lao thay đổi nhân sự thí nghiệm">
+        <div class="tc-top"><div class="tc-icon">📝</div><div><div class="tc-num">Chuyên đề 01</div><div class="tc-title">Thủ tục Cho phép làm việc &amp; Bàn giao theo PCT</div></div></div>
+        <div class="tc-desc">Hai giai đoạn bàn giao giữa QLVH và ĐVCT; quy định nghỉ giải lao, nghỉ hết ngày, thay đổi nhân sự, thí nghiệm thiết bị.</div>
+        <div class="tc-foot"><span class="tc-ref">Điều 6 &amp; 7 – PCT</span><span class="tc-go">Đọc →</span></div>
+      </div>
+
+      <div class="topic-card ac-blue" data-topic="t2" data-search="trách nhiệm người cho phép chỉ huy trực tiếp chhtt điều 12 giám sát an toàn">
+        <div class="tc-top"><div class="tc-icon">👷</div><div><div class="tc-num">Chuyên đề 02</div><div class="tc-title">Trách nhiệm Người cho phép &amp; Người CHTT</div></div></div>
+        <div class="tc-desc">5 nhóm trách nhiệm của Người cho phép (K2 Đ12) và 5 nhóm trách nhiệm của Người CHTT (K4 Đ12).</div>
+        <div class="tc-foot"><span class="tc-ref">K2 &amp; K4 Điều 12</span><span class="tc-go">Đọc →</span></div>
+      </div>
+
+      <div class="topic-card ac-blue" data-topic="t3" data-search="cách ly an toàn thiết bị kiểm tra cách ly điều 15 vùng làm việc đồng hồ áp lực">
+        <div class="tc-top"><div class="tc-icon">🔒</div><div><div class="tc-num">Chuyên đề 03</div><div class="tc-title">Cách ly an toàn thiết bị &amp; Kiểm tra sau cách ly</div></div></div>
+        <div class="tc-desc">7 yêu cầu cách ly, 5 quy định kiểm tra, nguyên tắc đồng hồ áp lực và thiết lập vùng làm việc an toàn.</div>
+        <div class="tc-foot"><span class="tc-ref">K3, 4 &amp; 5 Điều 15</span><span class="tc-go">Đọc →</span></div>
+      </div>
+
+      <div class="topic-card ac-blue" data-topic="t4" data-search="biện pháp kỹ thuật an toàn trước công tác điều 13 14 15 bảo hộ biển báo rào chắn">
+        <div class="tc-top"><div class="tc-icon">🛡️</div><div><div class="tc-num">Chuyên đề 04</div><div class="tc-title">Biện pháp kỹ thuật an toàn trước công tác</div></div></div>
+        <div class="tc-desc">Trang bị bảo hộ &amp; dụng cụ (Đ13); biển báo, rào chắn, tín hiệu (Đ14); cách ly an toàn thiết bị (Đ15).</div>
+        <div class="tc-foot"><span class="tc-ref">Điều 13, 14 &amp; 15</span><span class="tc-go">Đọc →</span></div>
+      </div>
+
+      <div class="topic-card ac-purple" data-topic="t5" data-search="không gian hạn chế bao hơi boiler drum điều 22 điều 23 đo khí oxy co h2s ch4 nh3 no downcomer">
+        <div class="tc-top"><div class="tc-icon">🛢️</div><div><div class="tc-num">Chuyên đề 05</div><div class="tc-title">Không gian hạn chế &amp; Bên trong Bao hơi</div></div></div>
+        <div class="tc-desc">Nhận diện mối nguy; cô lập – đo khí – cứu hộ; tiêu chuẩn môi trường khí; biện pháp đặc thù bao hơi.</div>
+        <div class="tc-foot"><span class="tc-ref">Điều 22 &amp; K5 Đ23</span><span class="tc-go">Đọc →</span></div>
+      </div>
+
+      <div class="topic-card ac-purple" data-topic="t6" data-search="buồng đốt đường khói điều 23 khoản 3 4 manhole 60 độ c chiếu sáng đóng cửa lò">
+        <div class="tc-top"><div class="tc-icon">🔥</div><div><div class="tc-num">Chuyên đề 06</div><div class="tc-title">Buồng đốt &amp; Đường khói</div></div></div>
+        <div class="tc-desc">Cấp phép – cô lập nhiên liệu; giới hạn nhiệt độ ≤ 60°C; chiếu sáng an toàn; đóng cửa lò (manhole).</div>
+        <div class="tc-foot"><span class="tc-ref">Khoản 3 &amp; 4 Điều 23</span><span class="tc-go">Đọc →</span></div>
+      </div>
+
+      <div class="topic-card ac-purple" data-topic="t7" data-search="máy phát hydro hydrogen điều 28 dải nổ 10 mét cấm lửa khí trơ co2 n2 pccc hỏa hoạn">
+        <div class="tc-top"><div class="tc-icon">💨</div><div><div class="tc-num">Chuyên đề 07</div><div class="tc-title">Máy phát làm mát bằng khí Hydro</div></div></div>
+        <div class="tc-desc">Đặc tính cháy nổ H₂; bán kính cấm lửa 10m; nạp/xả qua khí trơ; quy trình 8 bước xử lý hỏa hoạn.</div>
+        <div class="tc-foot"><span class="tc-ref">Điều 28</span><span class="tc-go">Đọc →</span></div>
+      </div>
+
+      <div class="topic-card ac-red" data-topic="t8" data-search="thiết bị quay khoản 1 đến 9 cuốn kẹp va đập văng bắn loto khởi động lại 5 điều kiện cấm dùng cát">
+        <div class="tc-top"><div class="tc-icon">🔧</div><div><div class="tc-num">Chuyên đề 08</div><div class="tc-title">Thiết bị quay</div></div></div>
+        <div class="tc-desc">Nguy cơ cuốn/kẹp/văng bắn; cô lập &amp; LOTO; xử lý cháy (cấm cát); 5 điều kiện khởi động lại.</div>
+        <div class="tc-foot"><span class="tc-ref">Khoản 1 – 9</span><span class="tc-go">Đọc →</span></div>
+      </div>
+
+      <div class="topic-card ac-orange" data-topic="t9" data-search="lò hơi thổi bụi điều 23 khoản 1 khoản 2 ống thủy sáng tắt lửa mft chọc xỉ">
+        <div class="tc-top"><div class="tc-icon">♨️</div><div><div class="tc-num">Chuyên đề 09</div><div class="tc-title">Lò hơi &amp; Quá trình Thổi bụi</div></div></div>
+        <div class="tc-desc">8 quy tắc vận hành lò hơi và 6 quy định an toàn khi thổi bụi.</div>
+        <div class="tc-foot"><span class="tc-ref">K1 &amp; K2 Điều 23</span><span class="tc-go">Đọc →</span></div>
+      </div>
+
+      <div class="topic-card ac-teal" data-topic="t10" data-search="đường ống nước tuần hoàn cwp bình ngưng kênh xả đo khí không gian kín blind flange thủy kích">
+        <div class="tc-top"><div class="tc-icon">💧</div><div><div class="tc-num">Chuyên đề 10</div><div class="tc-title">Đường ống Nước tuần hoàn</div></div></div>
+        <div class="tc-desc">Cấp phép &amp; cô lập (CWP, blind flange); thông gió – đo khí; an toàn kênh hở; chống thủy kích.</div>
+        <div class="tc-foot"><span class="tc-ref">Điều 15, 22, 25, 31 &amp; 34</span><span class="tc-go">Đọc →</span></div>
+      </div>
+
+      <div class="topic-card ac-amber" data-topic="t11" data-search="làm việc trên cao điều 19 20 21 dây an toàn 225kg 300kg giàn giáo 6m 2 sàn thời tiết cấp 5 38 độ">
+        <div class="tc-top"><div class="tc-icon">🪜</div><div><div class="tc-num">Chuyên đề 11</div><div class="tc-title">Làm việc trên cao</div></div></div>
+        <div class="tc-desc">Sức khỏe &amp; PTBVCN; thời tiết; giàn giáo &gt;6m phải có 2 sàn; thử tải dây an toàn 6 tháng/lần.</div>
+        <div class="tc-foot"><span class="tc-ref">Điều 19, 20 &amp; 21</span><span class="tc-go">Đọc →</span></div>
+      </div>
+
+      <div class="topic-card ac-teal" data-topic="t12" data-search="lặn thợ lặn nhóm 3 người cảnh giới dây rốn giảm áp bệnh khí ép tín hiệu giật dây cờ alpha">
+        <div class="tc-top"><div class="tc-icon">🤿</div><div><div class="tc-num">Chuyên đề 12</div><div class="tc-title">An toàn khi Lặn</div></div></div>
+        <div class="tc-desc">Thợ lặn ≥18 tuổi; nhóm lặn ≥3 người; cô lập bơm &amp; van phai; bảng giảm áp; quy ước tín hiệu.</div>
+        <div class="tc-foot"><span class="tc-ref">Quy chuẩn AT lặn</span><span class="tc-go">Đọc →</span></div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="home-footer">
+    <strong>Tài liệu nội bộ phục vụ công tác huấn luyện an toàn</strong><br>
+    Nội dung tổng hợp từ Quy chuẩn An toàn – Không thay thế văn bản pháp quy gốc.
+  </footer>
+</div>
+
+<!-- ============================================================
+     READER VIEW
+     ============================================================ -->
+<div id="readerView">
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-header">
+      <button class="home-btn" onclick="goHome()">🏠 Quay về Trang chủ</button>
+      <div class="sb-title-block">
+        <h1>📚 Lý thuyết An toàn</h1>
+        <p>Chọn chuyên đề bên dưới để đọc</p>
+      </div>
+    </div>
+    <div class="sb-search"><input id="sbSearch" type="text" placeholder="🔍 Tìm chuyên đề…"></div>
+    <ul class="sb-list" id="sbList">
+      <li class="sb-item active" data-topic="t1" data-search="pct thủ tục cho phép bàn giao điều 6 điều 7"><div class="sb-num">01</div><div class="sb-text"><h4>Thủ tục Cho phép làm việc &amp; Bàn giao theo PCT</h4><div class="sb-sub">Điều 6 &amp; 7 – PCT</div></div></li>
+      <li class="sb-item" data-topic="t2" data-search="trách nhiệm người cho phép chỉ huy trực tiếp chhtt điều 12"><div class="sb-num">02</div><div class="sb-text"><h4>Trách nhiệm Người cho phép &amp; Người CHTT</h4><div class="sb-sub">K2 &amp; K4 Điều 12 – PCT</div></div></li>
+      <li class="sb-item" data-topic="t3" data-search="cách ly an toàn thiết bị kiểm tra cách ly điều 15"><div class="sb-num">03</div><div class="sb-text"><h4>Cách ly an toàn thiết bị &amp; Kiểm tra sau cách ly</h4><div class="sb-sub">K3, 4 &amp; 5 Điều 15</div></div></li>
+      <li class="sb-item" data-topic="t4" data-search="biện pháp kỹ thuật an toàn trước công tác điều 13 14 15"><div class="sb-num">04</div><div class="sb-text"><h4>Biện pháp kỹ thuật an toàn trước công tác</h4><div class="sb-sub">Điều 13, 14 &amp; 15</div></div></li>
+      <li class="sb-item" data-topic="t5" data-search="không gian hạn chế bao hơi điều 22 điều 23 đo khí"><div class="sb-num">05</div><div class="sb-text"><h4>Không gian hạn chế &amp; Bên trong Bao hơi</h4><div class="sb-sub">Điều 22 &amp; K5 Điều 23</div></div></li>
+      <li class="sb-item" data-topic="t6" data-search="buồng đốt đường khói điều 23 khoản 3 4 manhole 60 độ"><div class="sb-num">06</div><div class="sb-text"><h4>Buồng đốt &amp; Đường khói</h4><div class="sb-sub">Khoản 3 &amp; 4 Điều 23</div></div></li>
+      <li class="sb-item" data-topic="t7" data-search="máy phát hydro hydrogen điều 28 dải nổ 10 mét"><div class="sb-num">07</div><div class="sb-text"><h4>Máy phát làm mát bằng khí Hydro</h4><div class="sb-sub">Điều 28</div></div></li>
+      <li class="sb-item" data-topic="t8" data-search="thiết bị quay khoản 1 đến 9 loto khởi động lại"><div class="sb-num">08</div><div class="sb-text"><h4>Thiết bị quay</h4><div class="sb-sub">Khoản 1 – 9</div></div></li>
+      <li class="sb-item" data-topic="t9" data-search="lò hơi thổi bụi điều 23 khoản 1 khoản 2 ống thủy sáng mft"><div class="sb-num">09</div><div class="sb-text"><h4>Lò hơi &amp; Quá trình Thổi bụi</h4><div class="sb-sub">K1 &amp; K2 Điều 23</div></div></li>
+      <li class="sb-item" data-topic="t10" data-search="đường ống nước tuần hoàn cwp blind flange thủy kích"><div class="sb-num">10</div><div class="sb-text"><h4>Đường ống Nước tuần hoàn</h4><div class="sb-sub">Điều 15, 22, 25, 31 &amp; 34</div></div></li>
+      <li class="sb-item" data-topic="t11" data-search="làm việc trên cao điều 19 20 21 dây an toàn giàn giáo"><div class="sb-num">11</div><div class="sb-text"><h4>Làm việc trên cao</h4><div class="sb-sub">Điều 19, 20 &amp; 21</div></div></li>
+      <li class="sb-item" data-topic="t12" data-search="lặn thợ lặn nhóm 3 người cảnh giới giảm áp"><div class="sb-num">12</div><div class="sb-text"><h4>An toàn khi Lặn</h4><div class="sb-sub">Quy chuẩn An toàn lặn</div></div></li>
+    </ul>
+  </aside>
+
+  <div class="overlay" id="overlay"></div>
+
+  <main class="main" id="main">
+    <div class="main-inner">
+      <!-- Nội dung 12 chuyên đề được chèn tự động -->
+      <div id="topicsMount"></div>
+    </div>
+  </main>
+
+  <button class="menu-btn" id="menuBtn" aria-label="Mở danh mục">☰</button>
+</div>
+
+<script>
+/* ============================================================
+   DỮ LIỆU 12 CHUYÊN ĐỀ
+   ============================================================ */
+const TOPICS = {
+  t1: {
+    accent: '#0b3d6e',
+    tag: 'Chuyên đề 01 · Phiếu công tác',
+    title: 'Thủ tục Cho phép làm việc &amp; Bàn giao tại hiện trường theo PCT',
+    sub: 'Quy trình phối hợp giữa Đơn vị Quản lý Vận hành (QLVH) và Đơn vị Công tác (ĐVCT)',
+    badge: '📋 Điều 6 &amp; Điều 7 – PCT',
+    intro: '<strong>Nguyên tắc chung:</strong> Thủ tục cho phép làm việc và bàn giao tại hiện trường là <strong>ranh giới pháp lý và kỹ thuật quan trọng nhất</strong> giữa Đơn vị QLVH và ĐVCT. Tại hiện trường, <strong>Người cho phép</strong> phải phối hợp trực tiếp cùng <strong>Người Chỉ huy trực tiếp (CHTT)</strong> tiến hành kiểm tra, bàn giao theo đúng <strong>02 giai đoạn</strong> quy định.',
+    sections: [
+      { num:'6', title:'Thủ tục Cho phép làm việc và Bàn giao tại hiện trường', blocks:[
+        {h4:'1. Kiểm tra an toàn trước khi thực hiện công tác', items:[
+          {t:'Chỉ dẫn phạm vi được phép làm việc', d:'Xác định rõ ràng ranh giới vật lý, vị trí đặt thiết bị cần sửa chữa, bảo dưỡng; các khu vực xung quanh và giới hạn di chuyển an toàn.'},
+          {t:'Cảnh báo yếu tố nguy hiểm', d:'Chỉ dẫn chi tiết các mối nguy hiện hữu và tiềm ẩn: thiết bị lân cận đang mang điện; áp lực hơi nóng; bồn bể hóa chất, khí độc hại; không gian hạn chế.'},
+          {t:'Kiểm tra hiện trạng biện pháp an toàn', d:'Đối soát thực tế các biện pháp an toàn đã thực hiện theo PCT: cắt điện động cơ; khóa chốt van chặn từ mọi phía; xả áp suất, làm nguội môi chất; đặt rào chắn, treo biển cảnh báo.'}
+        ]},
+        {h4:'2. Tiếp nhận hiện trường và cho phép ĐVCT bắt đầu làm việc', items:[
+          {t:'Kiểm tra và ký bàn giao', d:'Người CHTT trực tiếp kiểm tra, đối chiếu và xác nhận Người cho phép đã thực hiện đầy đủ, chính xác các biện pháp an toàn. Khi đồng ý tiếp nhận, Người cho phép ghi rõ <strong>ngày, giờ</strong> và ký xác nhận vào PCT (ký 02 bản giấy).'},
+          {t:'Thực hiện biện pháp an toàn của ĐVCT', d:'Sau khi có chữ ký của Người cho phép, Người CHTT tiếp quản hiện trường, chỉ huy làm thêm các biện pháp an toàn phụ trợ thuộc trách nhiệm đơn vị.'},
+          {t:'Phổ biến an toàn &amp; Kiểm tra PTBVCN', d:'Người CHTT phổ biến cụ thể nội dung công việc, phân công nhiệm vụ, cảnh báo mối nguy, kiểm tra thể trạng sức khỏe và trang bị PTBVCN của toàn thể nhân viên.'},
+          {t:'Ký nhận nhân viên và Lệnh khởi công', d:'Toàn bộ Nhân viên tham gia công tác ký xác nhận vào <strong>Mục 3.3</strong>. Công việc chỉ chính thức được phép bắt đầu khi Người CHTT ký xác nhận vào <strong>Mục 2.2</strong> trên cả 02 bản PCT.'}
+        ], highlight:'<strong>Lưu ý:</strong> Công việc <strong>chỉ chính thức được phép bắt đầu</strong> khi Người CHTT ký xác nhận vào Mục 2.2 trên <strong>cả 02 bản PCT</strong>.'}
+      ]},
+      { num:'7', title:'Biện pháp an toàn trong thời gian thực hiện công tác', blocks:[
+        {h4:'1. Quy định về Giám sát An toàn liên tục', items:[
+          {t:'Người CHTT', d:'Giám sát an toàn liên tục trong suốt thời gian làm việc; chỉ được rời hiện trường khi có người thay thế hợp lệ.'},
+          {t:'Người Lãnh đạo công việc', d:'Điều phối và kết hợp an toàn chung khi có nhiều ĐVCT cùng làm việc.'},
+          {t:'Người Giám sát AT &amp; Cảnh giới', d:'Thực hiện giám sát chuyên trách theo lĩnh vực được phân công.'}
+        ]},
+        {h4:'2. Quy định khi Nghỉ giải lao giữa ca', items:[
+          {d:'Dừng làm việc ngay khi có hiệu lệnh, tắt thiết bị, bảo quản vật tư và rút về khu vực an toàn.'},
+          {d:'Các biện pháp an toàn phải được giữ nguyên trạng thái.'},
+          {d:'Nhân viên vẫn chịu sự giám sát của Người CHTT. Cấm tự ý quay lại vị trí công tác.'},
+          {d:'Người CHTT kiểm tra lại hiện trường trước khi cho tiếp tục làm việc.'}
+        ]},
+        {h4:'3. Nghỉ hết ngày làm việc và Bắt đầu ngày tiếp theo', items:[
+          {t:'Kết thúc ngày', d:'Thu dọn hiện trường sơ bộ, giữ nguyên biện pháp an toàn; bàn giao lại PCT cho QLVH.'},
+          {t:'Trước ngày mới (≥30 phút)', d:'QLVH kiểm tra và khẳng định lại toàn bộ biện pháp an toàn thuộc phạm vi QLVH.'},
+          {t:'Bắt đầu ngày mới', d:'Người CHTT trực tiếp kiểm tra lại hiện trường; ký xác nhận Mục 3.4.'},
+          {t:'Trường hợp đặc biệt', d:'Nếu có xáo trộn biện pháp an toàn thì PCT hiện tại phải hủy và cấp PCT mới.'}
+        ]},
+        {h4:'4. Thay đổi Nhân sự và Thí nghiệm Thiết bị', items:[
+          {t:'Thay đổi Nhân viên', d:'Do Người CHTT quyết định, ghi Mục 3.3 PCT và xin ý kiến Người cho phép.'},
+          {t:'Thay đổi Người CHTT', d:'Cấp có thẩm quyền của ĐVCT quyết định bằng văn bản, ghi nhận vào PCT.'},
+          {t:'Thí nghiệm thiết bị', d:'Lập và cấp PCT riêng; cử Người LĐCV của QLVH chủ trì điều phối an toàn chung.'}
+        ]}
+      ]}
+    ]
+  },
+
+  t2: {
+    accent: '#0b3d6e',
+    tag: 'Chuyên đề 02 · Phiếu công tác',
+    title: 'Trách nhiệm Người cho phép &amp; Người Chỉ huy trực tiếp',
+    sub: 'Quy định theo Khoản 2 &amp; Khoản 4 Điều 12 – Phiếu Công tác',
+    badge: '📋 Điều 12 – PCT',
+    intro: '<strong>Nguyên tắc chung:</strong> Hai chức danh trụ cột tại hiện trường: <strong>Người cho phép</strong> (QLVH) và <strong>Người CHTT</strong> (ĐVCT). Mỗi người có những nhóm trách nhiệm độc lập nhưng phối hợp chặt chẽ xuyên suốt quá trình.',
+    sections:[
+      {num:'I', title:'Trách nhiệm của Người cho phép (Khoản 2 Điều 12)', blocks:[
+        {h4:'1. Tiếp nhận và nắm bắt điều kiện vận hành an toàn', items:[
+          {d:'Tiếp nhận PCT từ Người cấp phiếu; lắng nghe chỉ dẫn và sự điều hành của Người cấp phiếu.'},
+          {d:'Nắm vững tình trạng vận hành thực tế của hệ thống thiết bị tại nơi sắp diễn ra công việc.'}
+        ]},
+        {h4:'2. Kiểm tra thao tác cô lập và biện pháp an toàn thuộc QLVH', items:[
+          {d:'Trực tiếp kiểm tra việc thao tác cách ly thiết bị (ngừng động cơ, cắt nguồn điện, khóa van cấp/thoát, mở van xả áp/xả đọng).'},
+          {d:'Kiểm tra đảm bảo thiết bị đã hạ nhiệt độ, xả hết áp suất và môi chất nguy hiểm.'},
+          {d:'Đánh dấu xác nhận vào phần <strong>"Cho phép công tác" (Mục 2)</strong> của PCT.'}
+        ]},
+        {h4:'3. Chỉ dẫn hiện trường và cảnh báo yếu tố nguy hiểm', items:[
+          {d:'Dẫn giải và chỉ rõ vị trí làm việc, phạm vi ranh giới được phép hoạt động cho Người CHTT.'},
+          {d:'Cảnh báo cụ thể các yếu tố nguy hiểm, độc hại xung quanh.'}
+        ]},
+        {h4:'4. Kiểm soát nhân sự và Ký bàn giao hiện trường', items:[
+          {d:'Kiểm tra số lượng người, đối chiếu danh sách nhân viên công tác.'},
+          {d:'Ghi rõ ngày, giờ bàn giao và ký tên vào phần "Cho phép công tác" của PCT (02 bản).'}
+        ]},
+        {h4:'5. Tiếp nhận hoàn trả hiện trường và Khóa PCT', items:[
+          {d:'Tiếp nhận bàn giao hiện trường và thiết bị từ Người CHTT.'},
+          {d:'Kiểm tra vệ sinh công nghiệp, người và phương tiện đã rút hết, biển báo đã tháo dỡ.'},
+          {d:'Ký xác nhận khóa PCT (Mục 4.2).'}
+        ]}
+      ]},
+      {num:'II', numStyle:'orange', title:'Trách nhiệm của Người CHTT (Khoản 4 Điều 12)', titleStyle:'color:#8a4b00;', blocks:[
+        {h4:'1. Phối hợp công tác an toàn', items:[
+          {d:'Hợp tác chặt chẽ với Người cấp phiếu, Người cho phép và Người LĐCV.'},
+          {d:'Phối hợp với Người Cảnh giới và Người Giám sát an toàn.'}
+        ]},
+        {h4:'2. Kiểm tra hiện trường và phương tiện thi công', items:[
+          {d:'Nắm vững nội dung công việc; đề xuất biện pháp an toàn phù hợp.'},
+          {d:'Kiểm tra, tiếp nhận biện pháp an toàn do Người cho phép bàn giao; thực hiện bổ sung biện pháp của ĐVCT.'},
+          {d:'Giám sát tuân thủ quy trình an toàn của nhân viên.'},
+          {d:'Kiểm tra chất lượng dụng cụ thi công, PTBVCN và hạn kiểm định của thiết bị.'}
+        ]},
+        {h4:'3. Kiểm tra sơ bộ sức khỏe người lao động', items:[
+          {d:'Trước khi vào vị trí thi công, kiểm tra tình trạng sức khỏe, thể trạng và tinh thần của nhân viên.'},
+          {d:'Không bố trí người ốm đau, mệt mỏi, dùng rượu bia, chất kích thích.'}
+        ]},
+        {h4:'4. Phổ biến nhiệm vụ và Giải thích an toàn', items:[
+          {d:'Phổ biến cặn kẽ nội dung, trình tự thi công, phạm vi và mối nguy.'},
+          {d:'Kiểm tra PTBVCN và yêu cầu 100% nhân viên ký nhận vào Mục 3.3.'}
+        ]},
+        {h4:'5. Giám sát an toàn liên tục tại hiện trường', items:[
+          {d:'<strong>Có mặt liên tục tại hiện trường:</strong> thường trực tại khu vực công tác, kịp thời chấn chỉnh hành vi mất an toàn.'},
+          {d:'<strong>Khi rời hiện trường:</strong> chỉ được phép khi có người thay thế hợp lệ đã ghi nhận vào PCT.'},
+          {d:'<strong>Quản lý nghỉ giải lao/nghỉ hết ca:</strong> kiểm soát trạng thái an toàn, thực hiện xác nhận an toàn hàng ngày.'}
+        ], highlight:'<strong>Nguyên tắc:</strong> Người CHTT phải <strong>có mặt liên tục</strong> tại hiện trường trong suốt thời gian thi công.'}
+      ]}
+    ]
+  },
+
+  t3: {
+    accent: '#0b3d6e',
+    tag: 'Chuyên đề 03 · Cách ly thiết bị',
+    title: 'Cách ly an toàn thiết bị &amp; Kiểm tra thiết bị đã cách ly',
+    sub: '7 yêu cầu cách ly – 5 quy định kiểm tra – Thiết lập vùng làm việc an toàn',
+    badge: '⚙️ Khoản 3, 4 &amp; 5 Điều 15',
+    intro: '<strong>Nguyên tắc chung:</strong> Cách ly an toàn thiết bị là bước <strong>quan trọng nhất</strong> trước khi sửa chữa, bảo dưỡng. Phải tuân thủ <strong>7 yêu cầu cách ly</strong>, <strong>5 quy định kiểm tra</strong> và <strong>thiết lập vùng làm việc an toàn</strong>.',
+    sections:[
+      {num:'II', title:'Các yêu cầu khi cách ly thiết bị (Khoản 3 Điều 15)', items:[
+        {n:'1', t:'Cách ly hoàn toàn từ mọi phía', d:'Đóng các van cách ly (đầu vào, đầu ra, bypass), mở van xả đọng và xả khí; cắt nguồn lực, nguồn điều khiển các van.'},
+        {n:'2', t:'Triệt tiêu nguồn lực và điều khiển van', d:'<strong>CẤM</strong> cách ly chỉ bằng đóng/mở van điện, van khí mà không cắt nguồn lực, nguồn điều khiển.'},
+        {n:'3', t:'Ngăn chặn triệt để nguồn rò rỉ', d:'Ngăn chặn hơi, khí, hóa chất qua các đường ống, van khác có nguy cơ gây nguy hiểm.'},
+        {n:'4', t:'Kiểm tra trạng thái van thực tế tại chỗ', d:'Trực tiếp kiểm tra tại hiện trường trạng thái các van ở đúng vị trí đóng/mở.'},
+        {n:'5', t:'Trách nhiệm người thao tác', d:'Do <strong>Nhân viên vận hành đương ca</strong> đảm nhiệm. <strong>CẤM ủy nhiệm</strong> cho người của ĐVCT.'},
+        {n:'6', t:'Nắm vững sơ đồ công nghệ', d:'Giao cho Nhân viên vận hành nắm vững sơ đồ và vị trí thực tế của thiết bị.'},
+        {n:'7', t:'Treo biển cảnh báo an toàn', d:'Treo biển <strong>"CẤM THAO TÁC! CÓ NGƯỜI ĐANG LÀM VIỆC"</strong> ở van cách ly, tủ điều khiển tại chỗ.'}
+      ], danger:'<strong>NGHIÊM CẤM:</strong> Cách ly chỉ bằng đóng/mở van điện, van khí mà <strong>không cắt nguồn lực, nguồn điều khiển</strong>.'},
+      {num:'III', title:'Kiểm tra thiết bị đã cách ly (Khoản 4 Điều 15)', items:[
+        {n:'1', t:'Trách nhiệm kiểm tra an toàn toàn diện', d:'Kiểm tra thiết bị đảm bảo: <strong>xả hết áp lực, môi chất, hạ nhiệt độ, đảm bảo thông gió</strong>.'},
+        {n:'2', t:'Phương pháp xả áp, môi chất, hạ nhiệt', d:'Mở các van xả đọng và xả khí; xác định môi chất đã thoát hoàn toàn.'},
+        {n:'3', t:'Đo kiểm bằng thiết bị chuyên dùng đã kiểm định', d:'Súng bắn nhiệt độ, máy đo nồng độ khí — phải được bảo quản, hiệu chuẩn tốt.'},
+        {n:'4', t:'NGUYÊN TẮC CỐT LÕI ĐỐI VỚI ĐỒNG HỒ ÁP LỰC', d:'<strong>CẤM</strong> căn cứ đồng hồ để xác nhận hết áp lực; nhưng nếu đồng hồ chỉ có áp lực thì <strong>bắt buộc coi như thiết bị vẫn còn áp lực</strong>.'},
+        {n:'5', t:'Trách nhiệm nghiệm thu bàn giao', d:'Người cho phép đảm bảo thiết bị <strong>không còn áp lực, môi chất, nhiệt độ ở giá trị an toàn</strong>.'}
+      ], highlight:'<strong>Nguyên tắc cốt lõi:</strong> Không bao giờ tin đồng hồ để kết luận hết áp lực. Nếu đồng hồ còn chỉ áp lực → coi như thiết bị vẫn còn áp lực nguy hiểm.'},
+      {num:'IV', title:'Thiết lập vùng làm việc an toàn (Khoản 5 Điều 15)', items:[
+        {n:'1', t:'Thiết lập ranh giới trực quan', d:'Rào chắn tạm thời + dây/băng cảnh báo + biển <strong>"LÀM VIỆC TẠI ĐÂY!"</strong>.'},
+        {n:'2', t:'Xác định phạm vi di chuyển', d:'Rõ ràng lối vào/ra, lối trèo lên/xuống và khu vực thao tác.'},
+        {n:'3', t:'Khoảng cách an toàn với vật mang điện', d:'Có cảnh báo an toàn điện hoặc cắt điện nếu khoảng cách không đảm bảo.'},
+        {n:'4', t:'Đảm bảo lối thoát hiểm', d:'Không gây cản trở, khó khăn cho việc thoát nạn.'}
+      ]}
+    ]
+  },
+
+  t4: {
+    accent: '#0b3d6e',
+    tag: 'Chuyên đề 04 · Biện pháp kỹ thuật',
+    title: 'Biện pháp kỹ thuật về an toàn trước khi thực hiện công tác',
+    sub: 'Trang bị bảo hộ – Biển báo, rào chắn – Cách ly an toàn thiết bị',
+    badge: '📋 Điều 13, 14 &amp; 15',
+    intro: '<strong>Nguyên tắc chung:</strong> Trước khi tiến hành bất kỳ công tác nào, ĐVCT và QLVH phải thực hiện đầy đủ các <strong>biện pháp kỹ thuật an toàn</strong>: trang bị BHLĐ và dụng cụ an toàn, thiết lập biển báo – rào chắn – tín hiệu, và cách ly an toàn thiết bị.',
+    sections:[
+      {num:'Đ13', title:'Trang bị bảo hộ lao động và dụng cụ an toàn', items:[
+        {t:'Trang bị PTBVCN', d:'Quần áo chống cháy, găng tay chống cắt, mặt nạ phòng độc, ủng hóa chất, dây an toàn — đảm bảo chất lượng và quy chuẩn.'},
+        {t:'Kiểm định dụng cụ an toàn chuyên dùng', d:'Súng đo khí, dây đai cứu nạn, thiết bị thử điện, đồng hồ áp kế — kiểm tra quy cách, định kỳ hiệu chuẩn.'},
+        {t:'Kiểm soát hệ thống an toàn công nghệ', d:'Các trang bị về công nghệ, kỹ thuật an toàn – vệ sinh lao động phải được vận hành, bảo dưỡng định kỳ.'}
+      ], danger:'<strong>NGHIÊM CẤM:</strong> Thi công khi các hệ thống/trang bị an toàn bị hỏng hóc hoặc không đảm bảo độ tin cậy.'},
+      {num:'Đ14', title:'Thiết lập biển báo, rào chắn và tín hiệu cảnh báo', items:[
+        {t:'Khu vực nguy hiểm', d:'Biển <strong>"CẤM VÀO"</strong> đặt ngay tại lối vào.'},
+        {t:'Khu vực công tác', d:'Rào chắn, căng dây cảnh báo; biển báo nguy hiểm đặt ở vị trí thoáng.'},
+        {t:'Đường giao thông nội bộ', d:'Đặt tín hiệu cảnh báo, rào chắn, người hướng dẫn phân luồng.'},
+        {t:'Phân định trách nhiệm', d:'QLVH căng dây cảnh báo ban đầu; ĐVCT lập thêm rào chắn khi phát sinh nguy hiểm.'},
+        {t:'Nguyên tắc lối thoát hiểm', d:'Rào chắn <strong>không được chặn hoặc cản trở</strong> lối thoát hiểm khẩn cấp.'}
+      ], table:{
+        head:['TT','Vị trí treo','Nội dung biển báo'],
+        rows:[
+          ['<span class="badge blue">1</span>','Van cách ly, tủ điều khiển tại chỗ','<strong>"CẤM THAO TÁC! CÓ NGƯỜI ĐANG LÀM VIỆC"</strong>'],
+          ['<span class="badge blue">2</span>','Vùng làm việc có yếu tố nguy hiểm','<strong>"DỪNG LẠI! NGUY HIỂM CHẾT NGƯỜI"</strong>'],
+          ['<span class="badge blue">3</span>','Vị trí thi công sau khi hoàn tất an toàn','<strong>"LÀM VIỆC TẠI ĐÂY!"</strong>'],
+          ['<span class="badge blue">4</span>','Vị trí phân luồng, bảng điều khiển','Cảnh báo <strong>tránh thao tác nhầm</strong>']
+        ]
+      }},
+      {num:'Đ15', title:'Cách ly an toàn thiết bị', items:[
+        {t:'Nguyên tắc dừng và cô lập thiết bị', d:'Dừng vận hành hoàn toàn, cách ly khỏi dây chuyền sản xuất trước khi công tác.'},
+        {t:'Cô lập từ mọi phía', d:'Đóng kín van chặn mọi phía, mở van xả áp, xả đọng, xả khí.'},
+        {t:'Triệt tiêu nguồn điều khiển', d:'Cắt nguồn động lực và nguồn điều khiển của van điện, van khí nén.'},
+        {t:'Kiểm tra thực địa', d:'Nhân viên vận hành trực tiếp đến kiểm tra vị trí thực tế của van.'},
+        {t:'Nhân sự thao tác', d:'Do Nhân viên vận hành đương ca thực hiện. <strong>Nghiêm cấm ủy nhiệm</strong> cho ĐVCT.'}
+      ], danger:'<strong>CẤM TUYỆT ĐỐI:</strong> Làm việc khi thiết bị chưa được cô lập.'}
+    ]
+  },
+
+  t5: {
+    accent: '#3b1a70',
+    tag: 'Chuyên đề 05 · Không gian hạn chế',
+    title: 'An toàn trong Không gian hạn chế &amp; Bên trong Bao hơi',
+    sub: 'Nhận diện mối nguy – Cô lập – Đo khí – Cứu hộ – Kiểm soát bao hơi',
+    badge: '🛢️ Điều 22 &amp; K5 Điều 23',
+    intro: '<strong>Nguyên tắc chung:</strong> Không gian hạn chế và bao hơi có <strong>nguy cơ chết người cao nhất</strong> do thiếu ôxy, khí độc, cháy nổ, nhiệt độ cao và lối thoát hiểm chật hẹp.',
+    sections:[
+      {num:'II', title:'Quy định an toàn trong không gian hạn chế (Điều 22)', blocks:[
+        {h4:'1. Nhận diện mối nguy đặc thù', items:[
+          {t:'Thiếu ôxy', d:'Hàm lượng dưỡng khí giảm sâu do oxy hóa kim loại hoặc khí trơ chiếm chỗ.'},
+          {t:'Hơi khí độc hại &amp; Cháy nổ', d:'Khí CO, H₂S, NH₃, SOₓ hoặc metan, hydro bốc lên từ bùn cặn.'},
+          {t:'Yếu tố vi khí hậu', d:'Khói bụi, nhiệt độ cao, thiếu ánh sáng, tiếng ồn dội âm.'},
+          {t:'Tắc nghẽn lối thoát hiểm', d:'Cửa người chui chật hẹp, vật tư cản trở thoát hiểm.'}
+        ]},
+        {h4:'2. Biện pháp kỹ thuật an toàn bắt buộc', items:[
+          {t:'Cách ly &amp; Cô lập triệt để', d:'Van chặn khóa LOTO hoặc lắp mặt bích chặn mù.'},
+          {t:'Đo kiểm tra nồng độ khí', d:'Đo từ bên ngoài qua lỗ kiểm tra; thiết bị đo còn hạn kiểm định.'},
+          {t:'Kế hoạch cứu hộ khẩn cấp', d:'Lập phương án ứng cứu khẩn cấp trước khi cấp PCT.'},
+          {t:'Người Cảnh giới thường trực', d:'Túc trực liên tục tại lối vào, có sổ theo dõi ra/vào.'},
+          {t:'Dụng cụ thi công an toàn', d:'Thiết bị điện cầm tay đạt cấp phòng nổ (Ex).'}
+        ]},
+        {h4:'3. Tiêu chuẩn môi trường khí đạt chuẩn', table:{
+          head:['Chất khí','Ký hiệu','Ngưỡng cho phép'],
+          rows:[
+            ['Oxy (Dưỡng khí)','<strong>O₂</strong>','<span class="badge green">19,5% – 23,5%</span>'],
+            ['Carbondioxide','<strong>CO₂</strong>','<span class="badge green">≤ 1800 mg/m³</span>'],
+            ['Carbonmonoxide','<strong>CO</strong>','<span class="badge green">≤ 40 mg/m³</span>'],
+            ['Hydro Sunfua','<strong>H₂S</strong>','<span class="badge green">≤ 15 mg/m³</span>'],
+            ['Amoniac','<strong>NH₃</strong>','<span class="badge green">≤ 25 mg/m³</span>'],
+            ['Nitrogen monoxide','<strong>NO</strong>','<span class="badge green">≤ 20 mg/m³</span>'],
+            ['Metan / Khí dễ cháy','<strong>CH₄ / LEL</strong>','<span class="badge red">CH₄ ≤ 2 mg/m³</span> (LEL &lt; 10%)']
+          ]
+        }},
+        {h4:'4. Yêu cầu trong quá trình làm việc', items:[
+          {d:'Duy trì liên lạc bộ đàm/tín hiệu liên tục.'},
+          {d:'Đo kiểm định kỳ liên tục nồng độ khí độc, hàm lượng Oxy và nhiệt độ.'},
+          {d:'Quạt đẩy cấp khí tươi kết hợp quạt hút lưu thông khí liên tục.'},
+          {d:'Điện áp chiếu sáng an toàn <strong>≤ 36 VAC</strong> qua MBA cách ly (ngoài) hoặc <strong>≤ 48 VDC</strong>.'}
+        ], danger:'<strong>NGHIÊM CẤM:</strong> Sử dụng <strong>máy biến áp tự ngẫu</strong> để hạ áp chiếu sáng.'}
+      ]},
+      {num:'III', title:'Biện pháp an toàn khi làm việc bên trong bao hơi (K5 Điều 23)', items:[
+        {t:'Chế độ công tác', d:'Bắt buộc lập phương án thi công và thực hiện theo PCT.'},
+        {t:'Kiểm tra cô lập nguồn nhiệt &amp; môi chất', d:'Người CHTT đích thân kiểm tra các đường hơi chính, nước cấp, xả đáy, tái tuần hoàn đã đóng van cách ly.'},
+        {t:'Tuân thủ quy chuẩn không gian hạn chế', d:'Áp dụng đầy đủ Điều 22 (đo Oxy, kiểm tra khí độc, người cảnh giới, kế hoạch cứu nạn).'},
+        {t:'Giới hạn nhiệt độ', d:'Chỉ vào khi nhiệt độ bên trong <strong>≤ 40°C</strong>.'},
+        {t:'Mở cửa thông gió', d:'Mở cả hai cửa manhole hai đầu bao hơi.'},
+        {t:'Trang phục BHLĐ chuyên dùng', d:'Quần áo, mũ bảo hộ, găng cách nhiệt, đệm lót đầu gối.'},
+        {t:'Kiểm soát dụng cụ', d:'Lập biên bản đối soát dụng cụ, vật tư vào/ra sau mỗi ca.'},
+        {t:'NGĂN NGỪA DỊ VẬT LỌT VÀO ỐNG NƯỚC XUỐNG', d:'Bịt kín miệng ống bằng nắp chụp cao su hoặc giẻ sạch có dây buộc.'},
+        {t:'Kiểm tra lần cuối', d:'Khẳng định 100% người, dụng cụ đã rút hết trước khi đóng nắp.'}
+      ], danger:'<strong>NGUY HIỂM CHẾT NGƯỜI:</strong> Dị vật lọt vào <strong>ống nước xuống</strong> có thể gây tắc nghẽn, dẫn đến nổ bao hơi khi vận hành trở lại.'}
+    ]
+  },
+
+  t6: {
+    accent: '#3b1a70',
+    tag: 'Chuyên đề 06 · Buồng đốt',
+    title: 'An toàn khi làm việc bên trong Buồng đốt và Đường khói',
+    sub: 'Cấp phép – Cô lập nhiên liệu – Giới hạn nhiệt độ – Chiếu sáng an toàn – Đóng cửa lò',
+    badge: '🔥 Khoản 3 &amp; 4 Điều 23',
+    intro: '<strong>Nguyên tắc chung:</strong> Buồng đốt và đường khói có <strong>nhiệt độ cao, khí độc, không gian hạn chế và nguy cơ bỏng nhiệt cực lớn</strong>.',
+    sections:[
+      {num:'II', title:'Thủ tục cấp phép và cô lập nguyên nhiên liệu (K3 &amp; K4 Điều 23)', items:[
+        {t:'Chế độ PCT', d:'Bắt buộc lập phương án thi công và thực hiện theo PCT.'},
+        {t:'Tuân thủ quy chuẩn không gian hạn chế', d:'Áp dụng đồng bộ Điều 22 (đo khí, kiểm soát người ra vào, kế hoạch cứu nạn).'},
+        {t:'Cô lập triệt để mọi nguồn nhiên liệu', d:'Van khóa cách ly tự động và bằng tay (than cám, dầu DO/HFO, khí mồi) — treo biển <strong>"CẤM THAO TÁC! CÓ NGƯỜI ĐANG LÀM VIỆC"</strong>.'},
+        {t:'Bảo vệ hệ thống khóa liên động', d:'<strong>Nghiêm cấm đấu tắt</strong> bất kỳ khóa liên động bảo vệ nào.'},
+        {t:'Rào chắn cảnh báo', d:'Đặt rào chắn tạm thời và biển cảnh báo nguy hiểm tại cửa vào buồng đốt.'}
+      ], danger:'<strong>NGHIÊM CẤM:</strong> Đấu tắt bất kỳ khóa liên động bảo vệ nào — có thể dẫn đến khởi động lò khi còn người bên trong.'},
+      {num:'III', title:'Giới hạn nhiệt độ, thông gió và kiểm tra điều kiện an toàn', blocks:[
+        {h4:'1. Giới hạn nhiệt độ và Thông gió tự nhiên', items:[
+          {t:'Giới hạn nhiệt độ', d:'Nhiệt độ <strong>trên 60°C</strong> thì <strong>TUYỆT ĐỐI KHÔNG ĐƯỢC VÀO</strong>. Chỉ tiếp cận khi nhiệt độ <strong>dưới 60°C</strong>.'},
+          {t:'Mở toàn bộ cửa kiểm tra', d:'Mở tất cả manhole, cửa xem lửa, lỗ kiểm tra để thông gió tự nhiên.'},
+          {t:'Phòng ngừa bỏng từ vật liệu chịu lửa', d:'Bắt buộc dùng <strong>găng tay bảo hộ chịu nhiệt</strong> khi kiểm tra lò hơi.'}
+        ], highlight:'<strong>Giới hạn nhiệt độ:</strong> Chỉ vào buồng đốt/đường khói khi nhiệt độ <strong>≤ 60°C</strong>.'},
+        {h4:'2. Kiểm tra xác nhận 3 điều kiện an toàn', items:[
+          {n:'a', t:'Kiểm tra tình trạng đọng xỉ', d:'Phát hiện xỉ đóng tảng có nguy cơ rơi thì chọc xỉ, gõ rơi an toàn từ bên ngoài trước khi cho người vào.'},
+          {n:'b', t:'Kiểm tra điều kiện ánh sáng', d:'Bố trí hệ thống chiếu sáng đầy đủ, rõ ràng.'},
+          {n:'c', t:'Kiểm tra nồng độ khí và thông gió', d:'Oxy 19,5% – 23,5%; CO ≤ 40 mg/m³; H₂S ≤ 15 mg/m³; duy trì quạt cấp khí tươi liên tục.'}
+        ]}
+      ]},
+      {num:'IV', title:'Yêu cầu kỹ thuật an toàn đối với hệ thống chiếu sáng', items:[
+        {t:'Cấp điện áp an toàn chuẩn', d:'<strong>&lt; 36 VAC</strong> qua MBA cách ly (ngoài) hoặc <strong>&lt; 48 VDC</strong>.'},
+        {t:'Điều kiện 1 – Dây dẫn cách điện', d:'Dây bọc 2 lớp cách điện cao su chịu lực.'},
+        {t:'Điều kiện 2 – Thiết bị chống giật', d:'ELCB / aptomat chống dòng rò độ nhạy cao lắp ở đầu nguồn bên ngoài lò.'},
+        {t:'Điều kiện 3 – Bảo vệ dây qua cửa', d:'Dây luồn bảo vệ trong ống (cao su hoặc kim loại lót cách điện).'}
+      ]},
+      {num:'V', title:'Kết thúc công tác và Quy trình đóng cửa lò', items:[
+        {t:'Kiểm đếm rút người và dụng cụ', d:'Tập hợp đơn vị, <strong>kiểm đếm 100% quân số</strong>, thu dọn toàn bộ bóng đèn, dây điện, que hàn, giẻ lau.'},
+        {t:'Nghiệm thu đóng cửa lò', d:'Người CHTT cùng Người cho phép <strong>trực tiếp soi đèn kiểm tra lần cuối</strong> trước khi đóng cửa lò.'},
+        {t:'Khóa PCT', d:'Ký xác nhận hoàn thành công tác và khóa PCT.'}
+      ], danger:'<strong>NGUY HIỂM:</strong> Tuyệt đối không đóng cửa lò khi chưa kiểm đếm đủ 100% quân số và chưa soi đèn kiểm tra lần cuối.'}
+    ]
+  },
+
+  t7: {
+    accent: '#3b1a70',
+    tag: 'Chuyên đề 07 · Máy phát Hydro',
+    title: 'An toàn khi làm việc tại khu vực máy phát làm mát bằng khí Hydro',
+    sub: 'Đặc tính cháy nổ – Phạm vi an toàn – Nạp/xả môi chất – Phòng ngừa rò rỉ – PCCC khẩn cấp',
+    badge: '💨 Điều 28',
+    intro: '<strong>Nguyên tắc chung:</strong> Hydro là chất khí <strong>cực kỳ nguy hiểm</strong>, dễ bắt cháy và phát nổ khi tiếp xúc với nguồn nhiệt hoặc oxy/không khí. Khu vực máy phát hydro có <strong>nguy cơ cháy nổ cao nhất</strong> trong nhà máy.',
+    sections:[
+      {num:'II', title:'Đặc tính nguy hiểm cháy nổ của khí Hydro (K1 Điều 28)', table:{
+        head:['Hỗn hợp','Dải nồng độ bắt cháy, nổ'],
+        rows:[
+          ['<span class="badge purple">H₂ + Không khí</span>','Chứa H₂ từ <span class="badge green">3,3% – 81,5%</span>'],
+          ['<span class="badge purple">H₂ + Oxy nguyên chất</span>','Chứa H₂ từ <span class="badge red">2,63% – 95%</span>'],
+          ['<span class="badge purple">Hỗn hợp nổ cực mạnh</span>','<strong>67% H₂ + 33% O₂</strong> — vận tốc nổ cực đại']
+        ]
+      }, danger:'<strong>CẢNH BÁO:</strong> Dải nổ của H₂ với không khí rất rộng (3,3% – 81,5%) và với oxy nguyên chất còn rộng hơn (2,63% – 95%).'},
+      {num:'III', title:'Quy định về ngọn lửa hở và phạm vi an toàn (K2 &amp; K10 Điều 28)', items:[
+        {t:'Bán kính cấm lửa 10 mét', d:'NGHIÊM CẤM hút thuốc, bật công tắc điện/đèn pin không phòng nổ, hàn hơi, hàn điện, sử dụng ngọn lửa hở trong vòng bán kính <strong>10 mét</strong> khi chưa có PCT duyệt và chưa kiểm tra nồng độ H₂ đạt chuẩn.'},
+        {t:'Hệ thống biển cảnh báo', d:'Treo <strong>"CẤM HÚT THUỐC"</strong> và <strong>"HYDRO – CẤM LỬA"</strong> tại gian tuabin, xung quanh máy phát và hệ thống dầu khí.'}
+      ]},
+      {num:'IV', title:'Quy định khi nạp, xả và thay môi chất làm mát (K3, 4, 5, 6 Điều 28)', items:[
+        {t:'Chạy bộ quay trục (Turning Gear)', d:'Bắt buộc chạy Turning Gear khi nạp/thổi đuổi H₂ ra khỏi máy phát đang ngừng.'},
+        {t:'Tốc độ nạp xả', d:'Tiến hành nạp/xả <strong>từ từ</strong> để kiểm soát áp suất và lưu lượng.'},
+        {t:'Thổi đuổi bằng khí trơ', d:'Không nạp trực tiếp H₂ vào máy phát đang chứa không khí. Dùng <strong>CO₂ hoặc N₂</strong> làm lớp đệm trung gian.'},
+        {t:'Kiểm soát độ tinh khiết và nồng độ khí', d:'H₂ ≥ 98%; nồng độ O₂ trong thân máy và van thủy lực không vượt giới hạn.'},
+        {t:'NGUYÊN TẮC VỚI BỂ DẦU TUABIN', d:'Trong khoang không khí bể dầu tuabin <strong>TUYỆT ĐỐI KHÔNG ĐƯỢC CÓ KHÍ H₂</strong>.'}
+      ]},
+      {num:'V', title:'Phòng ngừa nguy cơ tạo hỗn hợp nổ và rò rỉ (K7, 8, 9 Điều 28)', items:[
+        {t:'Đề phòng hỗn hợp nổ trong thân máy phát', d:'Cảnh giác khi áp lực H₂ giảm thấp làm lọt không khí qua bộ chèn trục; ngăn H₂ nhiễm không khí lẫn trong dầu.'},
+        {t:'Đề phòng các điểm rò rỉ H₂', d:'Rò rỉ qua bộ chèn trục; không khí nhiễm H₂ bốc lên từ đường xả gối trục; H₂ lọt vào bể chứa dầu chính.'},
+        {t:'Giới hạn tổn thất rò rỉ', d:'Lượng H₂ rò rỉ trong 24 giờ phải được theo dõi, ghi chép và <strong>không vượt quá định mức</strong>.'}
+      ]},
+      {num:'VI', title:'Trang bị PCCC và Quy trình xử lý hỏa hoạn (K11 &amp; K12 Điều 28)', blocks:[
+        {h4:'1. Trang bị phương tiện cứu hỏa tại chỗ', items:[
+          {d:'Vòi cứu hỏa – Lăng phun sương'},
+          {d:'Bình chữa cháy bột ABC'},
+          {d:'Bình khí CO₂ chữa cháy điện'},
+          {d:'Thùng cát chuyên dụng, xẻng, chăn amiăng'}
+        ]},
+        {h4:'2. Quy trình 8 bước xử lý hỏa hoạn', items:[
+          {n:'1', d:'<strong>Báo cáo ngay lập tức</strong> cho Trưởng kíp, Trưởng ca.'},
+          {n:'2', d:'<strong>Tăng cường kiểm tra, giám sát</strong> các thông số vận hành.'},
+          {n:'3', d:'<strong>CHỦ ĐỘNG CHỮA CHÁY NGAY TẠI CHỖ</strong> bằng phương tiện sẵn có.'},
+          {n:'4', d:'Khoanh vùng, ngăn không cho ngọn lửa lan rộng.'},
+          {n:'5', d:'<strong>Tạm dừng mọi công việc sửa chữa</strong> không liên quan.'},
+          {n:'6', d:'Yêu cầu người không nhiệm vụ <strong>khẩn trương sơ tán</strong>.'},
+          {n:'7', d:'Sử dụng bình bột, khí CO₂ hoặc chăn amiăng dập lửa.'},
+          {n:'8', d:'Nếu đám cháy đe dọa sự cố nghiêm trọng, <strong>NGỪNG TỔ MÁY KHẨN CẤP VÀ ĐUỔI H₂ RA KHỎI MÁY PHÁT BẰNG KHÍ TRƠ</strong>.'}
+        ], danger:'<strong>NGUY HIỂM TỘT ĐỘ:</strong> Nếu đám cháy đe dọa lan đến thân máy phát chứa H₂, phải ngừng tổ máy khẩn cấp và đuổi H₂ ra bằng khí trơ ngay lập tức.'}
+      ]}
+    ]
+  },
+
+  t8: {
+    accent: '#b82323',
+    tag: 'Chuyên đề 08 · Thiết bị quay',
+    title: 'Quy định an toàn khi làm việc với thiết bị quay',
+    sub: 'Nhận diện mối nguy – Cô lập an toàn – Yêu cầu kỹ thuật – Vận hành &amp; Xử lý sự cố – Chạy thử',
+    badge: '⚙️ Khoản 1 – 9',
+    intro: '<strong>Nguyên tắc chung:</strong> Thiết bị quay tiềm ẩn <strong>rủi ro tai nạn nghiêm trọng</strong> và sự cố thiết bị. Mọi công tác phải tuân thủ nghiêm ngặt các quy định an toàn.',
+    sections:[
+      {num:'K1', title:'Nhận diện mối nguy đặc thù', items:[
+        {t:'Nguy cơ cuốn, kẹp', d:'Người, quần áo, tóc hoặc vật tư rơi vào khớp nối, trục quay, cánh guồng, dây đai.'},
+        {t:'Nguy cơ va đập, văng bắn', d:'Bộ phận cơ khí lỏng, gãy vỡ hoặc dị vật văng bắn với <strong>động năng lớn</strong>.'}
+      ]},
+      {num:'K2·4', title:'Công tác chuẩn bị và cô lập an toàn trước sửa chữa', items:[
+        {t:'Dừng và cắt điện động cơ', d:'Dừng hoàn toàn, cắt nguồn điện động cơ và thiết bị điện phụ trợ.'},
+        {t:'Khóa an toàn và Treo biển cấm đóng điện', d:'Áp dụng LOTO; treo biển tại LCS, DCS, aptomat, MCC.'},
+        {t:'Cô lập van công nghệ', d:'Đóng chặt van đầu hút, đầu đẩy, đường xả, tuần hoàn.'},
+        {t:'Biển báo khu vực', d:'Đặt biển <strong>"Khu vực đang làm việc"</strong>.'}
+      ]},
+      {num:'K3', title:'Yêu cầu kỹ thuật an toàn đối với thiết bị', items:[
+        {t:'Hàng rào an toàn', d:'Khoảng cách quy định ngăn cách lối đi lại.'},
+        {t:'Vỏ bảo vệ khớp nối', d:'Chắc chắn, kiên cố.'},
+        {t:'Tiếp địa và hộp đấu cáp', d:'Dây tiếp địa bảo vệ; hộp đấu kín nước, chống bụi.'},
+        {t:'Bôi trơn gối đỡ', d:'Kiểm tra và bôi trơn đầy đủ.'},
+        {t:'Mặt bằng &amp; Chiếu sáng', d:'Sạch sẽ, không dầu mỡ trơn trượt; ánh sáng đầy đủ.'}
+      ]},
+      {num:'K5·6·7', title:'Quy định trong vận hành và xử lý sự cố', items:[
+        {t:'Tác phong vận hành', d:'Giữ khoảng cách an toàn, <strong>không tiếp xúc trực tiếp</strong> với bộ phận đang quay.'},
+        {t:'Kiểm tra độ rung và nhiệt độ', d:'Nếu vượt trị số bảo vệ mà hệ thống không tác động → <strong>ngừng khẩn cấp ngay lập tức</strong>.'},
+        {t:'Xử lý sự cố cháy', d:'Dừng thiết bị + cắt điện; dùng <strong>bình CO₂ hoặc bột ABC</strong>.'}
+      ], danger:'<strong>NGHIÊM CẤM DÙNG CÁT</strong> để chữa cháy thiết bị quay — cát lọt vào gây kẹt nát gối trục, ổ bi.'},
+      {num:'K8·9', title:'An toàn khi chạy thử và khởi động lại', blocks:[
+        {h4:'1. An toàn trong chạy thử, cân chỉnh (K8)', items:[
+          {d:'Bắt buộc sử dụng <strong>nút ấn ngừng khẩn cấp (Emergency Stop)</strong>.'},
+          {d:'Bố trí <strong>01 người giám sát an toàn chuyên trách</strong> tại nút dừng khẩn cấp.'}
+        ]},
+        {h4:'2. Điều kiện khởi động lại (K9) — 5 điều kiện tiên quyết', items:[
+          {n:'1', d:'Đã lắp đặt hoàn chỉnh <strong>vỏ chắn bảo vệ</strong> các bộ phận quay.'},
+          {n:'2', d:'<strong>Dụng cụ thi công đã thu dọn sạch sẽ</strong>, tháo dỡ gá lắp tạm.'},
+          {n:'3', d:'Toàn bộ <strong>biển báo an toàn tạm thời đã tháo dỡ</strong>.'},
+          {n:'4', d:'Tất cả <strong>nhân sự đã rút hoàn toàn</strong> khỏi khu vực nguy hiểm.'},
+          {n:'5', d:'<strong>Cán bộ chịu trách nhiệm</strong> trực tiếp kiểm tra và khẳng định hoàn tất công tác sửa chữa.'}
+        ], highlight:'<strong>Nguyên tắc 5 điều kiện:</strong> Chỉ khi cả 5 điều kiện thỏa mãn đồng thời, động cơ mới được phép khởi động lại.'}
+      ]}
+    ]
+  },
+
+  t9: {
+    accent: '#d9540a',
+    tag: 'Chuyên đề 09 · Lò hơi &amp; Thổi bụi',
+    title: 'An toàn khi vận hành Lò hơi &amp; Quá trình Thổi bụi',
+    sub: '8 quy tắc vận hành lò hơi – 6 quy định an toàn thổi bụi',
+    badge: '🔥 K1 &amp; K2 Điều 23',
+    intro: '<strong>Nguyên tắc chung:</strong> Lò hơi là thiết bị <strong>chịu áp lực cực cao và nhiệt độ lớn</strong>, tiềm ẩn nguy cơ nổ, bỏng nhiệt, ngạt khí và tai nạn cơ học nghiêm trọng.',
+    sections:[
+      {num:'II', title:'Quy định an toàn khi vận hành lò hơi (K1 Điều 23)', items:[
+        {n:'1', t:'Kiểm định thiết bị chịu áp lực', d:'Kiểm định kỹ thuật an toàn trước vận hành và định kỳ đúng hạn.'},
+        {n:'2', t:'Khu vực tường lò đang vận hành', d:'Người không nhiệm vụ <strong>không được đến gần lò</strong> hoặc đi lại bên cạnh tường lò.'},
+        {n:'3', t:'An toàn khi nhóm lò / đốt lò', d:'<strong>CẤM đứng trước cửa lò và cửa xem lửa</strong>. Đeo kính bảo hộ chuyên dụng khi kiểm tra ngọn lửa.'},
+        {n:'4', t:'Thao tác cửa kiểm tra và cửa chọc xỉ', d:'Đứng cách xa van an toàn, cửa phòng nổ. <strong>CẤM mở cửa kiểm tra</strong> khi than cám bốc bay. Mở cửa từ từ, đứng nép sau nắp cửa.'},
+        {n:'5', t:'Kiểm tra thiết bị chịu áp lực', d:'Tuần tra, lắng nghe âm thanh, quan sát giàn ống sinh hơi, bộ quá nhiệt, ống góp.'},
+        {n:'6', t:'Thông rửa ống thủy sáng', d:'Đứng bên cạnh ống thủy; mở van từ từ. <strong>Không ghé mắt nhìn sát vào ống thủy</strong>.'},
+        {n:'7', t:'Xử lý khi lò tắt lửa (MFT)', d:'Lập tức ngừng cấp than/nhiên liệu. <strong>Chỉ đánh lửa lại sau khi thông gió thổi quét buồng đốt đầy đủ.</strong>'},
+        {n:'8', t:'Quy định với thiết bị đang mang áp lực', d:'<strong>CẤM</strong> hàn, buộc, xiết ê-cu. Chỉ cho phép xiết nóng theo TCVN.'}
+      ], danger:'<strong>NGUY HIỂM CHẾT NGƯỜI:</strong> Khi lò tắt lửa (MFT), <strong>tuyệt đối không đánh lửa trở lại</strong> khi chưa thông gió thổi quét buồng đốt đầy đủ.'},
+      {num:'III', title:'Quy định an toàn khi thổi bụi lò hơi (K2 Điều 23)', items:[
+        {n:'1', t:'Kiểm tra đối soát trước khi thổi bụi', d:'Đảm bảo không có công việc kiểm tra, sửa chữa tại khu vực lò; sấy nóng đường ống cấp hơi; kiểm tra PCT/LCT đang sửa chữa máy thổi bụi.'},
+        {n:'2', t:'Khoảng cách an toàn cơ học và nhiệt độ', d:'Không đưa tay vào cơ cấu truyền lực; không chạm trực tiếp vào ống dẫn hơi nóng.'},
+        {n:'3', t:'Điều kiện môi chất làm việc', d:'<strong>Nghiêm cấm vận hành thổi bụi</strong> mà không có môi chất (hơi nước sấy khô) đi qua vòi.'},
+        {n:'4', t:'Xử lý sự cố kẹt vòi thổi bụi', d:'Lập tức quay tay kéo vòi ra ngoài buồng đốt để tránh nhiệt độ cao nung cháy cong vênh.'},
+        {n:'5', t:'Cấm tiến hành thổi bụi', d:'Khi bộ thổi có khuyết tật cơ khí, xì hở van; khi chế độ cháy trong buồng đốt dao động.'},
+        {n:'6', t:'Quan sát buồng lửa khi thổi bụi', d:'<strong>CẤM mở lỗ kiểm tra</strong> khi vòi thổi bụi đang hoạt động.'}
+      ], highlight:'<strong>Lưu ý:</strong> Khi bộ thổi bụi bị kẹt giữa chừng, phải lập tức kéo vòi ra ngoài bằng tay quay để tránh hư hỏng do nhiệt độ cao.'}
+    ]
+  },
+
+  t10: {
+    accent: '#0a7ab8',
+    tag: 'Chuyên đề 10 · Nước tuần hoàn',
+    title: 'Quy định an toàn khi làm việc trên đường ống nước tuần hoàn',
+    sub: 'Cấp phép – Cô lập – Không gian kín – Kênh hở – Nghiệm thu &amp; Điền đầy hệ thống',
+    badge: '💧 Điều 15, 22, 25, 31 &amp; 34',
+    intro: '<strong>Nguyên tắc chung:</strong> Công việc trên đường ống nước tuần hoàn, hố van, bình ngưng và kênh xả tiềm ẩn <strong>nhiều mối nguy đặc thù</strong> như ngạt khí, đuối nước, điện giật, thủy kích.',
+    sections:[
+      {num:'II', title:'Thủ tục cấp phép và cô lập hệ thống (Điều 15, 22 &amp; 31)', items:[
+        {t:'Chế độ PCT', d:'Bắt buộc lập phương án thi công và thực hiện theo PCT.'},
+        {t:'Cắt điện động cơ bơm', d:'Dừng, cắt điện CWP; treo biển <strong>"CẤM ĐÓNG ĐIỆN! CÓ NGƯỜI ĐANG LÀM VIỆC"</strong>; khóa LOTO.'},
+        {t:'Cô lập van chặn từ mọi phía', d:'Đóng van chặn, van bướm; cắt nguồn điện lực và nguồn điều khiển van; treo biển cảnh báo.'},
+        {t:'Lắp mặt bích chặn (Blind Flange)', d:'Chiều dày tính toán chịu lực chuẩn; siết chặt bulông.'},
+        {t:'Xả cạn môi chất, triệt tiêu áp lực', d:'Mở van xả đọng đáy và xả khí đỉnh. Chỉ nới lỏng manhole khi <strong>áp lực về 0</strong>.'}
+      ]},
+      {num:'III', title:'Biện pháp an toàn trong đường ống và hố ga kín (Điều 22 &amp; 25)', blocks:[
+        {h4:'1. Thông gió cưỡng bức và Chống ngạt khí', items:[
+          {d:'Mở toàn bộ manhole, <strong>thông gió tự nhiên ít nhất 15–30 phút</strong>.'},
+          {d:'Quạt thổi/hút cấp khí tươi cưỡng bức liên tục; vận tốc 0,3 – 1,5 m/s.'}
+        ], danger:'<strong>NGHIÊM CẤM:</strong> Đưa máy bơm, máy nổ động cơ đốt trong vào đường ống/hố ga kín — nguy cơ sinh khí độc CO.'},
+        {h4:'2. Đo kiểm môi trường khí trước khi vào', table:{
+          head:['Chỉ tiêu','Ký hiệu','Ngưỡng cho phép'],
+          rows:[
+            ['Oxy','<strong>O₂</strong>','<span class="badge green">19,5% – 23,5%</span>'],
+            ['Carbondioxide','<strong>CO₂</strong>','<span class="badge green">≤ 1800 mg/m³</span>'],
+            ['Carbonmonoxide','<strong>CO</strong>','<span class="badge green">≤ 40 mg/m³</span>'],
+            ['Hydro Sunfua','<strong>H₂S</strong>','<span class="badge green">≤ 15 mg/m³</span>'],
+            ['Khí dễ cháy','<strong>LEL</strong>','<span class="badge green">&lt; 10%</span>']
+          ]
+        }},
+        {h4:'3. Tổ chức nhóm công tác và Bố trí cảnh giới (CG)', items:[
+          {t:'Quân số tối thiểu', d:'Ít nhất 02 – 03 người.'},
+          {t:'Bố trí thường trực cảnh giới', d:'Người CG <strong>túc trực liên tục bên ngoài</strong>, không rời vị trí.'},
+          {t:'Liên lạc &amp; Cứu nạn', d:'Liên lạc mỗi 15 phút; chuẩn bị bình tự cứu, dây cứu nạn, cáng thương, đèn pin.'},
+          {t:'Thời gian luân phiên', d:'Giải lao phù hợp ngoài đường ống.'}
+        ]},
+        {h4:'4. An toàn điện chiếu sáng và Dụng cụ thi công', items:[
+          {t:'Cấp điện áp an toàn', d:'<strong>≤ 36 VAC</strong> qua MBA cách ly (ngoài) hoặc <strong>≤ 48 VDC</strong>. Dây bọc cao su 2 lớp.'},
+          {t:'PTBVCN', d:'Quần áo bảo hộ, mũ cài quai, ủng cao su có mũi lót thép, găng tay cao su, dây đeo an toàn.'}
+        ]}
+      ]},
+      {num:'IV', title:'An toàn trên tuyến kênh và hố hở (Điều 34)', items:[
+        {t:'Tiêu chuẩn nhân sự biết bơi', d:'Chỉ người <strong>đã qua sát hạch kỹ năng bơi</strong>. Người <strong>không biết bơi tuyệt đối không được làm việc dưới nước</strong>.'},
+        {t:'Tổ chức nhóm công tác trên kênh', d:'Ít nhất 02 người, <strong>01 người đứng trên bờ</strong> quan sát, ứng cứu.'},
+        {t:'Hàng rào an toàn &amp; Phao cứu sinh', d:'Lan can/hàng rào bảo vệ kiên cố; phao tròn cứu hộ kèm dây ném.'},
+        {t:'Biển cảnh báo dòng nước', d:'Biển báo nguy hiểm cấm lại gần tại các vị trí nước sâu, dòng chảy xiết.'}
+      ], danger:'<strong>NGHIÊM CẤM:</strong> Bố trí người <strong>không biết bơi</strong> làm việc dưới nước hoặc tại khu vực ta-luy có nguy cơ trượt ngã.'},
+      {num:'V', title:'Nghiệm thu, kết thúc công tác và điền đầy hệ thống', items:[
+        {t:'Kiểm tra rút người và dụng cụ', d:'Soi đèn kiểm tra toàn tuyến ống; 100% người và vật tư đã ra ngoài.'},
+        {t:'Đóng cửa manhole &amp; Tháo mặt bích chặn', d:'Gioăng mới; siết đều bulông; tháo mặt bích chặn.'},
+        {t:'Khóa PCT &amp; Điền đầy nước', d:'Ký Mục 4 PCT; mở van xả khí đỉnh; <strong>từ từ mở van</strong> để chống thủy kích.'}
+      ], highlight:'<strong>Lưu ý:</strong> Điền đầy nước phải thực hiện <strong>từ từ</strong>, mở van hé trước, tránh <strong>thủy kích (búa nước)</strong> gây vỡ đường ống.'}
+    ]
+  },
+
+  t11: {
+    accent: '#d97706',
+    tag: 'Chuyên đề 11 · Làm việc trên cao',
+    title: 'Quy định an toàn khi làm việc trên cao',
+    sub: 'Sức khỏe – Trang bị bảo hộ – Thời tiết – Giàn giáo – Kiểm định dây an toàn',
+    badge: '🪜 Điều 19, 20 &amp; 21',
+    intro: '<strong>Nguyên tắc chung:</strong> Làm việc trên cao là một trong những công tác có <strong>nguy cơ tai nạn nghiêm trọng nhất</strong> (rơi ngã, va đập, điện giật).',
+    sections:[
+      {num:'II', title:'Điều kiện sức khỏe và trang bị bảo hộ (Điều 19)', items:[
+        {d:'Bắt buộc có <strong>Giấy chứng nhận đủ sức khỏe làm việc trên cao</strong>.'},
+        {d:'Người <strong>ốm đau</strong> hoặc đã dùng <strong>chất kích thích, cồn</strong> không được làm việc trên cao.'},
+        {t:'Dây an toàn bắt buộc', d:'Móc vào kết cấu chắc chắn <strong>ngay phía trên</strong> vị trí thao tác.'},
+        {t:'Trang phục thi công', d:'Quần áo gọn gàng, mũ bảo hộ cài quai, giày chống trơn trượt.'}
+      ]},
+      {num:'III', title:'Điều kiện thời tiết, hành vi cấm (Điều 19)', items:[
+        {t:'⛈️ Giông bão / Sấm sét', d:'Gió giật <strong>cấp 5 trở lên</strong>, mưa to, sấm sét.'},
+        {t:'🌡️ Nắng nóng gay gắt', d:'Trên <strong>38°C</strong> không có che nắng, làm mát.'},
+        {t:'🌙 Thiếu ánh sáng', d:'Trời tối hoặc chiếu sáng nhân tạo không đảm bảo.'},
+        {d:'Cấm dùng <strong>chất kích thích, đồ uống có cồn</strong>.'},
+        {d:'Cấm <strong>tung, ném</strong> dụng cụ, vật liệu.'},
+        {d:'Cấm cho vật nặng vào túi; cấm <strong>mang vác vật tư nặng leo trèo</strong>.'},
+        {d:'Cấm <strong>đùa nghịch, nói chuyện riêng, làm việc riêng</strong>.'},
+        {d:'Cấm sử dụng <strong>điện thoại di động</strong> khi leo lên/xuống thang.'},
+        {d:'Cấm <strong>leo trèo tùy tiện</strong> trên mép tường, dầm, lan can.'}
+      ], danger:'<strong>NGHIÊM CẤM TUYỆT ĐỐI:</strong> Sử dụng điện thoại di động khi leo lên/xuống thang hoặc giàn giáo.'},
+      {num:'IV', title:'Quy định an toàn khi làm việc trên giàn giáo (Điều 20)', items:[
+        {t:'Ưu tiên sử dụng giàn giáo kiên cố', d:'Thay vì dùng thang khi làm việc kéo dài.'},
+        {t:'Lắp dựng &amp; Nghiệm thu', d:'Đúng bản vẽ; chân cột kê lót chắc chắn; <strong>bắt buộc lập biên bản nghiệm thu</strong> trước khi dùng.'},
+        {t:'Giàn giáo cao trên 6m', d:'Phải có <strong>ít nhất 02 sàn công tác</strong>. Cấm làm việc đồng thời trên hai tầng sàn cùng khoang nếu không có sàn che chắn.'},
+        {t:'Tải trọng &amp; Lối đi lại', d:'Cấm để vật liệu trên lối đi; không vượt tải trọng thiết kế.'},
+        {t:'Kỷ luật giàn giáo', d:'Không tự ý tháo lan can, tay vịn, thanh giằng.'},
+        {t:'Giàn giáo di động &amp; An toàn điện', d:'Khóa chốt phanh, chêm bánh xe. <strong>Cấm dựng giàn giáo bên dưới đường dây mang điện</strong>.'}
+      ], highlight:'<strong>Nguyên tắc 6m:</strong> Giàn giáo cao trên 6m bắt buộc phải có <strong>02 sàn công tác</strong> — không có ngoại lệ.'},
+      {num:'V', title:'Tiêu chuẩn và kiểm định dây đeo an toàn (Điều 21)', blocks:[
+        {h4:'Kiểm tra định kỳ', items:[
+          {t:'Tự kiểm tra hàng ngày', d:'Đeo dây, móc vào vật cố định, chụm chân ngả người ra sau kiểm tra khóa móc, dây đai, đường chỉ may.'}
+        ], table:{
+          head:['Loại dây','Tải trọng thử','Thời gian','Tiêu chuẩn'],
+          rows:[
+            ['<strong>Dây an toàn cũ</strong>','<span class="badge orange">225 kg</span>','05 phút','Không rách chỉ, không biến dạng móc khóa'],
+            ['<strong>Dây an toàn mới</strong>','<span class="badge orange">300 kg</span>','05 phút','Khóa móc, đai chịu lực nguyên vẹn 100%']
+          ]
+        }, items2:[
+          {t:'Dán tem và Ghi sổ theo dõi', d:'Dán tem đạt chuẩn; dây không đạt phải lập biên bản hủy bỏ ngay.'},
+          {t:'Trách nhiệm pháp lý', d:'ĐVCT <strong>chịu hoàn toàn trách nhiệm trước pháp luật</strong> nếu xảy ra tai nạn do dây đứt, gãy móc khóa hoặc không thử định kỳ.'}
+        ], danger:'<strong>TRÁCH NHIỆM PHÁP LÝ:</strong> ĐVCT chịu <strong>hoàn toàn trách nhiệm</strong> trước pháp luật nếu xảy ra tai nạn do dây an toàn bị đứt, gãy móc khóa hoặc không thử đúng định kỳ 06 tháng/lần.'}
+      ]}
+    ]
+  },
+
+  t12: {
+    accent: '#0a7ab8',
+    tag: 'Chuyên đề 12 · An toàn khi lặn',
+    title: 'Các quy định về an toàn khi lặn',
+    sub: 'Thợ lặn &amp; Nhóm lặn – Cô lập khu vực – Thiết bị cấp khí – Tín hiệu – Dừng lặn khẩn cấp',
+    badge: '🤿 Quy chuẩn An toàn lặn',
+    intro: '<strong>Nguyên tắc chung:</strong> Công tác lặn dưới nước tiềm ẩn <strong>nguy cơ đặc biệt nghiêm trọng</strong> như bệnh khí ép (giảm áp), lực hút xoáy của dòng chảy, tai nạn với thiết bị nâng hạ và sự cố hệ thống cấp khí thở.',
+    sections:[
+      {num:'II', title:'Yêu cầu đối với thợ lặn và tổ chức nhóm lặn', blocks:[
+        {h4:'1. Tiêu chuẩn chuyên môn và Sức khỏe', items:[
+          {t:'Độ tuổi và Chứng chỉ', d:'Đủ <strong>từ 18 tuổi trở lên</strong>, có chứng chỉ chuyên môn hợp pháp, <strong>thẻ an toàn lao động nhóm 3</strong>.'},
+          {t:'Giấy chứng nhận sức khỏe đặc thù', d:'Khám định kỳ <strong>tối thiểu 06 tháng/lần</strong>. Cấm người mắc bệnh tim mạch, huyết áp, hô hấp, tiền đình, thủng màng nhĩ; người mệt mỏi, dùng rượu bia.'},
+          {t:'Kiểm tra thể trạng trước ca lặn', d:'Người CHTT kiểm tra trực tiếp thể trạng sức khỏe và tinh thần của thợ lặn.'}
+        ]},
+        {h4:'2. Thủ tục cấp phép và Cơ cấu Nhóm công tác lặn', items:[
+          {t:'Bắt buộc thực hiện theo PCT', d:'Lập Phương án thi công &amp; Biện pháp kỹ thuật an toàn.'},
+          {n:'1', t:'Thợ lặn chính', d:'Trực tiếp lặn xuống nước thực hiện thao tác.'},
+          {n:'2', t:'Thợ lặn dự phòng', d:'Mang sẵn sàng toàn bộ trang bị, sẵn sàng ứng cứu khẩn cấp.'},
+          {n:'3', t:'Người cảnh giới / Phục vụ', d:'Giữ dây rốn, điều tiết áp suất cấp khí, duy trì liên lạc, cảnh giới tàu thuyền.'}
+        ]}
+      ]},
+      {num:'III', title:'Biện pháp cô lập và thiết lập ranh giới an toàn', blocks:[
+        {h4:'1. Cô lập dòng chảy và các thiết bị thủy lực', items:[
+          {t:'Dừng và cắt điện động cơ bơm', d:'Dừng CWP, bơm lọc, máy quay lưới; treo biển cấm đóng điện; khóa LOTO.'},
+          {t:'Đóng van phai và van cách ly', d:'Hạ kín van phai; đóng chặt van bướm; <strong>cân bằng áp lực nước</strong> hoặc triệt tiêu hoàn toàn chênh cột nước.'},
+          {t:'Treo biển cấm thao tác', d:'Tại các cơ cấu đóng mở van phai và tời nâng hạ.'}
+        ], danger:'<strong>NGUY HIỂM CHẾT NGƯỜI:</strong> Lực hút xoáy từ chênh lệch cột nước có thể kéo chặt thợ lặn vào miệng van/lưới lọc.'},
+        {h4:'2. Cảnh giới an toàn mặt nước và thiết bị nâng hạ', items:[
+          {t:'Thả phao &amp; Treo cờ hiệu lặn', d:'Ban ngày: cờ Alpha "A"; ban đêm: đèn tín hiệu chuyên dùng.'},
+          {t:'Dừng thiết bị nâng chuyển trên cao', d:'Tuyệt đối cấm cẩu trục, cổng trục, cẩu tự hành hoạt động trên không gian thẳng đứng vị trí lặn.'}
+        ]}
+      ]},
+      {num:'IV', title:'Kiểm tra thiết bị lặn và hệ thống cấp khí thở', items:[
+        {t:'Hệ thống máy nén khí thở', d:'Máy nén chuyên dụng cho khí thở y tế/lặn biển; cửa hút cách xa ống xả khói động cơ; khí qua hệ thống lọc.'},
+        {t:'Mũ lặn, mặt nạ và van thở', d:'Kiểm tra kín khít; van cấp/xả khí và van khẩn cấp trơn tru.'},
+        {t:'Dây rốn cấp khí', d:'Chịu áp lực cao, không nứt vỡ, đầu kết nối chắc chắn.'},
+        {t:'Thông tin liên lạc hai chiều', d:'Kiểm tra thông suốt trước khi rời mặt nước.'}
+      ]},
+      {num:'V', title:'Quy tắc an toàn khi lặn và quy ước tín hiệu', blocks:[
+        {h4:'1. Quy tắc lặn xuống, nổi lên và Giảm áp', items:[
+          {t:'Tốc độ di chuyển', d:'Xuống <strong>≤ 20 m/phút</strong>; nổi lên <strong>≤ 9 – 10 m/phút</strong>.'},
+          {t:'Tuân thủ bảng giảm áp', d:'Đào thải nitơ hòa tan; ngăn ngừa bệnh khí ép.'}
+        ], danger:'<strong>NGUY HIỂM:</strong> Không tuân thủ bảng giảm áp có thể dẫn đến <strong>bệnh khí ép</strong> — bọt khí nitơ trong máu, gây tắc mạch, tổn thương thần kinh, thậm chí tử vong.'},
+        {h4:'2. Quy ước tín hiệu giật dây', table:{
+          head:['Tín hiệu','Ý nghĩa từ Thợ lặn','Ý nghĩa từ Người phục vụ'],
+          rows:[
+            ['<span class="badge blue">Giật 1 lần</span>','Bình thường / Đã đến đáy','Hỏi thăm / Yêu cầu xác nhận'],
+            ['<span class="badge blue">Giật 2 lần</span>','Cho thêm dây khí / Hạ thấp xuống','Chuẩn bị hạ thấp'],
+            ['<span class="badge blue">Giật 3 lần</span>','Thu bớt dây / Chuẩn bị nổi lên','Chuẩn bị kéo lên'],
+            ['<span class="badge red">Giật liên tục (≥ 4 lần)</span>','<strong>BÁO ĐỘNG NGUY HIỂM! KÉO LÊN NGAY</strong>','<strong>BÁO ĐỘNG KHẨN CẤP! NỔI LÊN NGAY</strong>']
+          ]
+        }},
+        {h4:'3. Điều kiện dừng lặn khẩn cấp', items:[
+          {t:'Khí tượng xấu', d:'Gió <strong>cấp 5 trở lên</strong>, sóng lớn, giông sét; dòng chảy ngầm <strong>&gt; 1,0 m/s</strong>.'},
+          {t:'Hệ thống cấp khí sự cố', d:'Tụt áp suất bình khí; khí thở có mùi khét hoặc dầu máy.'},
+          {t:'Thợ lặn bất thường', d:'Choáng váng, khó thở, tức ngực, run lạnh; thiết bị rò rỉ nước.'}
+        ]}
+      ]},
+      {num:'VI', title:'Quy định sau khi kết thúc ca lặn và bàn giao', items:[
+        {t:'Chăm sóc phục hồi sức khỏe', d:'Đưa thợ lặn lên bờ an toàn, tháo trang bị, lau khô, mặc ấm, uống nước ấm. <strong>Theo dõi sức khỏe ít nhất 02 giờ</strong>.'},
+        {t:'Nhật ký lặn', d:'Ghi đầy đủ thời gian lặn, độ sâu lớn nhất, chế độ giảm áp, tình trạng sức khỏe, nội dung công việc.'},
+        {t:'Nghiệm thu &amp; Khóa PCT', d:'Thu hồi thiết bị lặn, dụng cụ; Người cho phép và Người CHTT ký nghiệm thu và khóa PCT.'}
+      ], highlight:'<strong>Lưu ý:</strong> Việc theo dõi sức khỏe thợ lặn <strong>ít nhất 02 giờ</strong> sau khi lặn là bắt buộc — các triệu chứng muộn của bệnh giảm áp có thể xuất hiện sau nhiều giờ.'}
+    ]
+  }
+};
+
+/* ============================================================
+   RENDER TOPICS VÀO #topicsMount
+   ============================================================ */
+function esc(s){return s;}
+
+function renderItem(it){
+  const attrs = it.n ? ` data-num="${it.n}"` : '';
+  const title = it.t ? `<span class="item-title">${it.t}</span>` : '';
+  const desc = it.d ? `<span class="item-desc">${it.d}</span>` : '';
+  return `<li${attrs}>${title}${desc}</li>`;
+}
+
+function renderTable(tbl){
+  const head = tbl.head.map(h=>`<th>${h}</th>`).join('');
+  const rows = tbl.rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('');
+  return `<table class="data-table"><thead><tr>${head}</tr></thead><tbody>${rows}</tbody></table>`;
+}
+
+function renderBlock(b){
+  let h = '';
+  if(b.h4) h += `<h4>${b.h4}</h4>`;
+  if(b.items) h += `<ul class="item-list">${b.items.map(renderItem).join('')}</ul>`;
+  if(b.table) h += renderTable(b.table);
+  if(b.items2) h += `<ul class="item-list" style="margin-top:14px;">${b.items2.map(renderItem).join('')}</ul>`;
+  if(b.highlight) h += `<div class="highlight-box"><p>${b.highlight}</p></div>`;
+  if(b.danger) h += `<div class="danger-box"><p>${b.danger}</p></div>`;
+  return h;
+}
+
+function renderSection(s){
+  let h = `<section class="section"><div class="section-header">`;
+  const numStyle = s.numStyle === 'orange' ? ` style="background:linear-gradient(135deg,#b45309,#ea8c00);"` : '';
+  h += `<div class="section-num"${numStyle}>${s.num}</div>`;
+  const titleStyle = s.titleStyle ? ` style="${s.titleStyle}"` : '';
+  h += `<h3${titleStyle}>${s.title}</h3></div>`;
+  if(s.blocks) h += s.blocks.map(renderBlock).join('');
+  if(s.items) h += `<ul class="item-list">${s.items.map(renderItem).join('')}</ul>`;
+  if(s.table) h += renderTable(s.table);
+  if(s.highlight) h += `<div class="highlight-box"><p>${s.highlight}</p></div>`;
+  if(s.danger) h += `<div class="danger-box"><p>${s.danger}</p></div>`;
+  h += `</section>`;
+  return h;
+}
+
+function renderTopic(id, t){
+  let h = `<article class="topic" id="${id}" style="--accent:${t.accent};">`;
+  h += `<div class="topic-header"><span class="th-tag">${t.tag}</span>`;
+  h += `<h2>${t.title}</h2><p class="th-sub">${t.sub}</p>`;
+  h += `<span class="th-badge">${t.badge}</span></div>`;
+  if(t.intro) h += `<div class="intro-box">${t.intro}</div>`;
+  h += t.sections.map(renderSection).join('');
+  h += `</article>`;
+  return h;
+}
+
+const mount = document.getElementById('topicsMount');
+mount.innerHTML = Object.entries(TOPICS).map(([id,t])=>renderTopic(id,t)).join('');
+
+/* ============================================================
+   ĐIỀU HƯỚNG VIEW
+   ============================================================ */
+const homeView = document.getElementById('homeView');
+const readerView = document.getElementById('readerView');
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('overlay');
+const menuBtn = document.getElementById('menuBtn');
+const main = document.getElementById('main');
+const sbItems = document.querySelectorAll('.sb-item');
+const topics = document.querySelectorAll('.topic');
+
+function openReader(topicId){
+  homeView.classList.add('hidden');
+  readerView.classList.add('active');
+  document.body.style.overflow = 'hidden';
+  showTopic(topicId || 't1');
+}
+
+function goHome(){
+  readerView.classList.remove('active');
+  homeView.classList.remove('hidden');
+  document.body.style.overflow = '';
+  history.replaceState(null, '', location.pathname);
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function showTopic(id){
+  topics.forEach(t => t.classList.toggle('active', t.id === id));
+  sbItems.forEach(it => it.classList.toggle('active', it.dataset.topic === id));
+  if(main) main.scrollTo({top:0, behavior:'smooth'});
+  if(window.innerWidth <= 900){
+    sidebar.classList.remove('open');
+    overlay.classList.remove('show');
+  }
+  history.replaceState(null, '', '#' + id);
+}
+
+sbItems.forEach(it=>{
+  it.addEventListener('click', ()=> showTopic(it.dataset.topic));
+});
+
+document.querySelectorAll('.topic-card').forEach(card=>{
+  card.addEventListener('click', ()=> openReader(card.dataset.topic));
+});
+
+menuBtn.addEventListener('click', ()=>{
+  sidebar.classList.toggle('open');
+  overlay.classList.toggle('show');
+});
+overlay.addEventListener('click', ()=>{
+  sidebar.classList.remove('open');
+  overlay.classList.remove('show');
+});
+
+/* ============================================================
+   TÌM KIẾM
+   ============================================================ */
+function normalize(s){
+  return (s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d');
+}
+
+const homeSearch = document.getElementById('homeSearch');
+homeSearch.addEventListener('input', ()=>{
+  const q = normalize(homeSearch.value.trim());
+  document.querySelectorAll('.topic-card').forEach(c=>{
+    const hay = normalize((c.dataset.search||'') + ' ' + c.textContent);
+    c.style.display = (!q || hay.includes(q)) ? '' : 'none';
+  });
+});
+homeSearch.addEventListener('keydown', e=>{
+  if(e.key === 'Enter'){
+    const first = [...document.querySelectorAll('.topic-card')].find(c=>c.style.display !== 'none');
+    if(first) first.click();
+  }
+});
+
+const sbSearch = document.getElementById('sbSearch');
+sbSearch.addEventListener('input', ()=>{
+  const q = normalize(sbSearch.value.trim());
+  sbItems.forEach(it=>{
+    const hay = normalize((it.dataset.search||'') + ' ' + it.textContent);
+    it.style.display = (!q || hay.includes(q)) ? '' : 'none';
+  });
+});
+
+/* ============================================================
+   HASH ROUTING
+   ============================================================ */
+if(location.hash){
+  const id = location.hash.replace('#','');
+  if(document.getElementById(id)) openReader(id);
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1355 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kiểm tra trắc nghiệm - NMNĐ Mông Dương 1</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  min-height: 100vh; color: #2c3e50; padding: 16px;
+  -webkit-font-smoothing: antialiased;
+}
+.screen { display: none; }
+.screen.active { display: block; animation: fadeIn .4s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px);} to {opacity:1; transform:translateY(0);} }
+
+.btn {
+  padding: 11px 22px; border: none; border-radius: 10px;
+  font-size: 15px; font-weight: 600; cursor: pointer;
+  transition: all .2s; font-family: inherit;
+}
+.btn-primary { background: linear-gradient(135deg,#f39c12,#e67e22); color:#fff;
+  box-shadow: 0 4px 15px rgba(230,126,34,.4); }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(230,126,34,.6); }
+.btn-secondary { background:#eef2f8; color:#2a5298; border:2px solid #d0dbe8; }
+.btn-secondary:hover { background:#dde7f5; }
+.btn-submit { background: linear-gradient(135deg,#27ae60,#1e8449); color:#fff;
+  box-shadow: 0 4px 15px rgba(39,174,96,.4); }
+.btn-submit:hover { transform: translateY(-2px); }
+.btn-ghost { background: rgba(42,82,152,.1); color:#2a5298; }
+.btn-ghost:hover { background: rgba(42,82,152,.2); }
+.btn:disabled { opacity:.5; cursor:not-allowed; transform:none !important; }
+
+/* HOME */
+.home-card {
+  max-width: 780px; margin: 20px auto; background:#fff; border-radius:22px;
+  padding: 36px 32px; box-shadow: 0 20px 60px rgba(0,0,0,.35); text-align:center;
+}
+.home-icon { font-size: 54px; margin-bottom: 6px; }
+h1 { font-size: 26px; color:#1e3c72; margin-bottom: 4px; }
+.subtitle { color:#7a8ca5; font-size:14.5px; margin-bottom: 22px; }
+
+.pos-title { font-size:15px; font-weight:700; color:#1e3c72;
+  margin-bottom:10px; text-align:left; }
+.pos-grid { display:grid; grid-template-columns: 1fr 1fr; gap:12px;
+  margin-bottom: 22px; }
+.pos-card {
+  border: 2.5px solid #d0dbe8; border-radius:14px; padding:18px 14px;
+  cursor:pointer; transition: all .2s; background:#fff; text-align:center;
+  font-family:inherit;
+}
+.pos-card:hover { border-color:#2a5298; transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(42,82,152,.15); }
+.pos-card.selected { border-color:#f39c12; background: linear-gradient(135deg,#fff8ec,#fff2da);
+  box-shadow: 0 8px 20px rgba(243,156,18,.3); }
+.pos-card .pos-icon { font-size: 36px; margin-bottom:6px; }
+.pos-card .pos-name { font-size:16px; font-weight:800; color:#1e3c72; margin-bottom:4px; }
+.pos-card .pos-desc { font-size:12.5px; color:#7a8ca5; line-height:1.4; }
+
+.info-grid { display:flex; justify-content:center; gap:12px; margin-bottom: 22px; flex-wrap:wrap; }
+.info-item {
+  background: linear-gradient(135deg,#eef4fc,#dbe7f7); border-radius:14px;
+  padding: 14px 20px; font-size:12.5px; color:#5a7292; font-weight:600;
+  display:flex; flex-direction:column; align-items:center; gap:3px; min-width:100px;
+}
+.info-item span { font-size:23px; font-weight:800; color:#2a5298; line-height:1; }
+.home-actions { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-bottom:24px; }
+
+.history-section { text-align:left; border-top: 2px dashed #e2e8f0; padding-top:20px; }
+.history-section h2 { font-size:15.5px; color:#1e3c72; margin-bottom:12px; }
+#historyList { display:flex; flex-direction:column; gap:8px; max-height:260px; overflow-y:auto; }
+.history-empty { color:#9aa8bb; font-size:13.5px; text-align:center; padding:12px; }
+.history-item {
+  display:flex; align-items:center; gap:11px; padding:10px 13px;
+  background:#f7fafd; border-radius:10px; border-left:5px solid #27ae60; font-size:13.5px;
+}
+.history-item.fail { border-left-color:#e74c3c; }
+.history-item .hi-pos { font-size:11.5px; font-weight:700; color:#fff;
+  background:#2a5298; padding:3px 8px; border-radius:6px; }
+.history-item .hi-score { font-weight:800; color:#1e3c72; font-size:16px; min-width:70px; }
+.history-item .hi-date { color:#7a8ca5; font-size:12px; }
+.history-item .hi-time { margin-left:auto; color:#7a8ca5; font-size:12px; }
+
+/* QUIZ */
+.quiz-container { max-width: 1150px; margin: 0 auto; }
+.quiz-header {
+  position: sticky; top: 12px; z-index: 100;
+  background: rgba(255,255,255,.98); backdrop-filter: blur(10px);
+  border-radius: 14px; padding: 11px 18px; display:flex; align-items:center;
+  justify-content:space-between; gap:10px; box-shadow: 0 4px 20px rgba(0,0,0,.18);
+  margin-bottom: 16px;
+}
+.quiz-title { font-weight:700; color:#1e3c72; font-size:14px; }
+.timer {
+  font-size:21px; font-weight:800; color:#e74c3c; font-variant-numeric: tabular-nums;
+  background:#fdedec; padding: 6px 16px; border-radius: 10px; letter-spacing:1px;
+}
+.timer.warning { animation: pulse 1s infinite; }
+@keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:.45;} }
+
+.quiz-body { display:grid; grid-template-columns: 1fr 290px; gap:20px; align-items:start; }
+.cat-panel { grid-column:2; grid-row:1; position: sticky; top: 90px;
+  display:flex; flex-direction:column; align-items:center; gap:12px; }
+.quiz-main { grid-column:1; grid-row:1; }
+
+.speech-bubble {
+  background:#fff; border-radius:16px; padding:12px 16px; font-size:14px;
+  font-weight:600; color:#1a2b4c; position:relative; text-align:center;
+  box-shadow: 0 4px 15px rgba(0,0,0,.15); min-height:54px; width:100%;
+  display:flex; align-items:center; justify-content:center; transition: background .3s;
+}
+.speech-bubble::after {
+  content:''; position:absolute; bottom:-10px; left:50%; transform:translateX(-50%);
+  border:10px solid transparent; border-top-color:#fff; border-bottom:0;
+}
+.speech-bubble.happy { background:#e8f8f0; color:#1e8449; }
+.speech-bubble.happy::after { border-top-color:#e8f8f0; }
+.speech-bubble.sad { background:#fdedec; color:#b03a2e; }
+.speech-bubble.sad::after { border-top-color:#fdedec; }
+.cat-container { width:100%; max-width:230px; }
+.cat-container.bounce { animation: catBounce .5s ease 2; }
+@keyframes catBounce { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-12px);} }
+.cat-container.shake { animation: catShake .4s ease; }
+@keyframes catShake { 0%,100%{transform:translateX(0);} 25%{transform:translateX(-6px);} 75%{transform:translateX(6px);} }
+
+.progress-info {
+  display:flex; justify-content:space-between; align-items:center;
+  background: rgba(255,255,255,.95); border-radius:12px; padding:10px 16px;
+  margin-bottom:12px; font-size:13.5px; font-weight:600; color:#2a5298;
+  box-shadow: 0 3px 12px rgba(0,0,0,.1); flex-wrap:wrap; gap:8px;
+}
+.progress-info .badge-section { padding:3px 9px; border-radius:6px; font-size:11.5px; }
+.badge-lt { background:#dbe7f7; color:#2a5298; }
+.badge-vh { background:#e8f8f0; color:#1e8449; }
+.badge-qn { background:#fff2da; color:#e67e22; }
+
+.navigator {
+  display:grid; grid-template-columns: repeat(auto-fill, minmax(34px,1fr));
+  gap:6px; margin-bottom:16px; padding:12px; background: rgba(255,255,255,.95);
+  border-radius:12px; box-shadow: 0 3px 12px rgba(0,0,0,.1);
+}
+.nav-item {
+  aspect-ratio:1; border:2px solid #d0d7e2; border-radius:8px; background:#fff;
+  font-weight:700; font-size:12.5px; cursor:pointer; display:flex;
+  align-items:center; justify-content:center; transition: all .15s; color:#4a5568;
+  font-family:inherit;
+}
+.nav-item:hover { border-color:#2a5298; transform: scale(1.08); }
+.nav-item.current { border-color:#2a5298; background:#2a5298; color:#fff; }
+.nav-item.correct { border-color:#27ae60; background:#d5f4e6; color:#1e7e45; }
+.nav-item.wrong { border-color:#e74c3c; background:#fde8e6; color:#b03a2e; }
+.nav-item.current.correct { background:#27ae60; color:#fff; }
+.nav-item.current.wrong { background:#e74c3c; color:#fff; }
+
+.question-card {
+  background:#fff; border-radius:16px; padding:26px;
+  box-shadow: 0 8px 30px rgba(0,0,0,.14); margin-bottom:16px;
+}
+.q-tag { display:inline-block; font-size:11.5px; font-weight:700;
+  padding:4px 10px; border-radius:6px; margin-bottom:10px; }
+.q-tag.tag-lt { background:#dbe7f7; color:#2a5298; }
+.q-tag.tag-vh { background:#e8f8f0; color:#1e8449; }
+.q-tag.tag-qn { background:#fff2da; color:#e67e22; }
+.question-text { font-size:17px; font-weight:700; line-height:1.55;
+  margin-bottom:18px; color:#1a2b4c; }
+.options { display:flex; flex-direction:column; gap:10px; }
+.option {
+  display:flex; align-items:flex-start; gap:13px; padding:14px 16px;
+  border:2px solid #e2e8f0; border-radius:12px; cursor:pointer;
+  transition: all .18s; background:#fff; font-size:15px; line-height:1.45;
+  text-align:left; font-family:inherit; color:#2c3e50;
+}
+.option:hover:not(.disabled) { border-color:#2a5298; background:#f0f4fa; transform: translateX(4px); }
+.option .badge {
+  flex-shrink:0; width:28px; height:28px; border-radius:50%; background:#edf2f7;
+  color:#4a5568; display:flex; align-items:center; justify-content:center;
+  font-weight:800; font-size:13.5px; transition: all .2s;
+}
+.option.correct { border-color:#27ae60; background:#e8f8f0; }
+.option.correct .badge { background:#27ae60; color:#fff; }
+.option.wrong { border-color:#e74c3c; background:#fdedec; }
+.option.wrong .badge { background:#e74c3c; color:#fff; }
+.option.disabled { cursor:default; }
+.option.disabled:hover { transform:none; }
+
+.feedback { margin-top:16px; padding:12px 16px; border-radius:10px;
+  font-size:14.5px; font-weight:600; display:none; animation: fadeIn .3s; }
+.feedback.show { display:block; }
+.feedback.ok { background:#e8f8f0; color:#1e8449; border-left:5px solid #27ae60; }
+.feedback.no { background:#fdedec; color:#b03a2e; border-left:5px solid #e74c3c; }
+
+.nav-buttons { display:flex; justify-content:space-between; gap:12px; }
+
+/* RESULT */
+.result-card {
+  max-width: 820px; margin: 20px auto; background:#fff; border-radius:22px;
+  padding: 36px 30px; box-shadow: 0 20px 60px rgba(0,0,0,.35);
+}
+.result-header { text-align:center; margin-bottom:22px; }
+.score-circle { position:relative; width:170px; height:170px; margin: 0 auto 12px; }
+.score-circle svg { width:100%; height:100%; }
+.score-text {
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  flex-direction:column; font-weight:800; color:#1e3c72;
+}
+.score-text #scoreNum { font-size:42px; line-height:1; }
+.score-text small { font-size:15px; color:#7a8ca5; font-weight:600; }
+.result-title { font-size:24px; color:#1e3c72; margin-bottom:4px; }
+.result-sub { color:#7a8ca5; font-size:14.5px; }
+.result-pos-badge { display:inline-block; margin-top:8px; font-size:12.5px;
+  font-weight:700; padding:4px 12px; border-radius:20px;
+  background:#dbe7f7; color:#2a5298; }
+.result-stats { display:flex; justify-content:center; gap:12px; flex-wrap:wrap; margin: 16px 0 22px; }
+.stat-box { background:#f4f8fd; border-radius:12px; padding:11px 20px; text-align:center; min-width:105px; }
+.stat-box .val { font-size:19px; font-weight:800; color:#2a5298; }
+.stat-box .lbl { font-size:12px; color:#7a8ca5; font-weight:600; margin-top:2px; }
+.review-title { font-size:15.5px; color:#1e3c72; margin-bottom:10px; font-weight:700; }
+.review-list { max-height: 360px; overflow-y:auto; display:flex; flex-direction:column;
+  gap:9px; margin-bottom:20px; padding-right:6px; }
+.review-item { padding:12px 14px; border-radius:10px; border-left:5px solid #cbd5e0;
+  background:#f9fbfd; font-size:13.5px; }
+.review-item.ok { border-left-color:#27ae60; }
+.review-item.no { border-left-color:#e74c3c; }
+.review-item .rq { font-weight:700; color:#1a2b4c; margin-bottom:5px; }
+.review-item .ra { color:#5a7292; }
+.review-item .ra b.ok { color:#1e8449; }
+.review-item .ra b.no { color:#b03a2e; }
+.result-actions { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+
+@media (max-width: 900px) {
+  .quiz-body { grid-template-columns: 1fr; }
+  .cat-panel { grid-column:1; grid-row:1; position:static; max-width:200px; margin:0 auto; }
+  .quiz-main { grid-column:1; grid-row:2; }
+  .cat-container { max-width:150px; }
+  .speech-bubble { font-size:13px; padding:9px 12px; min-height:auto; }
+  .quiz-header { flex-wrap:wrap; justify-content:center; }
+  .quiz-title { display:none; }
+  .question-text { font-size:15.5px; }
+  .option { font-size:14px; padding:12px; }
+  .home-card { padding: 26px 18px; }
+  .pos-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+  body { padding: 8px; }
+  .question-card { padding: 18px; }
+  .navigator { grid-template-columns: repeat(auto-fill, minmax(30px,1fr)); gap:5px; padding:8px; }
+  .nav-item { font-size:11px; }
+  .timer { font-size:18px; padding:5px 12px; }
+  .btn { padding:10px 16px; font-size:13.5px; }
+}
+</style>
+</head>
+<body>
+
+<!-- HOME -->
+<div id="homeScreen" class="screen active">
+  <div class="home-card">
+    <div class="home-icon">⚡</div>
+    <h1>Kiểm tra trắc nghiệm</h1>
+    <p class="subtitle">Nhà máy Nhiệt điện Mông Dương 1 — EVNGENCO3</p>
+
+    <div class="pos-title">1️⃣ Chọn vị trí dự thi:</div>
+    <div class="pos-grid">
+      <button class="pos-card" data-pos="lotruong" id="posLT">
+        <div class="pos-icon">🔥</div>
+        <div class="pos-name">LÒ TRƯỞNG</div>
+        <div class="pos-desc">Đề gồm QTNV của chức danh Lò trưởng</div>
+      </button>
+      <button class="pos-card" data-pos="lopHO" id="posLP">
+        <div class="pos-icon">🛠️</div>
+        <div class="pos-name">LÒ PHÓ</div>
+        <div class="pos-desc">Đề gồm QTNV của chức danh Lò phó</div>
+      </button>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-item"><span>50</span>Câu lý thuyết</div>
+      <div class="info-item"><span>5</span>Câu VHDN</div>
+      <div class="info-item"><span>5</span>Câu QTNV</div>
+      <div class="info-item"><span>50'</span>Thời gian</div>
+    </div>
+
+    <div class="home-actions">
+      <button id="startBtn" class="btn btn-primary" disabled>🚀 Bắt đầu làm bài</button>
+      <button id="resumeBtn" class="btn btn-secondary" style="display:none">▶️ Tiếp tục bài thi</button>
+    </div>
+
+    <div class="history-section">
+      <h2>📊 Lịch sử 10 lần thi gần nhất</h2>
+      <div id="historyList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div id="quizScreen" class="screen">
+  <div class="quiz-container">
+    <header class="quiz-header">
+      <button id="homeBtn" class="btn btn-ghost" title="Về trang chủ (lưu tiến trình)">🏠 Trang chủ</button>
+      <div class="quiz-title" id="quizTitle">Lò hơi & thiết bị phụ</div>
+      <div class="timer" id="timer">50:00</div>
+      <button id="submitBtn" class="btn btn-submit" title="Nộp bài">📝 Nộp bài</button>
+    </header>
+
+    <div class="quiz-body">
+      <aside class="cat-panel">
+        <div class="speech-bubble" id="speechBubble">Chào bạn! Cùng làm bài nhé! 🐱</div>
+        <div class="cat-container" id="catContainer">
+          <svg id="tomCat" viewBox="0 0 220 300" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="110" cy="292" rx="82" ry="7" fill="rgba(0,0,0,0.12)"/>
+            <path d="M175 250 Q215 245 205 195 Q198 165 180 170"
+                  fill="none" stroke="#7A8DB0" stroke-width="14" stroke-linecap="round"/>
+            <ellipse cx="110" cy="235" rx="62" ry="58" fill="#8B9DC3"/>
+            <ellipse cx="110" cy="248" rx="40" ry="42" fill="#D6E0F0"/>
+            <ellipse cx="78" cy="284" rx="24" ry="13" fill="#8B9DC3"/>
+            <ellipse cx="142" cy="284" rx="24" ry="13" fill="#8B9DC3"/>
+            <ellipse cx="78" cy="284" rx="14" ry="7" fill="#D6E0F0"/>
+            <ellipse cx="142" cy="284" rx="14" ry="7" fill="#D6E0F0"/>
+            <ellipse id="armL" cx="52" cy="222" rx="17" ry="32" fill="#8B9DC3"/>
+            <ellipse id="armR" cx="168" cy="222" rx="17" ry="32" fill="#8B9DC3"/>
+            <polygon points="52,95 32,28 96,58" fill="#8B9DC3"/>
+            <polygon points="168,95 188,28 124,58" fill="#8B9DC3"/>
+            <polygon points="58,88 44,44 86,64" fill="#F5A9B8"/>
+            <polygon points="162,88 176,44 134,64" fill="#F5A9B8"/>
+            <ellipse cx="110" cy="120" rx="74" ry="68" fill="#8B9DC3"/>
+            <ellipse cx="110" cy="152" rx="44" ry="32" fill="#D6E0F0"/>
+            <g id="eyesNormal">
+              <ellipse cx="82" cy="115" rx="15" ry="18" fill="#fff"/>
+              <ellipse cx="138" cy="115" rx="15" ry="18" fill="#fff"/>
+              <circle cx="82" cy="117" r="9" fill="#2C3E50"/>
+              <circle cx="138" cy="117" r="9" fill="#2C3E50"/>
+              <circle cx="79" cy="113" r="3" fill="#fff"/>
+              <circle cx="135" cy="113" r="3" fill="#fff"/>
+            </g>
+            <g id="eyesHappy" style="display:none">
+              <path d="M67 120 Q82 102 97 120" fill="none" stroke="#2C3E50" stroke-width="5" stroke-linecap="round"/>
+              <path d="M123 120 Q138 102 153 120" fill="none" stroke="#2C3E50" stroke-width="5" stroke-linecap="round"/>
+            </g>
+            <g id="eyesSad" style="display:none">
+              <ellipse cx="82" cy="117" rx="15" ry="18" fill="#fff"/>
+              <ellipse cx="138" cy="117" rx="15" ry="18" fill="#fff"/>
+              <circle cx="82" cy="122" r="9" fill="#2C3E50"/>
+              <circle cx="138" cy="122" r="9" fill="#2C3E50"/>
+              <path d="M67 106 Q82 100 97 108" fill="none" stroke="#2C3E50" stroke-width="3.5" stroke-linecap="round"/>
+              <path d="M123 108 Q138 100 153 106" fill="none" stroke="#2C3E50" stroke-width="3.5" stroke-linecap="round"/>
+            </g>
+            <polygon points="110,145 104,153 116,153" fill="#F5A9B8"/>
+            <g id="mouthNormal">
+              <path d="M110 153 Q100 163 90 158" fill="none" stroke="#2C3E50" stroke-width="3" stroke-linecap="round"/>
+              <path d="M110 153 Q120 163 130 158" fill="none" stroke="#2C3E50" stroke-width="3" stroke-linecap="round"/>
+            </g>
+            <g id="mouthHappy" style="display:none">
+              <path d="M85 158 Q110 192 135 158 Q110 172 85 158 Z" fill="#F5A9B8" stroke="#2C3E50" stroke-width="2.5" stroke-linejoin="round"/>
+            </g>
+            <g id="mouthSad" style="display:none">
+              <path d="M92 172 Q110 152 128 172" fill="none" stroke="#2C3E50" stroke-width="3" stroke-linecap="round"/>
+            </g>
+            <ellipse id="tear" cx="68" cy="138" rx="5" ry="8" fill="#5DADE2" style="display:none"/>
+            <g stroke="#2C3E50" stroke-width="2" stroke-linecap="round">
+              <line x1="62" y1="145" x2="25" y2="137"/>
+              <line x1="62" y1="153" x2="23" y2="153"/>
+              <line x1="62" y1="161" x2="25" y2="169"/>
+              <line x1="158" y1="145" x2="195" y2="137"/>
+              <line x1="158" y1="153" x2="197" y2="153"/>
+              <line x1="158" y1="161" x2="195" y2="169"/>
+            </g>
+          </svg>
+        </div>
+      </aside>
+
+      <div class="quiz-main">
+        <div class="progress-info">
+          <span id="qCounter">Câu 1/60</span>
+          <span id="sectionBadge" class="badge-section badge-lt">Lý thuyết</span>
+          <span id="answeredCount">Đã trả lời: 0/60</span>
+        </div>
+        <div class="navigator" id="navigator"></div>
+        <div class="question-card">
+          <div id="qTag" class="q-tag tag-lt">LÝ THUYẾT</div>
+          <div class="question-text" id="questionText"></div>
+          <div class="options" id="options"></div>
+          <div class="feedback" id="feedback"></div>
+        </div>
+        <div class="nav-buttons">
+          <button id="prevBtn" class="btn btn-secondary">← Câu trước</button>
+          <button id="nextBtn" class="btn btn-primary">Câu sau →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div id="resultScreen" class="screen">
+  <div class="result-card">
+    <div class="result-header">
+      <div class="score-circle">
+        <svg viewBox="0 0 120 120">
+          <circle cx="60" cy="60" r="52" fill="none" stroke="#e2e8f0" stroke-width="10"/>
+          <circle id="scoreRing" cx="60" cy="60" r="52" fill="none" stroke="#27ae60" stroke-width="10"
+                  stroke-dasharray="326.7" stroke-dashoffset="326.7" stroke-linecap="round"
+                  transform="rotate(-90 60 60)"/>
+        </svg>
+        <div class="score-text"><span id="scoreNum">0</span><small>/60</small></div>
+      </div>
+      <div class="result-title" id="resultTitle">Hoàn thành!</div>
+      <div class="result-sub" id="resultSub"></div>
+      <div class="result-pos-badge" id="resultPos">Vị trí: —</div>
+    </div>
+    <div class="result-stats">
+      <div class="stat-box"><div class="val" id="statLT">0</div><div class="lbl">Lý thuyết /50</div></div>
+      <div class="stat-box"><div class="val" id="statVH">0</div><div class="lbl">VHDN /5</div></div>
+      <div class="stat-box"><div class="val" id="statQN">0</div><div class="lbl">QTNV /5</div></div>
+      <div class="stat-box"><div class="val" id="statTime">00:00</div><div class="lbl">Thời gian</div></div>
+    </div>
+    <div class="review-title">🔍 Xem lại bài làm</div>
+    <div class="review-list" id="reviewList"></div>
+    <div class="result-actions">
+      <button id="retryBtn" class="btn btn-primary">🔄 Làm lại</button>
+      <button id="backHomeBtn" class="btn btn-secondary">🏠 Về trang chủ</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =================================================================
+   NGÂN HÀNG CÂU HỎI
+   ================================================================= */
+
+// ---------- 120 câu LÝ THUYẾT (Lò hơi & thiết bị phụ) ----------
+const THEORY_QUESTIONS = [
+  { q: "Bộ sấy không khí có mấy khoang?", o: ["1","2","3","4"], a: 2 },
+  { q: "Bộ sấy không khí có mấy động cơ?", o: ["1","2","3","4"], a: 1 },
+  { q: "Công suất động cơ chính của bộ sấy không khí là bao nhiêu?", o: ["37 kW","11 kW","25 kW","30 kW"], a: 0 },
+  { q: "Công suất động cơ phụ của bộ sấy không khí là bao nhiêu?", o: ["37 kW","11 kW","25 kW","30 kW"], a: 1 },
+  { q: "Dòng điện bộ sấy không khí khi vận hành bình thường là bao nhiêu?", o: ["26-28A","20-22A","30-32A","18-20A"], a: 0 },
+  { q: "Bộ sấy không khí có bao nhiêu loại tấm chèn?", o: ["1","2","3","4"], a: 2 },
+  { q: "Bộ sấy không khí có mấy vòi thổi bụi?", o: ["2","1","3","4"], a: 0 },
+  { q: "Khống chế nhiệt độ khói vào bộ sấy không khí bao nhiêu độ để tránh quá nhiệt?", o: ["420°C","450°C","350°C","400°C"], a: 0 },
+  { q: "Động cơ chính bộ sấy không khí Trip khi nhiệt độ gối đỡ lớn hơn bao nhiêu độ?", o: ["90°C","100°C","110°C","120°C"], a: 1 },
+  { q: "Động cơ chính bộ sấy không khí Trip khi nhiệt độ gối chặn lớn hơn bao nhiêu độ?", o: ["80°C","90°C","100°C","120°C"], a: 2 },
+  { q: "Tốc độ quay của bộ sấy không khí khi vận hành bình thường là?", o: ["2,05 v/p","1,05 v/p","1,35 v/p","1,55 v/p"], a: 1 },
+  { q: "Tốc độ quay của bộ sấy không khí khi vần trục là?", o: ["0,56 v/p","0,46 v/p","0,36 v/p","0,26 v/p"], a: 3 },
+  { q: "Độ lọt gió của bộ sấy không khí theo khuyến cáo của nhà chế tạo là bao nhiêu?", o: ["< 10%","< 8%","< 9%","< 7%"], a: 3 },
+  { q: "Mỗi quạt thổi đá vôi có lưu lượng gió bao nhiêu?", o: ["41,76 m³/phút","42,76 m³/phút","43,76 m³/phút","44,76 m³/phút"], a: 1 },
+  { q: "Động cơ quạt thổi đá vôi có công suất bao nhiêu?", o: ["50 kW","75 kW","100 kW","80 kW"], a: 1 },
+  { q: "Đá vôi có tác dụng gì?", o: ["Khử NOx trong buồng đốt","Khử SO2 trong buồng đốt","Tăng hiệu suất lò hơi","Ổn định chế độ cháy trong lò"], a: 1 },
+  { q: "Mỗi lò hơi bao gồm bao nhiêu silo đá vôi?", o: ["2","3","1","4"], a: 2 },
+  { q: "Mỗi lò có bao nhiêu điểm cấp đá vôi?", o: ["5","6","7","8"], a: 3 },
+  { q: "Gió nào hỗ trợ để phun đá vôi vào lò và làm mát các đầu phun?", o: ["Gió sơ cấp","Gió thứ cấp","Gió chèn","Gió tuần hoàn"], a: 1 },
+  { q: "Theo thiết kế mỗi lò tiêu thụ bao nhiêu tấn đá vôi/giờ?", o: ["7,56 tấn/giờ","8,56 tấn/giờ","9,56 tấn/giờ","6,56 tấn/giờ"], a: 0 },
+  { q: "Một lò có bao nhiêu quạt tải đá vôi?", o: ["1","2","3","4"], a: 2 },
+  { q: "Bộ lọc bụi trên đỉnh silo đá vôi là dạng gì?", o: ["Dạng túi vải","Kiểu cyclone","Lọc kiểu hấp thụ","Lọc bụi ướt"], a: 0 },
+  { q: "Tốc độ lớn nhất của máy cấp đá vôi kiểu quay là bao nhiêu?", o: ["14 tấn/giờ","15 tấn/giờ","16 tấn/giờ","17 tấn/giờ"], a: 3 },
+  { q: "Nhiệt độ buồng đốt bao nhiêu thì đá vôi không thể hấp thụ SOx?", o: ["Lớn hơn 954°C","Nhỏ hơn 843°C","Nhỏ hơn 900°C","Trong khoảng 843 - 900°C"], a: 0 },
+  { q: "Bể chứa dầu FO (nay là bể DO chính) có dung tích chứa bao nhiêu?", o: ["1400 m³","1450 m³","1500 m³","1550 m³"], a: 2 },
+  { q: "Bể chứa dầu FO có kích thước nào là đúng?", o: ["Đường kính 15,5 m, cao 9,5m","Đường kính 15 m, cao 9,5m","Đường kính 15,5 m, cao 9,0m","Đường kính 14,5 m, cao 9,5m"], a: 0 },
+  { q: "Công suất mỗi bơm tăng áp dầu FO (nay là DO chính) cho 1 tổ máy là bao nhiêu?", o: ["25%","30%","50%","100%"], a: 3 },
+  { q: "Bể dầu bôi trơn có hình dạng nào sau đây là đúng?", o: ["Trụ bằng","Tròn","Trụ nón","Thang"], a: 2 },
+  { q: "Công suất bơm dầu FO chính (nay là bơm dầu DO chính) nào sau đây là đúng?", o: ["52,2 m³/h","59,2 m³/h","52,9 m³/h","55,2 m³/h"], a: 1 },
+  { q: "Cảnh báo áp lực dầu \"L\" trên đường ống dầu FO là bao nhiêu?", o: ["15 barg","16 barg","17 barg","18 barg"], a: 0 },
+  { q: "Cảnh báo áp lực dầu \"H\" trên đường ống dầu FO là bao nhiêu?", o: ["15 barg","25 barg","35 barg","45 barg"], a: 1 },
+  { q: "Cảnh báo nhiệt độ dầu \"LL\" tại bể dầu FO là bao nhiêu?", o: ["20°C","30°C","40°C","50°C"], a: 3 },
+  { q: "Cảnh báo nhiệt độ dầu \"H\" tại bể dầu FO là bao nhiêu?", o: ["63°C","73°C","83°C","93°C"], a: 0 },
+  { q: "Cảnh báo nhiệt độ dầu \"HH\" tại bể dầu FO là bao nhiêu?", o: ["65°C","75°C","85°C","95°C"], a: 0 },
+  { q: "Cảnh báo mức dầu FO \"HH\" trong bể dầu FO là bao nhiêu?", o: ["8700 mm","8770 mm","8680 mm","8780 mm"], a: 3 },
+  { q: "Mỗi quạt gió chèn có công suất bao nhiêu cho mỗi lò hơi?", o: ["50%","55%","45%","65%"], a: 0 },
+  { q: "Quạt gió chèn có lưu lượng xấp xỉ bao nhiêu?", o: ["13000 kg/h","14000 kg/h","15000 kg/h","16000 kg/h"], a: 1 },
+  { q: "Công suất động cơ quạt gió chèn là bao nhiêu?", o: ["235 kW","353 kW","333 kW","335 kW"], a: 3 },
+  { q: "Điện áp động cơ điện của quạt gió chèn là bao nhiêu?", o: ["400 V","10000 V","21000 V","11000 V"], a: 1 },
+  { q: "Quạt gió chèn có bao nhiêu tầng cánh?", o: ["5","6","7","8"], a: 2 },
+  { q: "Quạt gió chèn vận hành bình thường ở tốc độ bao nhiêu?", o: ["2970 vòng/phút","2907 vòng/phút","2870 vòng/phút","2770 vòng/phút"], a: 0 },
+  { q: "Cảnh báo nhiệt độ của 1 trong 3 cuộn dây động cơ quạt gió chèn?", o: ["110°C","120°C","130°C","140°C"], a: 2 },
+  { q: "Mỗi lò hơi CFB tại nhà máy nhiệt điện Mông Dương có mấy silo than?", o: ["2","3","4","5"], a: 3 },
+  { q: "Lưu lượng tối đa của máy cấp than tường trước là?", o: ["5 tấn/h","10 tấn/h","24 tấn/h","41 tấn/h"], a: 2 },
+  { q: "Lưu lượng tối đa của máy cấp than tường sau là?", o: ["5 tấn/h","10 tấn/h","24 tấn/h","41 tấn/h"], a: 3 },
+  { q: "Điện áp động cơ máy cấp than định lượng tường trước là?", o: ["400 V","220 V","10 kV","110 V"], a: 0 },
+  { q: "Mỗi lò hơi có mấy máy cấp than định lượng tường trước?", o: ["4","5","6","7"], a: 2 },
+  { q: "Mỗi lò hơi có mấy máy cấp than định lượng tường sau?", o: ["1","2","3","4"], a: 1 },
+  { q: "Đường kính của silo than cung cấp than phía tường trước là?", o: ["7600 mm","7610 mm","7620 mm","7630 mm"], a: 2 },
+  { q: "Chiều cao của silo than cung cấp than phía tường trước là?", o: ["25031 mm","25183 mm","25231 mm","25283 mm"], a: 1 },
+  { q: "Công suất động cơ máy cấp than kiểu máng cào tường sau là?", o: ["7,5 kW","7,6 kW","7,7 kW","7,8 kW"], a: 0 },
+  { q: "Trong nhà máy có mấy loại thổi bụi?", o: ["1","2","3","4"], a: 2 },
+  { q: "Một lò có bao nhiêu bộ thổi bụi dài?", o: ["12","6","18","14"], a: 0 },
+  { q: "Một lò có bao nhiêu bộ thổi bụi ngắn?", o: ["10","12","14","16"], a: 1 },
+  { q: "Chiều dài hành trình của thổi bụi dài?", o: ["6,73 m","7,73 m","8,73 m","9,73 m"], a: 2 },
+  { q: "Chiều dài hành trình của thổi bụi ngắn?", o: ["2,34 m","3,34 m","4,34 m","5,34 m"], a: 2 },
+  { q: "Tốc độ của vòi thổi bụi dài?", o: ["3,5 m/phút","4,5 m/phút","5,5 m/phút","6,5 m/phút"], a: 0 },
+  { q: "Tốc độ của vòi thổi bụi ngắn?", o: ["2,75 m/phút","1,75 m/phút","4,75 m/phút","3,75 m/phút"], a: 1 },
+  { q: "Lưu lượng hơi tối đa của thổi bụi dài?", o: ["4800 kg/giờ","4900 kg/giờ","4700 kg/giờ","4600 kg/giờ"], a: 0 },
+  { q: "Được phép thổi bụi khi nào?", o: ["Khi tải lò lớn hơn 40%","Khi tải lò lớn hơn 30%","Khi tải lò lớn hơn 20%","Khi tải lò lớn hơn 50%"], a: 3 },
+  { q: "Thổi bụi BSKK thực hiện khi nào?", o: ["Trước khi đốt các vòi dầu","Sau khi đốt các vòi dầu","Trước khi đốt các vòi dầu và thực hiện liên tục trong quá trình đốt dầu","Chỉ thực hiện khi hoàn thành khởi động"], a: 2 },
+  { q: "Thổi bụi ngắn dùng cho khu vực nào?", o: ["Bộ hâm nước, tái nhiệt 2","Bộ hâm nước, tái nhiệt 1","Tái nhiệt 2, quá nhiệt cấp 1","Tái nhiệt 1, quá nhiệt cấp 1"], a: 1 },
+  { q: "Thổi bụi dài dùng cho khu vực nào?", o: ["Bộ hâm nước, tái nhiệt 2","Bộ hâm nước, tái nhiệt 1","Tái nhiệt 2, quá nhiệt cấp 1","Tái nhiệt 1, quá nhiệt cấp 1"], a: 2 },
+  { q: "Nhiệt độ khói thoát sau khi ra khỏi bộ sấy không khí khoảng bao nhiêu?", o: ["141°C","142°C","143°C","144°C"], a: 3 },
+  { q: "Trong hệ thống khói gió quạt nào có công suất lớn nhất?", o: ["Quạt khói","Quạt sơ cấp","Quạt thứ cấp","Quạt chèn liệu"], a: 0 },
+  { q: "Áp suất quạt khói tối đa là bao nhiêu?", o: ["600 mmH2O","700 mmH2O","800 mmH2O","850 mmH2O"], a: 2 },
+  { q: "Công suất động cơ quạt khói là bao nhiêu?", o: ["2580 kW","2850 kW","2550 kW","2805 kW"], a: 1 },
+  { q: "Điện thế cấp cho động cơ quạt khói là bao nhiêu?", o: ["10000 V","11000 V","4000 V","22000 V"], a: 0 },
+  { q: "Quạt khói có bao nhiêu tầng cánh?", o: ["1","2","3","4"], a: 1 },
+  { q: "Số cánh hướng ở mỗi van đầu hút vào quạt khói là bao nhiêu?", o: ["14","13","15","16"], a: 3 },
+  { q: "Trước khi khởi động quạt khói, các van cánh hướng đầu hút phải đặt ở vị trí nhỏ nhất là bao nhiêu?", o: ["5%","10%","2%","0%"], a: 3 },
+  { q: "Áp suất buồng đốt thông thường sẽ đặt trong giá trị bao nhiêu?", o: ["- 250 Pa","+250 Pa","-125 Pa","+125 Pa"], a: 2 },
+  { q: "Mỗi quạt gió sơ cấp có công suất bao nhiêu cho mỗi lò hơi?", o: ["50%","55%","45%","65%"], a: 0 },
+  { q: "Quạt gió sơ cấp có lưu lượng xấp xỉ bao nhiêu?", o: ["367405 kg/h","367400 kg/h","364700 kg/h","376400 kg/h"], a: 1 },
+  { q: "Gió sơ cấp được dùng với mục đích gì cho lò hơi CFB?", o: ["Nén liệu trong buồng đốt","Chèn liệu trong buồng đốt","Để làm mát liệu trong buồng đốt","Tạo tầng sôi của liệu trong buồng đốt"], a: 3 },
+  { q: "Nấm gió buồng đốt lò hơi CFB Mông Dương có mấy loại?", o: ["1 loại","2 loại","3 loại","4 loại"], a: 1 },
+  { q: "Lưu lượng gió sơ cấp chiếm bao nhiêu % gió cấp vào lò hơi CFBC?", o: ["60-70%","65-75%","55-65%","50-70%"], a: 0 },
+  { q: "Công suất động cơ quạt gió sơ cấp là bao nhiêu?", o: ["2600 kW","2700 kW","2800 kW","2900 kW"], a: 2 },
+  { q: "Độ tăng nhiệt độ gió sơ khi qua quạt gió sơ cấp là bao nhiêu?", o: ["7,2°C","8,2°C","8,3°C","9,2°C"], a: 3 },
+  { q: "Áp suất tĩnh đầu đẩy quạt gió sơ cấp là bao nhiêu mmH2O?", o: ["2048,1 mmH2O","2048,2 mmH2O","2048,3 mmH2O","2048,4 mmH2O"], a: 1 },
+  { q: "Độ rung bình thường của quạt sơ cấp là bao nhiêu?", o: ["2,4 mm/s","2,5 mm/s","2,6 mm/s","2,3 mm/s"], a: 3 },
+  { q: "Độ rung cảnh báo của quạt sơ cấp là bao nhiêu?", o: ["4,9 mm/s","4,10 mm/s","4,11 mm/s","5 mm/s"], a: 0 },
+  { q: "Áp lực buồng đốt bao nhiêu gây trip quạt sơ cấp (thấp)?", o: ["< -10 mbar","< -15 mbar","< -20 mbar","< -25 mbar"], a: 3 },
+  { q: "Áp lực buồng đốt bao nhiêu gây trip quạt sơ cấp (cao)?", o: ["> 37 mbar","> 15 mbar","> 20 mbar","> 25 mbar"], a: 0 },
+  { q: "Mỗi quạt gió thứ cấp có công suất bao nhiêu cho mỗi lò hơi?", o: ["50%","55%","45%","65%"], a: 0 },
+  { q: "Quạt gió thứ cấp có lưu lượng xấp xỉ bao nhiêu?", o: ["294232 kg/h","249232 kg/h","243232 kg/h","249223 kg/h"], a: 1 },
+  { q: "Gió thứ cấp được dùng để bổ sung gì cho lò hơi CFB?", o: ["CO2","SO2","N2","O2"], a: 3 },
+  { q: "Lưu lượng gió thứ cấp chiếm bao nhiêu % gió cấp vào lò hơi CFBC?", o: ["30-40 %","40-50 %","50 %","60 %"], a: 0 },
+  { q: "Công suất động cơ quạt gió thứ cấp là bao nhiêu?", o: ["1200 kW","1115 kW","1100 kW","1250 kW"], a: 2 },
+  { q: "Dòng điện định mức quạt gió thứ cấp là bao nhiêu A?", o: ["75 A","76 A","77 A","74 A"], a: 3 },
+  { q: "Áp suất tĩnh đầu đẩy quạt gió thứ cấp là bao nhiêu mmH2O?", o: ["1088 mmH2O","1087 mmH2O","1068 mmH2O","1077 mmH2O"], a: 1 },
+  { q: "Trạng thái vận hành ở tải liên tục lớn nhất lưu lượng sinh hơi của lò là?", o: ["916,257 tấn/h","916,275 tấn/h","916,527 tấn/h","916,725 tấn/h"], a: 0 },
+  { q: "Lò hơi CFB NMNĐ Mông Dương 1 có mấy bộ phân ly Cyclone?", o: ["1","2","3","4"], a: 2 },
+  { q: "Đường kính trong của bao hơi là?", o: ["1524 mm","1542 mm","1245 mm","1254 mm"], a: 0 },
+  { q: "Chiều dài của bao hơi là?", o: ["20593 mm","20539 mm","25039 mm","23590 mm"], a: 0 },
+  { q: "Số lượng ống mỗi Cyclone là?", o: ["160 ống","180 ống","200 ống","220 ống"], a: 1 },
+  { q: "Đường kính ngoài ống sinh hơi tại khu vực Cyclone là?", o: ["38.5 mm","44.5 mm","50.8 mm","57.4 mm"], a: 2 },
+  { q: "Số lượng ống bộ quá nhiệt cấp 1 là?", o: ["163 ống","164 ống","165 ống","166 ống"], a: 3 },
+  { q: "Số lượng ống bộ quá tái nhiệt 1 là?", o: ["163 ống","164 ống","165 ống","166 ống"], a: 3 },
+  { q: "Hệ thống phun giảm ôn hơi quá nhiệt lò hơi gồm mấy cấp độ?", o: ["1","2","3","4"], a: 1 },
+  { q: "Hệ thống phun giảm ôn hơi tái nhiệt lò hơi gồm mấy cấp độ?", o: ["1","2","3","4"], a: 0 },
+  { q: "Thời gian tác động MFT lò hơi khi không có bơm cấp nước nào vận hành kéo dài trong bao lâu?", o: ["5 giây","10 giây","30 giây","300 giây"], a: 1 },
+  { q: "MFT lò hơi khi mức nước bao hơi thấp thấp (LL) là?", o: ["-203 mm","-279 mm","-127 mm","-254 mm"], a: 1 },
+  { q: "MFT lò hơi khi mức nước bao hơi cao cao (HH) là?", o: [">+203 mm",">+279 mm",">+127 mm",">+254 mm"], a: 3 },
+  { q: "MFT lò hơi khi áp suất buồng đốt cao cao (HH) là?", o: [">-37 mbar",">-25 mbar",">+25 mbar",">+37 mbar"], a: 3 },
+  { q: "MFT lò hơi khi áp suất buồng đốt thấp thấp (LL) nhỏ hơn?", o: ["<-37 mbar","<-25 mbar","<+25 mbar","<+37 mbar"], a: 0 },
+  { q: "MFT lò hơi khi tổng lưu lượng gió lò hơi thấp thấp (LL), kéo dài 5s là?", o: ["<123 tấn/h","<160 tấn/h","<262 tấn/h","<314 tấn/h"], a: 2 },
+  { q: "MFT lò hơi khi tổng lưu lượng gió sơ cấp lưu hóa lò hơi thấp thấp (LL), kéo dài 10s là?", o: ["<123 tấn/h","<140 tấn/h","<262 tấn/h","<314 tấn/h"], a: 1 },
+  { q: "MFT lò hơi khi áp lực gió chèn thấp thấp (LL) nhỏ hơn?", o: ["<150 mbar","<250 mbar","<430 mbar","<500 mbar"], a: 1 },
+  { q: "MFT lò hơi khi nhiệt độ buồng đốt cao khi 19/28 điểm đo và nhiệt độ trung bình lớn hơn bao nhiêu độ C?", o: ["650°C","815°C","980°C","982°C"], a: 2 },
+  { q: "MFT lò hơi khi nhiệt độ buồng đốt thấp khi 19/28 điểm đo và nhiệt độ trung bình nhỏ hơn bao nhiêu độ C?", o: ["650°C","815°C","980°C","982°C"], a: 0 },
+  { q: "MFT lò hơi trường hợp mồi lửa chậm trong vòng bao nhiêu lâu?", o: ["5 phút","10 phút","15 phút","30 phút"], a: 2 },
+  { q: "MFT lò hơi khi động cơ chính và động cơ phụ bộ sấy không khí dừng kéo dài trong bao lâu?", o: ["3 giây","5 giây","10 giây","15 giây"], a: 2 },
+  { q: "MFT lò hơi khi cả ba tín hiệu đo mức nước bao hơi bị lỗi kéo dài trong bao lâu?", o: ["3 giây","5 giây","10 giây","15 giây"], a: 3 },
+  { q: "MFT lò hơi khi áp lực bao hơi cao hơn bao nhiêu?", o: ["100 bar","200 bar","109 bar","209 bar"], a: 3 },
+  { q: "Quy định thời gian khởi động lò hơi ở trạng thái nóng khi lò hơi đã dừng trong khoảng thời gian?", o: ["Từ 2 đến 10 giờ","Từ 2 đến 11 giờ","Từ 1 đến 9 giờ","Từ 3 đến 11 giờ"], a: 0 },
+  { q: "Quy định thời gian khởi động lò hơi ở trạng thái cực nóng khi lò hơi đã dừng tối đa bao nhiêu?", o: ["1 giờ","2 giờ","3 giờ","4 giờ"], a: 1 },
+  { q: "Khi khởi động lò hơi từ trạng thái lạnh, khi nào thì đạt điều kiện đóng van điện động cuối đường xả khí hơi bão hòa?", o: ["Áp suất đạt 1 bar","Áp suất đạt 25 psig","Áp suất đạt 0.5 mmHg","Áp suất đạt 500 mbar"], a: 1 },
+  { q: "Khi khởi động lò hơi tốc độ tăng nhiệt độ sàn liệu trong phạm vi nào?", o: ["28-56 °C/h","56-85°C/h","83-111 °C/h","120 °C/h"], a: 0 },
+  { q: "Khi khởi động lò hơi tốc độ tăng nhiệt độ phần kim loại chịu áp trong phạm vi nào?", o: ["28-56 °C/h","56-85°C/h","83-111 °C/h","120 °C/h"], a: 1 },
+  { q: "Nhiệm vụ chính của lò hơi trong nhà máy nhiệt điện là?", o: ["Cấp hơi cho các hộ tiêu thụ hơi","Cấp hơi bão hoà cho tuabin hơi","Cấp hơi quá nhiệt cho tua bin hơi","1 và 3 đều đúng"], a: 2 },
+  { q: "Ưu điểm của bộ sấy không khí kiểu quay (trao đổi nhiệt gián tiếp) là?", o: ["Đặt sau bộ hâm nước","Có cấu tạo và vận hành đơn giản","Giảm nhiệt độ khói thải","Chống ăn mòn nhiệt độ thấp"], a: 3 },
+  { q: "Bộ quá nhiệt của lò hơi dùng để?", o: ["Gia nhiệt hơi ẩm đến trạng thái bão hoà khô","Gia nhiệt cho hơi bão hoà khô thành hơi quá nhiệt","Gia nhiệt cho nước trước khi cấp vào bao hơi","Tách nước và hơi để đưa vào tua bin"], a: 1 },
+  { q: "Nhiệt độ khói ra sau bộ sấy không khí lò hơi CFB của nhà máy nhiệt điện thường?", o: ["~ 100°C","~ 130°C","~ 150°C","~ 180°C"], a: 1 },
+  { q: "Quá trình cháy thực tế trong lò hơi CFB là quá trình cháy ở điều kiện có hệ số không khí thừa α xấp xỉ?", o: ["1,15","<1","=1","Rất cao"], a: 0 },
+  { q: "Nhiệt độ trung tâm buồng lửa của lò hơi đốt than CFB phải duy trì ở khoảng nhiệt độ nào?", o: ["1100°C-1200°C","850 - 900°C","Nhỏ hơn nhiệt độ biến dạng của tro t1","Càng cao càng tốt"], a: 1 },
+  { q: "Cấu trúc dòng môi chất trong ống sinh hơi đặt đứng nguy hiểm nhất là?", o: ["Dạng phân lớp","Dạng đầu đạn","Dạng bọt","Dạng thanh"], a: 0 },
+  { q: "Chức năng và nhiệm vụ chính của bao hơi là?", o: ["Dự trữ nước và nhiệt cho lò hơi","Đảm bảo vòng tuần hoàn tự nhiên và phân ly hơi khỏi hỗn hợp hơi nước","Tập trung hơi nước của lò","Sinh hơi cho lò hơi"], a: 1 },
+  { q: "Lượng sinh hơi ở BMCR của lò hơi phụ bao nhiêu?", o: ["40000 kg/h","41000 kg/h","42000 kg/h","43000 kg/h"], a: 0 },
+  { q: "Áp suất hơi của lò phụ thiết kế bao nhiêu?", o: ["21,5 barg","21,6 barg","21,7 barg","21,8 barg"], a: 1 },
+  { q: "Bao nhiêu bộ quá nhiệt cho lò hơi phụ?", o: ["37","38","39","40"], a: 0 },
+  { q: "Bao nhiêu vòi phun dầu trên lò hơi phụ?", o: ["1","2","3","4"], a: 1 },
+  { q: "Công suất của quạt gió cưỡng bức cho lò hơi phụ là bao nhiêu?", o: ["969 m³/phút","979 m³/phút","989 m³/phút","1000 m³/phút"], a: 1 },
+];
+
+// ---------- 29 câu VĂN HÓA DOANH NGHIỆP ----------
+const VHDN_QUESTIONS = [
+  { q: "Giá trị cốt lõi \"Tận tâm - Trí tuệ\" trong xây dựng VHDN của EVNGENCO3 có ý nghĩa như thế nào?", o: [
+    "CBCNV EVNGENCO3 luôn cố gắng thể hiện thái độ nghiêm túc và tinh thần trách nhiệm cao đối với công việc, hết lòng phục vụ khách hàng, vì lợi ích của nhà đầu tư và người lao động; luôn vận dụng tri thức, trí tuệ để hành động với hiệu quả cao nhất",
+    "CBCNV chỉ cần làm tốt các công việc của mình, không cần quan tâm đến việc phục vụ khách hàng",
+    "CBCNV luôn cố gắng thể hiện tinh thần trách nhiệm cao đối với công việc, luôn vận dụng tri thức, trí tuệ để hành động với hiệu quả cao nhất",
+    "Tất cả các đáp án trên"], a: 0 },
+  { q: "Thái độ nghiêm túc và tinh thần trách nhiệm cao đối với công việc, hết lòng phục vụ khách hàng, vì lợi ích của nhà đầu tư và người lao động; luôn vận dụng tri thức, trí tuệ để hành động với hiệu quả cao nhất là ý nghĩa của giá trị cốt lõi nào?", o: [
+    "Hợp tác - Chia sẻ","Tận tâm - Trí tuệ","Sáng tạo - Hiệu quả","Chất lượng - Tín nhiệm"], a: 1 },
+  { q: "Trong xây dựng VHDN, EVNGENCO3 xác định giá trị cốt lõi \"Sáng tạo - Hiệu quả\" có ý nghĩa như thế nào?", o: [
+    "Là giá trị phong cách phục vụ","Là Tinh thần chủ đạo mà EVNGENCO3 mong muốn đạt được","Là đòn bẩy cho sự phát triển","Là nguyện vọng mà EVNGENCO3 mong muốn đạt được"], a: 2 },
+  { q: "\"Giá trị cốt lõi\" trong xây dựng VHDN của EVNGENCO3 gồm mấy tiêu chí?", o: ["1","4","3","2"], a: 1 },
+  { q: "\"Giá trị cốt lõi\" trong xây dựng VHDN của EVNGENCO3 gồm những tiêu chí nào?", o: [
+    "Tận tâm - Trí tuệ","Chất lượng - Tín nhiệm, Hợp tác - chia sẻ",
+    "Chất lượng - Tín nhiệm, Tận tâm - Trí tuệ, Hợp tác - Chia sẻ, Sáng tạo - Hiệu quả","Sáng tạo - Hiệu quả"], a: 2 },
+  { q: "Tiêu chí \"ứng xử nội bộ\" trong xây dựng VHDN của EVNGENCO3 được thể hiện như thế nào?", o: [
+    "Hợp tác cùng phát triển","Vì một cộng đồng phát triển","Trên thuận, dưới hòa, tôn trọng lẫn nhau","Vì sự phát triển bền vững"], a: 2 },
+  { q: "Khẩu hiệu của TPC MÔNG DƯƠNG là gì?", o: [
+    "Sáng tạo - Hiệu quả","Chất lượng - Tin cậy - Hiệu quả","Vì sự phát triển bền vững","Vì một cộng đồng phát triển"], a: 1 },
+  { q: "Ngày Bác Hồ về thăm ngành Điện (Ngày truyền thống ngành Điện lực Việt Nam) là ngày nào?", o: [
+    "21/10/1954","21/12/1954","22/12/1954","26/12/1954"], a: 1 },
+  { q: "Có mấy nghi thức giao tiếp qua điện thoại trong Công ty Nhiệt điện Mông Dương?", o: ["1","4","2","3"], a: 2 },
+  { q: "Nghi thức giao tiếp qua điện thoại trong Công ty Nhiệt điện Mông Dương gồm những nghi thức nào?", o: [
+    "Khi nghe","Khi gọi","Nhắn tin","Cả khi nghe và khi gọi"], a: 3 },
+  { q: "\"Khẩu hiệu\" EVN trong tài liệu Văn hóa là gì?", o: [
+    "EVN thắp sáng niềm tin","EVN giữ vững niềm tin","EVN tỏa sáng niềm tin","EVN vì sự phát triển bền vững"], a: 0 },
+  { q: "Quy định Văn hóa doanh nghiệp của EVNGENCO3, CBCNV khi nhận điện thoại, ý nào sau đây là đúng?", o: [
+    "Khi nhận điện thoại, đầu tiên phải giới thiệu: Tên hoặc bộ phận/đơn vị + xin nghe",
+    "Đầu tiên phải hỏi xem người gọi đến là ai, ở bộ phận/đơn vị nào",
+    "Nói Alo sau đó nghe người gọi đến","Tất cả các câu trên"], a: 0 },
+  { q: "Quy định Văn hóa doanh nghiệp của EVNGENCO3, giao tiếp qua thư điện tử như thế nào là đúng?", o: [
+    "Mở đầu email cần có lời chào: Kính gửi + tên người được gửi hoặc bộ phận được gửi. Nội dung rõ ràng, dễ hiểu",
+    "Trình bày email theo kiểu chữ dễ đọc, in đậm nội dung quan trọng",
+    "Sử dụng dòng tiêu đề để trích yếu nội dung email, ngắn gọn và phù hợp",
+    "Tất cả các câu trên"], a: 3 },
+  { q: "Lễ phục đối với nữ khi tham dự các cuộc hội nghị, hội họp và các lễ ký kết hợp tác là?", o: [
+    "Trang phục tự chọn, gọn gàng, lịch sự","Áo dài truyền thống","Comple nữ",
+    "Mùa đông: Comple nữ; Mùa hè: áo dài truyền thống"], a: 3 },
+  { q: "Trang phục đối với lực lượng lao động trực tiếp trong Công ty Nhiệt điện Mông Dương?", o: [
+    "Mặc quần áo bảo hộ lao động, đi giày bảo hộ lao động, đội mũ bảo hộ lao động",
+    "Mặc quần áo bảo hộ lao động, đi giày bảo hộ lao động, đội mũ bảo hộ lao động và các thiết bị BHLĐ được cấp khi ra công trường",
+    "Mặc quần áo bảo hộ lao động, đi giày thể thao hoặc dép có quai hậu, đội mũ bảo hộ lao động và các thiết bị BHLĐ",
+    "Mặc quần áo gọn gàng, lịch sự, đi giày hoặc dép có quai hậu"], a: 1 },
+  { q: "Nhiệm vụ của CBCNV trong việc sử dụng tài sản của Công ty?", o: [
+    "Không sử dụng các tài sản trong phòng vào mục đích cá nhân. Đối với các tài sản giao riêng cho từng cá nhân phải được sử dụng hiệu quả, tiết kiệm, tránh lãng phí",
+    "Mọi CBCNV phải có trách nhiệm bảo quản, giữ gìn và sử dụng đúng mục đích, tiết kiệm tránh lãng phí các tài sản, phương tiện chung tại phòng làm việc. Được sử dụng các tài sản trong phòng vào mục đích cá nhân",
+    "Được sử dụng các tài sản trong phòng vào mục đích cá nhân",
+    "Tất cả các đáp án trên"], a: 0 },
+  { q: "Nghi thức giao tiếp điện thoại khi gọi cần chuẩn bị những gì?", o: [
+    "Trả lời tự nhiên, không cần chuẩn bị",
+    "Chuẩn bị nội dung cần trao đổi; khi có người cầm máy phải có lời chào, xưng tên, chức danh, bộ phận làm việc và đề nghị gặp người cần gặp. Trao đổi ngắn gọn, rõ ràng. Tác phong từ tốn, âm lượng vừa phải; kết thúc phải có lời cảm ơn, lời chào",
+    "Chuẩn bị nội dung cần trao đổi; phải có lời chào, xưng tên, chức danh, bộ phận làm việc khi có người cầm máy",
+    "Chuẩn bị nội dung cần trao đổi; phải có lời chào, xưng tên, chức danh, bộ phận làm việc khi có người cầm máy; Trao đổi nội dung ngắn gọn, rõ ràng cụ thể"], a: 1 },
+  { q: "Theo quy định, đơn vị của bạn có phải ban hành tài liệu VHDN/Bộ quy tắc ứng xử (QTƯX) để áp dụng trong đơn vị không?", o: [
+    "Không cần ban hành","Áp dụng VHDN của EVNGENCO3 và ban hành QTƯX","Ban hành VHDN và QTƯX","Chỉ ban hành QTƯX"], a: 1 },
+  { q: "Quy tắc ứng xử đối với đồng nghiệp cùng phòng, phân xưởng khi được giao giải quyết một công việc?", o: [
+    "Phải chủ động phối hợp, hỗ trợ đồng nghiệp để cùng thực hiện tốt mọi nhiệm vụ được giao",
+    "Né tránh, đùn đẩy công việc cho đồng nghiệp","Từ chối sự phối hợp với đồng nghiệp",
+    "Chỉ làm việc với đồng nghiệp mà mình thích"], a: 0 },
+  { q: "Trong công việc được giao, khi bất đồng quan điểm với đồng nghiệp cùng phòng/phân xưởng, bạn sẽ làm gì?", o: [
+    "Lôi kéo bè cánh về phe nhóm của mình",
+    "Báo cáo trực tiếp với người quản lý giao việc để người quản lý quyết định",
+    "Gây khó khăn, cản trở cho đồng nghiệp","Tất cả các đáp án trên"], a: 1 },
+  { q: "Nhân viên vận hành Băng tải than khi nhận ca phải đến trước thời gian nhận ca tối thiểu bao lâu?", o: [
+    "10 phút","20 phút","30 phút","40 phút"], a: 2 },
+  { q: "Nghiêm cấm giao ca trong những trường hợp nào?", o: [
+    "Giao ca cho người say rượu, bia, thần kinh rối loạn",
+    "Giao ca cho người không đúng chức danh nhân viên vận hành",
+    "Giao ca trong thời gian xảy ra sự cố hoặc đang thao tác thay đổi phương thức vận hành",
+    "Cả 3 đáp án trên"], a: 3 },
+  { q: "Khi giao ca, cách thức ký sổ nhật ký giữa người giao ca và người nhận ca được thực hiện thế nào?", o: [
+    "Người giao ca ký trước, người nhận ca ký sau","Không cần ký sổ",
+    "Người nhận ca ký trước, người giao ca ký sau","Chỉ người giao ca phải ký"], a: 2 },
+  { q: "Trong thời gian trực ca, người vận hành có phải vệ sinh thiết bị, nơi làm việc không?", o: [
+    "Không cần vệ sinh thiết bị, nơi làm việc","Chỉ cần vệ sinh thiết bị khi có sự cố",
+    "Phải thường xuyên vệ sinh thiết bị, vệ sinh vị trí làm việc","Cả 3 đáp án trên"], a: 2 },
+  { q: "Những quy tắc ứng xử của CBCNV với Lãnh đạo trong Công ty NĐ Mông Dương?", o: [
+    "Giữ thái độ nghiêm túc, lịch sự, tôn trọng khi giao tiếp với Lãnh đạo. Chấp hành nghiêm túc các ý kiến chỉ đạo. Trung thực, thẳng thắn, thiện chí trong mọi báo cáo, đề xuất",
+    "Tôn trọng ý kiến của Lãnh đạo. Khi thực hiện quyết định mà phát hiện trái pháp luật thì phải báo cáo ngay",
+    "Tôn trọng ý kiến của Lãnh đạo. Khi phát hiện quyết định trái pháp luật thì không cần báo cáo",
+    "Luôn lấy lòng Lãnh đạo để đạt được mục đích của mình"], a: 0 },
+  { q: "Câu nào sau đây nói về quy tắc ứng xử đối với các đơn vị trong Công ty Nhiệt điện Mông Dương?", o: [
+    "Phân giao chức năng và nhiệm vụ cụ thể, rõ ràng cho từng Phòng và Phân xưởng",
+    "Khuyến khích và tạo điều kiện tốt nhất để các Phòng và Phân xưởng phát triển thành các bộ phận tham mưu giỏi, đắc lực cho lãnh đạo Công ty",
+    "Xây dựng và duy trì môi trường làm việc bình đẳng, tôn trọng và công bằng",
+    "Tất cả các đáp án trên"], a: 3 },
+  { q: "Trong điều hành và thực thi công việc, CBCNV trong Công ty Nhiệt điện Mông Dương cần thực hiện như thế nào?", o: [
+    "Tuân thủ pháp luật, nội quy, quy định của Công ty và đạo đức nghề nghiệp. Trung thực, tận tâm, trách nhiệm cao khi thực hiện công việc. Chủ động sáng tạo. Hoàn thành tốt nhiệm vụ",
+    "Người đứng đầu và cấp phó đôn đốc, kiểm tra việc thực hiện nhiệm vụ. CBCNV chấp hành quyết định của cấp quản lý trực tiếp",
+    "Phối hợp với cá nhân bộ phận liên quan khác để hoàn thành công việc có hiệu quả, không cố tình kéo dài thời gian. Luôn có thái độ cầu thị, thẳng thắn, chân thành",
+    "Tất cả các đáp án trên"], a: 3 },
+  { q: "Thái độ của CBCNV Công ty Nhiệt điện Mông Dương trong điều hành và thực thi công việc là?", o: [
+    "Luôn có thái độ cầu thị, thẳng thắn, chân thành tham gia đóng góp trong công việc. Có ý thức trách nhiệm, thường xuyên học tập nâng cao trình độ, chủ động, sáng tạo",
+    "Chấp hành sự điều động, phân công của Lãnh đạo. Không trốn tránh đùn đẩy trách nhiệm. Phối hợp với các cá nhân bộ phận liên quan",
+    "Chỉ có thái độ niềm nở, tôn trọng với Lãnh đạo, còn đối với đồng nghiệp thì không cần",
+    "Trốn tránh đùn đẩy trách nhiệm khi thực hiện nhiệm vụ, giải quyết công việc"], a: 0 },
+];
+
+// ---------- 20 câu QTNV - LÒ TRƯỞNG ----------
+const QTNV_LOTRUONG = [
+  { q: "Lò trưởng trong ca vận hành chịu sự điều hành của chức danh nào sau đây?", o: [
+    "Trưởng ca vận hành và Trưởng kíp lò máy","Chỉ Trưởng kíp điện","Chỉ Lò phó","Trưởng phòng Kỹ thuật"], a: 0 },
+  { q: "Lò trưởng khi đi ca vận hành làm việc tại vị trí nào trong nhà máy?", o: [
+    "Nhà hành chính","Nhà điều khiển trung tâm","Bốt trực lò phó","Nhà trung tâm thải xỉ"], a: 1 },
+  { q: "Lò trưởng không có trách nhiệm bảo quản các sổ sách và tài liệu nào sau đây?", o: [
+    "Sổ nhật ký vận hành lò trưởng","Sổ ghi hư hỏng thiết bị phần lò hơi","Sổ theo dõi phiếu công tác","Sổ nhật ký vận hành lò phó"], a: 3 },
+  { q: "Trường hợp Lò trưởng đã chuyển sang công tác khác hoặc bị đình chỉ do sự cố chủ quan, trước khi bố trí trở lại làm Lò trưởng thì phải?", o: [
+    "Qua thời gian tìm hiểu để nắm tình hình thực tế sản xuất không dưới 3 ngày, nếu thời gian ngừng công tác Lò trưởng từ 2 đến 3 tháng",
+    "Qua thời gian thực tập ít nhất 7 ngày nếu đã ngừng công tác trên 3 tháng",
+    "Phải qua kiểm tra sát hạch lại trình độ chuyên môn đạt yêu cầu khi gây ra sự cố chủ quan thuộc trách nhiệm của Lò trưởng",
+    "Cả 3 đáp án trên"], a: 3 },
+  { q: "Lò trưởng phải nắm chắc quy trình nào sau đây?", o: [
+    "Quy trình vận hành Lò hơi CFB nhà máy nhiệt điện Mông Dương và Quy trình vận hành hệ thống quạt khói",
+    "Quy trình vận hành bơm nước ngưng","Chỉ quy trình vận hành hệ thống bơm nước cấp",
+    "Quy trình xử lý nước thải"], a: 0 },
+  { q: "Nhiệm vụ của Lò trưởng là?", o: [
+    "Trực tiếp chỉ huy các chức danh vận hành của mình theo sự điều hành của Trưởng kíp; đảm bảo vận hành, khai thác thiết bị an toàn, hiệu quả",
+    "Đảm bảo thiết bị vận hành an toàn tin cậy, phù hợp với các quy phạm kỹ thuật",
+    "Cùng tham gia tổ chức sản xuất trong ca và bố trí phương thức vận hành hợp lý; thường xuyên kiểm tra, bồi huấn công nhân",
+    "Cả 3 đáp án trên"], a: 3 },
+  { q: "Lò trưởng có thể đổi ca cho nhau đối với vị trí cùng chức danh không?", o: [
+    "Không","Có. Trong trường hợp đặc biệt và được sự đồng ý của lãnh đạo phân xưởng",
+    "Có, tự do đổi ca","Chỉ đổi khi trưởng ca đồng ý"], a: 1 },
+  { q: "Cấm Lò trưởng giao nhận ca trong trường hợp nào sau đây?", o: [
+    "Người đến nhận ca đang ốm, say rượu, bia, hoặc người không đúng chức danh vận hành",
+    "Ghi chép sổ sách chưa đầy đủ, không rõ ràng",
+    "Vệ sinh thiết bị, nơi làm việc chưa sạch sẽ, chưa gọn gàng",
+    "Tất cả các trường hợp trên"], a: 3 },
+  { q: "Yêu cầu về sức khỏe, chuyên môn của Lò trưởng?", o: [
+    "Lò trưởng phải là người có sức khỏe, có trình độ kỹ thuật được đào tạo theo chương trình đào tạo Lò trưởng. Người đó phải qua kỳ kiểm tra công nhận chức danh Lò trưởng do Giám đốc quyết định công nhận chức danh",
+    "Do Quản đốc quyết định công nhận chức danh",
+    "Do Phó quản đốc quyết định công nhận chức danh","Tất cả các đáp án trên"], a: 0 },
+  { q: "Trách nhiệm của Lò trưởng là gì?", o: [
+    "Chịu trách nhiệm về việc chấp hành quy định trong công tác bảo hộ lao động và kỷ luật lao động của nhân viên vận hành",
+    "Chịu trách nhiệm về việc hoàn thành các kế hoạch sản xuất của phân xưởng, đảm bảo sản xuất an toàn, liên tục và kinh tế",
+    "Chịu trách nhiệm về những trường hợp ngừng, hỏng thiết bị, tai nạn lao động và cháy nổ, mất mát thiết bị do lỗi của mình",
+    "Cả 3 đáp án trên"], a: 3 },
+  { q: "Quyền hạn của Lò trưởng là gì?", o: [
+    "Trong ca được trực tiếp chỉ huy mọi công việc vận hành và xử lý mọi trường hợp không bình thường trong hệ thống thiết bị",
+    "Có quyền đình chỉ mọi thao tác của nhân viên vận hành cũng như đình chỉ các công việc sửa chữa, thí nghiệm hiệu chỉnh",
+    "Có quyền đề nghị với Trưởng kíp, Phó Quản đốc, Quản đốc phân xưởng về việc đình chỉ nhân viên dưới quyền và đưa ra khỏi vị trí làm việc",
+    "Cả 3 đáp án trên"], a: 3 },
+  { q: "Lò trưởng phải nắm chắc các nội dung nào sau đây?", o: [
+    "Sơ đồ nhiệt chi tiết của tổ máy; cấu tạo, nguyên lý làm việc và sơ đồ công nghệ các thiết bị Lò hơi",
+    "Thông số kỹ thuật và phương pháp vận hành thao tác các thiết bị thuộc phạm vi quản lý",
+    "Quy phạm quản lý kỹ thuật vận hành các nhà máy điện; quy phạm kỹ thuật an toàn; các quy trình vận hành",
+    "Cả 3 đáp án trên"], a: 3 },
+  { q: "Quan hệ của Lò trưởng với cấp trên cấp dưới như thế nào?", o: [
+    "Lò trưởng chịu sự điều hành trực tiếp và thực hiện mệnh lệnh về hành chính, kỹ thuật của Trưởng kíp",
+    "Khi nhận lệnh trực tiếp của Quản đốc, phó Quản đốc thì phải thông qua và được Trưởng kíp đồng ý trước khi thực hiện",
+    "Trực tiếp ra mệnh lệnh và chỉ dẫn cho nhân viên vận hành thực hiện",
+    "Cả 3 đáp án trên"], a: 3 },
+  { q: "Lò trưởng quan hệ với lực lượng sửa chữa như thế nào?", o: [
+    "Phải chịu trách nhiệm đưa thiết bị ra kịp thời, bàn giao và nghiệm thu theo đúng thủ tục đã quy định trong quy trình an toàn",
+    "Thực hiện chế độ phiếu công tác",
+    "Chịu trách nhiệm về điều kiện an toàn cho sửa chữa",
+    "Cả 3 đáp án trên"], a: 3 },
+  { q: "Lò trưởng trong quan hệ hành chính và kỹ thuật dưới quyền của?", o: [
+    "Quản đốc phân xưởng, Trưởng kíp lò máy và Trưởng ca nhà máy",
+    "Chỉ Trưởng kíp điện","Chỉ Kỹ thuật viên","Chỉ Trưởng ca"], a: 0 },
+  { q: "Lò trưởng đi làm theo lịch nào?", o: [
+    "Lịch đi ca 3 ca 4 kíp",
+    "Đi làm theo giờ hành chính và lịch điều động phân xưởng (nếu có)",
+    "Chỉ lịch hành chính","Không theo lịch nào"], a: 1 },
+  { q: "Lò trưởng khi giao ca cần phải làm gì?", o: [
+    "Trước lúc giao ca 30 phút, phải trực tiếp kiểm tra hoặc qua các báo cáo của các chức danh dưới quyền về tình trạng làm việc của thiết bị",
+    "Báo cáo tình hình trước lúc giao ca, các chỉ tiêu kỹ thuật cho Trưởng kíp trước giờ giao ca 15 phút",
+    "Ghi chép đầy đủ tình hình trong ca mình vào sổ giao ca",
+    "Cả 3 đáp án trên"], a: 3 },
+  { q: "Nội dung nào sau đây là chính xác nhất đối với quy định khi giao ca (Lò trưởng)?", o: [
+    "Người giao ca chỉ được ký bàn giao và rời khỏi vị trí sản xuất khi người nhận ca đã ký vào sổ nhật ký vận hành",
+    "Nếu không có người đến nhận ca, Lò trưởng không được phép rời khỏi vị trí sản xuất, phải báo cho Lãnh đạo phân xưởng điều người thay thế",
+    "Cả 2 đáp án trên đúng","Cả 2 đáp án trên sai"], a: 2 },
+  { q: "Nội dung nào sau đây là chính xác nhất đối với quy định khi nhận ca (Lò trưởng)?", o: [
+    "Có mặt trước khi nhận ca 30 phút để nắm bắt tình hình vận hành của những ca trước",
+    "Đọc kỹ sổ nhật ký vận hành, nghe và hỏi thêm Lò trưởng của ca trước",
+    "Sau khi nắm chắc toàn bộ thông tin, người nhận ca phải ký vào sổ giao nhận ca. Sau khi nhận ca, Lò trưởng báo cáo cho Trưởng kíp biết tình hình các thiết bị",
+    "Cả 3 đáp án trên"], a: 3 },
+  { q: "Lò trưởng phải biết và làm theo các tài liệu nào sau đây?", o: [
+    "Phân cấp quản lý thiết bị cho các chức danh vận hành",
+    "Quy phạm phòng chống cháy",
+    "Quy trình giao nhận ca và các quy trình nhiệm vụ của các chức danh dưới quyền mình phụ trách",
+    "Cả 3 đáp án trên"], a: 3 },
+];
+
+// ---------- 20 câu QTNV - LÒ PHÓ ----------
+const QTNV_LOPHO = [
+  { q: "Lò phó trong ca vận hành chịu sự điều hành của chức danh nào sau đây?", o: [
+    "Máy trưởng","Trưởng kíp lò máy và Lò trưởng","Trưởng kíp điện","Chỉ Trưởng ca"], a: 1 },
+  { q: "Lò phó khi đi ca vận hành làm việc tại vị trí nào trong nhà máy?", o: [
+    "Nhà hành chính","Nhà điều khiển trung tâm","Khu vực lò hơi và thiết bị phụ","Nhà trung tâm thải xỉ"], a: 2 },
+  { q: "Lò phó không có trách nhiệm bảo quản các sổ sách và tài liệu nào sau đây?", o: [
+    "Sổ nhật ký vận hành lò trưởng","Sổ ghi hư hỏng thiết bị phần lò hơi",
+    "Sổ theo dõi phiếu công tác","Sổ nhật ký vận hành lò phó"], a: 0 },
+  { q: "Trường hợp Lò phó đã chuyển sang công tác khác hoặc bị đình chỉ do sự cố chủ quan, trước khi bố trí trở lại làm Lò phó thì phải?", o: [
+    "Qua thời gian tìm hiểu để nắm tình hình thực tế sản xuất không dưới 3 ngày, nếu thời gian ngừng công tác từ 2 đến 3 tháng",
+    "Qua thời gian thực tập ít nhất 7 ngày nếu đã ngừng công tác trên 3 tháng",
+    "Phải qua kiểm tra sát hạch lại trình độ chuyên môn đạt yêu cầu khi gây ra sự cố chủ quan",
+    "Cả 3 đáp án trên"], a: 3 },
+  { q: "Lò phó phải nắm chắc quy trình nào sau đây?", o: [
+    "Quy trình vận hành Lò hơi CFB nhà máy nhiệt điện Mông Dương và Quy trình vận hành hệ thống quạt khói",
+    "Quy trình vận hành bơm nước ngưng","Chỉ quy trình vận hành hệ thống bơm nước cấp",
+    "Quy trình xử lý nước thải"], a: 0 },
+  { q: "Nhiệm vụ của Lò phó là?", o: [
+    "Là người trực tiếp hỗ trợ Lò trưởng xử lý sự cố phần Lò hơi xảy ra trong ca",
+    "Thực hiện các thao tác chuyển đổi phương thức theo phiếu thao tác, quy trình vận hành và mệnh lệnh của Lò trưởng",
+    "Chịu trách nhiệm về sự làm việc an toàn, liên tục của Lò hơi và thiết bị phụ; thường xuyên vệ sinh thiết bị, vị trí làm việc",
+    "Cả 3 đáp án trên"], a: 3 },
+  { q: "Lò phó đi làm theo lịch nào?", o: [
+    "Theo lịch đi ca được Lãnh đạo Công ty phê duyệt",
+    "Lịch đi ca 3 ca 5 kíp","Đi làm theo giờ hành chính",
+    "Theo lịch đi ca được Lãnh đạo Công ty phê duyệt và lịch điều động phân xưởng (nếu có)"], a: 3 },
+  { q: "Lò phó có thể đổi ca cho nhau đối với vị trí cùng chức danh không?", o: [
+    "Không","Có. Trong trường hợp đặc biệt và được sự đồng ý của lãnh đạo phân xưởng",
+    "Có, tự do đổi ca","Chỉ đổi khi trưởng ca đồng ý"], a: 1 },
+  { q: "Lò phó khi giao ca cần phải làm gì?", o: [
+    "Trước khi giao ca, Lò phó phải ghi đầy đủ, rõ ràng vào sổ nhật ký vận hành về phương thức vận hành, tình trạng không bình thường của thiết bị",
+    "Khi giao ca phải thông báo cho ca sau biết về tình hình làm việc của Lò hơi trong ca, những mệnh lệnh mới của cấp trên và những lưu ý cần thiết khác",
+    "Khi người nhận ca hỏi hoặc yêu cầu giải thích, người giao ca có nhiệm vụ giải đáp; chỉ khi người nhận ca ký vào sổ nhật ký vận hành thì người giao ca mới được ký bàn giao",
+    "Cả 3 đáp án trên"], a: 3 },
+  { q: "Cấm Lò phó giao nhận ca trong trường hợp nào sau đây?", o: [
+    "Người đến nhận ca đang ốm, say rượu, bia, hoặc người không đúng chức danh vận hành",
+    "Không có người đến nhận ca",
+    "Vệ sinh thiết bị, nơi làm việc chưa sạch sẽ, chưa gọn gàng",
+    "Cả 3 đáp án trên"], a: 3 },
+  { q: "Nội dung nào sau đây là sai trong quy định khi giao ca (Lò phó)?", o: [
+    "Nếu không có người đến nhận ca, Lò phó không được phép rời khỏi vị trí sản xuất, phải báo cho Lãnh đạo phân xưởng điều người thay thế",
+    "Trước khi giao ca, Lò phó phải ghi đầy đủ, rõ ràng vào sổ nhật ký vận hành",
+    "Cấm giao ca trong thời gian xảy ra sự cố hoặc đang thao tác thay đổi phương thức vận hành. Chỉ được phép giao nhận ca khi được sự đồng ý của Phó quản đốc",
+    "Khi người nhận ca hỏi hoặc yêu cầu giải thích, người giao ca có nhiệm vụ giải đáp"], a: 2 },
+  { q: "Nội dung nào sau đây là đầy đủ nhất quy định khi nhận ca đối với chức danh Lò phó?", o: [
+    "Chuẩn bị tốt về tinh thần và sức khoẻ, có mặt trước khi nhận ca 30 phút, đọc kỹ sổ nhật ký vận hành, nghe và hỏi thêm Lò phó ca trước",
+    "Sau khi nắm chắc toàn bộ thông tin cần thiết, người nhận ca phải ký vào sổ giao nhận ca",
+    "Sau khi nhận ca, Lò phó báo cáo cho Lò trưởng biết về tình hình các thiết bị của Lò hơi",
+    "Cả 3 đáp án trên"], a: 3 },
+  { q: "Yêu cầu về sức khỏe, chuyên môn của Lò phó?", o: [
+    "Lò trưởng phải là người có sức khỏe, có trình độ kỹ thuật được đào tạo theo chương trình đào tạo Lò phó",
+    "Lò trưởng phải qua kỳ kiểm tra công nhận chức danh Lò phó do Quản đốc quyết định",
+    "Lò phó phải là người có sức khỏe, có trình độ kỹ thuật được đào tạo theo chương trình đào tạo Lò trưởng",
+    "Cả 3 đáp án trên"], a: 3 },
+  { q: "Trách nhiệm của Lò phó là gì?", o: [
+    "Chịu trách nhiệm về việc chấp hành các quy định trong công tác bảo hộ lao động và kỷ luật lao động do phân xưởng đề ra",
+    "Chịu trách nhiệm về sự làm việc an toàn, liên tục của Lò hơi và thiết bị phụ trong phạm vi mình được giao",
+    "Chịu trách nhiệm về những trường hợp ngừng, hỏng thiết bị, tai nạn lao động và cháy nổ, mất mát thiết bị do lỗi của mình",
+    "Cả 3 đáp án trên"], a: 3 },
+  { q: "Quyền hạn của Lò phó là gì?", o: [
+    "Có quyền độc lập xử lý sự cố bằng mọi biện pháp nhằm nhanh chóng khôi phục chế độ làm việc bình thường của thiết bị",
+    "Có quyền không thực hiện mệnh lệnh của cấp trên nếu thấy mệnh lệnh đó đe doạ đến tính mạng con người hoặc sự an toàn của thiết bị",
+    "Có quyền báo cáo bằng văn bản lên Quản đốc, Phó Quản đốc những sự việc và kiến nghị về tình trạng kỹ thuật của thiết bị",
+    "Cả 3 đáp án trên"], a: 3 },
+  { q: "Lò phó phải nắm chắc các nội dung nào sau đây?", o: [
+    "Cấu tạo, nguyên lý làm việc và sơ đồ công nghệ các thiết bị Lò hơi trong dây chuyền",
+    "Vị trí thực tế, tính năng tác dụng, thông số kỹ thuật và phương pháp vận hành thao tác các thiết bị thuộc phạm vi quản lý",
+    "Quy phạm quản lý kỹ thuật vận hành các nhà máy điện; quy phạm kỹ thuật an toàn; các quy trình vận hành",
+    "Cả 3 đáp án trên"], a: 3 },
+  { q: "Quan hệ của Lò phó với cấp trên cấp dưới như thế nào?", o: [
+    "Lò phó chịu sự điều hành trực tiếp và thực hiện những mệnh lệnh về hành chính, kỹ thuật của Lò trưởng",
+    "Khi nhận lệnh trực tiếp của Quản đốc, phó Quản đốc thì phải thông qua và phải được Lò trưởng, Trưởng kíp đồng ý trước khi thực hiện",
+    "Khi Giám đốc, Phó Giám đốc đến vị trí làm việc, Lò phó phải báo cáo tình hình làm việc của Lò hơi",
+    "Cả 3 đáp án trên"], a: 3 },
+  { q: "Lò phó nhận lệnh trực tiếp của ai?", o: [
+    "Lò phó thực hiện trực tiếp các mệnh lệnh của Lò trưởng. Trong trường hợp nhận lệnh thao tác từ Trưởng kíp, Trưởng ca thì trước khi thao tác phải báo cáo lại cho Lò trưởng biết",
+    "Lò phó thực hiện trực tiếp các mệnh lệnh của Lò trưởng, máy trưởng",
+    "Lò phó thực hiện trực tiếp các mệnh lệnh của Trưởng ca",
+    "Lò phó thực hiện trực tiếp các mệnh lệnh của Phó Quản đốc PXVH"], a: 0 },
+  { q: "Lò phó phải biết và làm theo các tài liệu sau?", o: [
+    "Quy trình nhiệm vụ Lò phó","Quy trình kỹ thuật an toàn",
+    "Quy định phân chia phạm vi quản lý thiết bị cho các chức danh vận hành",
+    "Cả 3 đáp án trên"], a: 3 },
+  { q: "Lò phó không được phép làm gì?", o: [
+    "Rời khỏi vị trí làm việc khi chưa có người nhận ca",
+    "Uống rượu bia trong ca làm việc",
+    "Rời khỏi vị trí làm việc khi đang xảy ra sự cố",
+    "Cả 3 đáp án trên"], a: 3 },
+];
+
+/* =================================================================
+   CẤU HÌNH & TRẠNG THÁI
+   ================================================================= */
+const LETTERS = ['A','B','C','D'];
+const TOTAL_TIME = 50 * 60;
+const NUM_THEORY = 50;
+const NUM_VHDN = 5;
+const NUM_QTNV = 5;
+const TOTAL_Q = NUM_THEORY + NUM_VHDN + NUM_QTNV; // 60
+
+const HISTORY_KEY = 'quiz_history_mongduong_v2';
+const STATE_KEY   = 'quiz_state_mongduong_v2';
+
+let selectedPos = null;   // 'lotruong' | 'lopHO'
+let currentIndex = 0;
+let examQuestions = [];   // mảng 60 câu đã trộn
+let answers = [];
+let timeLeft = TOTAL_TIME;
+let timerInterval = null;
+let quizActive = false;
+
+const $ = id => document.getElementById(id);
+const homeScreen   = $('homeScreen');
+const quizScreen   = $('quizScreen');
+const resultScreen = $('resultScreen');
+
+/* =================================================================
+   TIỆN ÍCH
+   ================================================================= */
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function buildExam(pos) {
+  const theoryPool = shuffle(THEORY_QUESTIONS).slice(0, NUM_THEORY)
+    .map(q => ({ ...q, section: 'LT' }));
+  const vhdnPool = shuffle(VHDN_QUESTIONS).slice(0, NUM_VHDN)
+    .map(q => ({ ...q, section: 'VH' }));
+  const qtnvSource = pos === 'lotruong' ? QTNV_LOTRUONG : QTNV_LOPHO;
+  const qtnvPool = shuffle(qtnvSource).slice(0, NUM_QTNV)
+    .map(q => ({ ...q, section: 'QN' }));
+
+  // Trộn vị trí các câu hỏi nhưng đảm bảo đủ thành phần
+  return shuffle([...theoryPool, ...vhdnPool, ...qtnvPool]);
+}
+
+function showScreen(el) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  el.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* =================================================================
+   MÈO TOM
+   ================================================================= */
+const catContainer = $('catContainer');
+const speechBubble = $('speechBubble');
+
+const HAPPY_MSGS = ["Đúng rồi! Giỏi quá! 🎉","Chính xác! Tuyệt vời! ⭐","Quá đỉnh! Tiếp tục nào! 💪","Xuất sắc! Cậu làm được mà! 🌟","Chuẩn luôn! Meow~ 🐾"];
+const SAD_MSGS   = ["Ôi sai rồi... Cố lên nhé! 😿","Tiếc quá! Lần sau chú ý nha! 💧","Sai mất rồi... Đừng nản nhé! 🌱","Huhu, sai rồi! Ôn lại nào! 📖"];
+const NEUTRAL_MSGS = ["Cố lên nào! 🐱","Suy nghĩ kỹ nhé! 🤔","Bạn làm được mà! 💡","Tập trung nào! 🎯"];
+
+function setCatMood(mood) {
+  const eyesN = $('eyesNormal'), eyesH = $('eyesHappy'), eyesS = $('eyesSad');
+  const mouthN = $('mouthNormal'), mouthH = $('mouthHappy'), mouthS = $('mouthSad');
+  const tear = $('tear');
+  eyesN.style.display = mood === 'neutral' ? '' : 'none';
+  eyesH.style.display = mood === 'happy' ? '' : 'none';
+  eyesS.style.display = mood === 'sad' ? '' : 'none';
+  mouthN.style.display = mood === 'neutral' ? '' : 'none';
+  mouthH.style.display = mood === 'happy' ? '' : 'none';
+  mouthS.style.display = mood === 'sad' ? '' : 'none';
+  tear.style.display = mood === 'sad' ? '' : 'none';
+
+  const armL = $('armL'), armR = $('armR');
+  catContainer.classList.remove('bounce','shake');
+  if (mood === 'happy') {
+    armL.setAttribute('transform','rotate(-35 52 222)');
+    armR.setAttribute('transform','rotate(35 168 222)');
+    void catContainer.offsetWidth;
+    catContainer.classList.add('bounce');
+  } else {
+    armL.removeAttribute('transform');
+    armR.removeAttribute('transform');
+    if (mood === 'sad') {
+      void catContainer.offsetWidth;
+      catContainer.classList.add('shake');
+    }
+  }
+}
+function say(text, mood) {
+  speechBubble.textContent = text;
+  speechBubble.classList.remove('happy','sad');
+  if (mood === 'happy') speechBubble.classList.add('happy');
+  if (mood === 'sad')   speechBubble.classList.add('sad');
+}
+function randomPick(arr) { return arr[Math.floor(Math.random()*arr.length)]; }
+
+/* =================================================================
+   ĐỒNG HỒ
+   ================================================================= */
+function formatTime(s) {
+  const m = Math.floor(s/60).toString().padStart(2,'0');
+  const sec = (s%60).toString().padStart(2,'0');
+  return m + ':' + sec;
+}
+function updateTimerDisplay() {
+  $('timer').textContent = formatTime(timeLeft);
+  $('timer').classList.toggle('warning', timeLeft <= 300);
+}
+function startTimer() {
+  clearInterval(timerInterval);
+  updateTimerDisplay();
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    updateTimerDisplay();
+    if (timeLeft % 5 === 0) saveState();
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      alert('⏰ Hết giờ! Bài sẽ được nộp tự động.');
+      finalizeSubmit(true);
+    }
+  }, 1000);
+}
+
+/* =================================================================
+   BẮT ĐẦU / TIẾP TỤC
+   ================================================================= */
+function startQuiz() {
+  if (!selectedPos) { alert('Vui lòng chọn vị trí dự thi!'); return; }
+  examQuestions = buildExam(selectedPos);
+  answers = new Array(TOTAL_Q).fill(null);
+  currentIndex = 0;
+  timeLeft = TOTAL_TIME;
+  quizActive = true;
+  clearState();
+  $('quizTitle').textContent = 'Vị trí: ' + (selectedPos === 'lotruong' ? 'Lò trưởng' : 'Lò phó');
+  renderNavigator();
+  renderQuestion();
+  updateProgress();
+  setCatMood('neutral');
+  say('Chào bạn! Cùng làm bài nhé! 🐱','neutral');
+  showScreen(quizScreen);
+  startTimer();
+}
+
+function resumeQuiz() {
+  const s = loadState();
+  if (!s) return;
+  selectedPos = s.pos;
+  examQuestions = s.examQuestions;
+  currentIndex = s.currentIndex || 0;
+  answers = s.answers || new Array(TOTAL_Q).fill(null);
+  timeLeft = s.timeLeft || TOTAL_TIME;
+  quizActive = true;
+  $('quizTitle').textContent = 'Vị trí: ' + (selectedPos === 'lotruong' ? 'Lò trưởng' : 'Lò phó');
+  renderNavigator();
+  renderQuestion();
+  updateProgress();
+  setCatMood('neutral');
+  say('Tiếp tục nào! 🐱','neutral');
+  showScreen(quizScreen);
+  startTimer();
+}
+
+/* =================================================================
+   RENDER CÂU HỎI
+   ================================================================= */
+function sectionLabel(sec) {
+  if (sec === 'LT') return { text: 'LÝ THUYẾT', cls: 'tag-lt', badge: 'badge-lt', badgeName: 'Lý thuyết' };
+  if (sec === 'VH') return { text: 'VĂN HÓA DOANH NGHIỆP', cls: 'tag-vh', badge: 'badge-vh', badgeName: 'VHDN' };
+  return { text: 'QUY TRÌNH NHIỆM VỤ', cls: 'tag-qn', badge: 'badge-qn', badgeName: 'QTNV' };
+}
+
+function renderQuestion() {
+  const q = examQuestions[currentIndex];
+  const chosen = answers[currentIndex];
+  const sl = sectionLabel(q.section);
+
+  const tagEl = $('qTag');
+  tagEl.className = 'q-tag ' + sl.cls;
+  tagEl.textContent = sl.text;
+
+  const sb = $('sectionBadge');
+  sb.className = 'badge-section ' + sl.badge;
+  sb.textContent = sl.badgeName;
+
+  $('questionText').textContent = 'Câu ' + (currentIndex+1) + ': ' + q.q;
+
+  const optionsEl = $('options');
+  optionsEl.innerHTML = '';
+  q.o.forEach((text, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'option';
+    btn.type = 'button';
+    const badge = document.createElement('span');
+    badge.className = 'badge';
+    badge.textContent = LETTERS[idx];
+    const span = document.createElement('span');
+    span.textContent = text;
+    btn.appendChild(badge);
+    btn.appendChild(span);
+    btn.addEventListener('click', () => selectOption(idx));
+    optionsEl.appendChild(btn);
+  });
+
+  const fb = $('feedback');
+  fb.className = 'feedback';
+  fb.textContent = '';
+
+  if (chosen !== null) {
+    lockAndReveal(chosen, false);
+  }
+  updateProgress();
+  $('prevBtn').disabled = currentIndex === 0;
+  $('nextBtn').disabled = currentIndex === TOTAL_Q - 1;
+}
+
+function selectOption(idx) {
+  if (answers[currentIndex] !== null) return;
+  answers[currentIndex] = idx;
+  lockAndReveal(idx, true);
+  saveState();
+  updateProgress();
+  renderNavigator();
+}
+
+function lockAndReveal(chosen, animate) {
+  const q = examQuestions[currentIndex];
+  const correct = q.a;
+  const optionsEl = $('options');
+  const btns = optionsEl.querySelectorAll('.option');
+  btns.forEach((b, i) => {
+    b.classList.add('disabled');
+    if (i === correct) b.classList.add('correct');
+    if (i === chosen && chosen !== correct) b.classList.add('wrong');
+  });
+  const fb = $('feedback');
+  if (chosen === correct) {
+    fb.className = 'feedback ok show';
+    fb.textContent = '✅ Chính xác! Đáp án đúng là ' + LETTERS[correct] + '.';
+    if (animate) {
+      setCatMood('happy');
+      say(randomPick(HAPPY_MSGS), 'happy');
+    }
+  } else {
+    fb.className = 'feedback no show';
+    fb.textContent = '❌ Sai rồi. Đáp án đúng là ' + LETTERS[correct] + ': ' + q.o[correct];
+    if (animate) {
+      setCatMood('sad');
+      say(randomPick(SAD_MSGS), 'sad');
+    }
+  }
+}
+
+function nextQuestion() {
+  if (currentIndex < TOTAL_Q - 1) {
+    currentIndex++;
+    renderQuestion();
+    setCatMood('neutral');
+    say(randomPick(NEUTRAL_MSGS),'neutral');
+  }
+}
+function prevQuestion() {
+  if (currentIndex > 0) {
+    currentIndex--;
+    renderQuestion();
+    setCatMood('neutral');
+  }
+}
+function gotoQuestion(i) {
+  currentIndex = i;
+  renderQuestion();
+  setCatMood('neutral');
+}
+
+function updateProgress() {
+  const answered = answers.filter(a => a !== null).length;
+  $('qCounter').textContent = 'Câu ' + (currentIndex+1) + '/' + TOTAL_Q;
+  $('answeredCount').textContent = 'Đã trả lời: ' + answered + '/' + TOTAL_Q;
+}
+
+function renderNavigator() {
+  const nav = $('navigator');
+  nav.innerHTML = '';
+  examQuestions.forEach((q, i) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'nav-item';
+    b.textContent = i+1;
+    if (answers[i] !== null) {
+      b.classList.add(answers[i] === q.a ? 'correct' : 'wrong');
+    }
+    if (i === currentIndex) b.classList.add('current');
+    b.addEventListener('click', () => gotoQuestion(i));
+    nav.appendChild(b);
+  });
+}
+
+/* =================================================================
+   NỘP BÀI & KẾT QUẢ
+   ================================================================= */
+function submitQuiz() {
+  const blank = answers.filter(a => a === null).length;
+  if (blank > 0) {
+    if (!confirm('Bạn còn ' + blank + ' câu chưa trả lời. Vẫn nộp bài?')) return;
+  }
+  if (!confirm('Xác nhận nộp bài?')) return;
+  finalizeSubmit(false);
+}
+
+function finalizeSubmit(auto) {
+  clearInterval(timerInterval);
+  quizActive = false;
+  clearState();
+
+  const total = TOTAL_Q;
+  let correctLT = 0, correctVH = 0, correctQN = 0;
+  let totalLT = 0, totalVH = 0, totalQN = 0;
+  examQuestions.forEach((q, i) => {
+    if (q.section === 'LT') totalLT++;
+    else if (q.section === 'VH') totalVH++;
+    else totalQN++;
+    if (answers[i] === q.a) {
+      if (q.section === 'LT') correctLT++;
+      else if (q.section === 'VH') correctVH++;
+      else correctQN++;
+    }
+  });
+  const totalCorrect = correctLT + correctVH + correctQN;
+  const timeUsed = TOTAL_TIME - timeLeft;
+
+  saveAttempt(selectedPos, totalCorrect, total, timeUsed);
+  showResult(correctLT, totalLT, correctVH, totalVH, correctQN, totalQN, timeUsed);
+}
+
+function showResult(cLT, tLT, cVH, tVH, cQN, tQN, timeUsed) {
+  const total = TOTAL_Q;
+  const totalCorrect = cLT + cVH + cQN;
+  const pct = Math.round(totalCorrect/total*100);
+
+  $('scoreNum').textContent = totalCorrect;
+  const ring = $('scoreRing');
+  const circ = 2 * Math.PI * 52;
+  ring.style.strokeDashoffset = circ - (circ * pct / 100);
+  ring.style.stroke = pct >= 80 ? '#27ae60' : pct >= 50 ? '#f39c12' : '#e74c3c';
+
+  $('statLT').textContent = cLT + '/' + tLT;
+  $('statVH').textContent = cVH + '/' + tVH;
+  $('statQN').textContent = cQN + '/' + tQN;
+  $('statTime').textContent = formatTime(timeUsed);
+  $('resultPos').textContent = 'Vị trí: ' + (selectedPos === 'lotruong' ? 'Lò trưởng' : 'Lò phó');
+
+  const title = $('resultTitle'), sub = $('resultSub');
+  if (pct >= 90) { title.textContent = '🏆 Xuất sắc!'; sub.textContent = 'Bạn nắm rất vững kiến thức!'; }
+  else if (pct >= 80) { title.textContent = '🌟 Rất tốt!'; sub.textContent = 'Kết quả cao, tiếp tục phát huy nhé!'; }
+  else if (pct >= 50) { title.textContent = '👍 Đạt yêu cầu'; sub.textContent = 'Cần ôn thêm một số phần còn yếu.'; }
+  else { title.textContent = '📚 Cần cố gắng'; sub.textContent = 'Hãy ôn lại và thử lại nhé!'; }
+
+  const review = $('reviewList');
+  review.innerHTML = '';
+  examQuestions.forEach((q, i) => {
+    const userAns = answers[i];
+    const isOk = userAns === q.a;
+    const item = document.createElement('div');
+    item.className = 'review-item ' + (userAns === null ? '' : (isOk ? 'ok' : 'no'));
+    let userText = userAns === null ? '<i>Chưa trả lời</i>'
+      : LETTERS[userAns] + '. ' + q.o[userAns];
+    let correctText = LETTERS[q.a] + '. ' + q.o[q.a];
+    const sl = sectionLabel(q.section);
+    item.innerHTML =
+      '<div class="rq">[' + sl.badgeName + '] Câu ' + (i+1) + ': ' + q.q + '</div>' +
+      '<div class="ra">Bạn chọn: <b class="' + (isOk ? 'ok' : (userAns===null?'':'no')) + '">' + userText + '</b></div>' +
+      '<div class="ra">Đáp án đúng: <b class="ok">' + correctText + '</b></div>';
+    review.appendChild(item);
+  });
+
+  showScreen(resultScreen);
+}
+
+/* =================================================================
+   LỊCH SỬ
+   ================================================================= */
+function saveAttempt(pos, score, total, timeUsed) {
+  let history = [];
+  try { history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]'); } catch(e) {}
+  history.unshift({
+    date: new Date().toISOString(),
+    pos, score, total, timeUsed
+  });
+  history = history.slice(0, 10);
+  try { localStorage.setItem(HISTORY_KEY, JSON.stringify(history)); } catch(e) {}
+}
+
+function renderHistory() {
+  const list = $('historyList');
+  let history = [];
+  try { history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]'); } catch(e) {}
+  if (!history.length) {
+    list.innerHTML = '<div class="history-empty">Chưa có lần thi nào. Hãy chọn vị trí và bắt đầu làm bài! 🚀</div>';
+    return;
+  }
+  list.innerHTML = '';
+  history.forEach(h => {
+    const pct = Math.round(h.score/h.total*100);
+    const d = new Date(h.date);
+    const dateStr = d.toLocaleDateString('vi-VN') + ' ' + d.toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'});
+    const div = document.createElement('div');
+    div.className = 'history-item' + (pct >= 50 ? '' : ' fail');
+    const posLabel = h.pos === 'lotruong' ? 'LÒ TRƯỞNG' : (h.pos === 'lopHO' ? 'LÒ PHÓ' : '—');
+    div.innerHTML =
+      '<div class="hi-pos">' + posLabel + '</div>' +
+      '<div class="hi-score">' + h.score + '/' + h.total + ' (' + pct + '%)</div>' +
+      '<div class="hi-date">' + dateStr + '</div>' +
+      '<div class="hi-time">⏱ ' + formatTime(h.timeUsed) + '</div>';
+    list.appendChild(div);
+  });
+}
+
+/* =================================================================
+   LƯU TIẾN TRÌNH
+   ================================================================= */
+function saveState() {
+  if (!quizActive || !examQuestions.length) return;
+  try {
+    localStorage.setItem(STATE_KEY, JSON.stringify({
+      pos: selectedPos,
+      examQuestions, currentIndex, answers, timeLeft, active: true
+    }));
+  } catch(e) {}
+}
+function loadState() {
+  try {
+    const s = JSON.parse(localStorage.getItem(STATE_KEY));
+    if (s && s.active && s.answers && s.examQuestions) return s;
+  } catch(e) {}
+  return null;
+}
+function clearState() {
+  try { localStorage.removeItem(STATE_KEY); } catch(e) {}
+}
+
+/* =================================================================
+   EVENTS
+   ================================================================= */
+// Position cards
+document.querySelectorAll('.pos-card').forEach(card => {
+  card.addEventListener('click', () => {
+    document.querySelectorAll('.pos-card').forEach(c => c.classList.remove('selected'));
+    card.classList.add('selected');
+    selectedPos = card.dataset.pos;
+    $('startBtn').disabled = false;
+  });
+});
+
+$('startBtn').addEventListener('click', startQuiz);
+$('resumeBtn').addEventListener('click', resumeQuiz);
+$('prevBtn').addEventListener('click', prevQuestion);
+$('nextBtn').addEventListener('click', nextQuestion);
+$('submitBtn').addEventListener('click', submitQuiz);
+
+// Nút Home: hoạt động bất cứ lúc nào
+$('homeBtn').addEventListener('click', () => {
+  if (quizActive) {
+    if (!confirm('Thoát bài thi? Tiến trình sẽ được lưu để tiếp tục sau.')) return;
+    saveState();
+    clearInterval(timerInterval);
+    quizActive = false;
+    $('resumeBtn').style.display = 'inline-block';
+  }
+  showScreen(homeScreen);
+  renderHistory();
+});
+
+$('backHomeBtn').addEventListener('click', () => {
+  showScreen(homeScreen);
+  renderHistory();
+});
+$('retryBtn').addEventListener('click', () => {
+  // giữ nguyên vị trí đã chọn, bắt đầu lại
+  startQuiz();
+});
+
+// Keyboard
+document.addEventListener('keydown', (e) => {
+  if (!quizScreen.classList.contains('active')) return;
+  if (e.key === 'ArrowRight') nextQuestion();
+  if (e.key === 'ArrowLeft') prevQuestion();
+  if (['1','2','3','4'].includes(e.key)) {
+    selectOption(parseInt(e.key)-1);
+  }
+});
+
+/* =================================================================
+   KHỞI TẠO
+   ================================================================= */
+(function init() {
+  renderHistory();
+  const s = loadState();
+  if (s) {
+    $('resumeBtn').style.display = 'inline-block';
+  }
+})();
+</script>
+</body>
+</html>

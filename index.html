@@ -3,253 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ thống Ôn tập An Toàn</title>
+    <title>Hệ Thống Ôn Tập Kỹ Thuật An Toàn</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Montserrat', sans-serif;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            perspective: 1000px;
+            background: radial-gradient(circle at center, #1e3c72 0%, #0f1a2c 100%);
+            min-height: 100vh; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; overflow: hidden; perspective: 1200px;
         }
-
-        /* --- KHU VỰC 3D SCENE --- */
-        .scene-3d {
-            position: relative;
-            width: 100%;
-            height: 300px;
-            display: flex;
-            justify-content: center;
-            align-items: flex-end;
-            margin-bottom: 20px;
-        }
-
-        /* Lò hơi (Boiler) */
+        .scene-3d { position: relative; width: 100%; height: 320px; display: flex; justify-content: center; align-items: flex-end; margin-bottom: 10px; }
         .boiler {
-            position: relative;
-            width: 140px;
-            height: 180px;
-            background: linear-gradient(90deg, #555 0%, #888 50%, #555 100%);
-            border-radius: 10px 10px 0 0;
-            box-shadow: 
-                inset -10px 0 15px rgba(0,0,0,0.5),
-                inset 10px 0 15px rgba(255,255,255,0.2),
-                0 15px 25px rgba(0,0,0,0.6);
-            transform: rotateY(-15deg);
-            z-index: 2;
-            animation: floatBoiler 4s ease-in-out infinite;
+            position: relative; width: 150px; height: 200px;
+            background: linear-gradient(135deg, #444 0%, #999 50%, #222 100%);
+            border-radius: 15px 15px 5px 5px;
+            box-shadow: inset -15px 0 20px rgba(0,0,0,0.6), inset 15px 0 20px rgba(255,255,255,0.2), 20px 25px 35px rgba(0,0,0,0.7);
+            transform: rotateY(-20deg) rotateX(5deg); z-index: 2; animation: floatBoiler 4s ease-in-out infinite;
         }
-
         .boiler-top {
-            position: absolute;
-            top: -20px;
-            left: 0;
-            width: 140px;
-            height: 30px;
-            background: linear-gradient(90deg, #444 0%, #777 50%, #444 100%);
-            border-radius: 50% / 100% 100% 0 0;
+            position: absolute; top: -25px; left: 0; width: 150px; height: 35px;
+            background: linear-gradient(90deg, #333 0%, #888 50%, #333 100%);
+            border-radius: 50% / 100% 100% 0 0; box-shadow: 0 -5px 10px rgba(0,0,0,0.5);
         }
-
         .gauge {
-            position: absolute;
-            top: 40px;
-            left: 50px;
-            width: 40px;
-            height: 40px;
-            background: #f1c40f;
-            border-radius: 50%;
-            border: 5px solid #333;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+            position: absolute; top: 50px; left: 55px; width: 45px; height: 45px;
+            background: #f1c40f; border-radius: 50%; border: 6px solid #222;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.6), 0 0 10px rgba(241, 196, 15, 0.5);
         }
-        
         .gauge::after {
-            content: '';
-            position: absolute;
-            top: 18px;
-            left: 18px;
-            width: 2px;
-            height: 15px;
-            background: #e74c3c;
-            transform-origin: bottom center;
-            animation: gaugeNeedle 2s ease-in-out infinite alternate;
+            content: ''; position: absolute; top: 20px; left: 20px; width: 3px; height: 18px;
+            background: #e74c3c; transform-origin: bottom center; animation: gaugeNeedle 1.5s ease-in-out infinite alternate;
+            box-shadow: 0 0 5px #e74c3c;
         }
-
         .pipe {
-            position: absolute;
-            top: 80px;
-            right: -20px;
-            width: 20px;
-            height: 60px;
-            background: #666;
-            border-radius: 0 5px 5px 0;
-            box-shadow: 5px 0 10px rgba(0,0,0,0.4);
+            position: absolute; top: 90px; right: -25px; width: 25px; height: 70px;
+            background: linear-gradient(90deg, #555, #888); border-radius: 0 8px 8px 0; box-shadow: 8px 0 15px rgba(0,0,0,0.5);
         }
-
-        /* Khói/Steam */
         .steam {
-            position: absolute;
-            top: -40px;
-            right: -15px;
-            width: 30px;
-            height: 30px;
-            background: rgba(255, 255, 255, 0.6);
-            border-radius: 50%;
-            filter: blur(8px);
-            animation: steamRise 3s ease-out infinite;
+            position: absolute; top: -50px; right: -20px; width: 40px; height: 40px;
+            background: rgba(255, 255, 255, 0.7); border-radius: 50%; filter: blur(10px); animation: steamRise 2.5s ease-out infinite;
         }
-
-        /* Kỹ sư an toàn */
         .engineer {
-            font-size: 100px;
-            position: relative;
-            z-index: 3;
-            margin-left: -30px;
-            filter: drop-shadow(0 15px 15px rgba(0,0,0,0.5));
-            animation: floatEngineer 3s ease-in-out infinite alternate;
-            transform: rotateY(15deg);
+            font-size: 120px; position: relative; z-index: 3; margin-left: -40px;
+            filter: drop-shadow(10px 20px 15px rgba(0,0,0,0.8)); animation: floatEngineer 3.5s ease-in-out infinite alternate; transform: rotateY(15deg);
         }
-
-        /* --- KHU VỰC MENU --- */
         .menu-container {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            padding: 30px 40px;
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-            text-align: center;
-            transform: translateZ(30px);
-            animation: fadeIn 1s ease-out;
+            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            padding: 40px 50px; border-radius: 25px; border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.2);
+            text-align: center; transform: translateZ(40px); animation: fadeIn 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-
         h1 {
-            color: #fff;
-            font-size: 22px;
-            margin-bottom: 25px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            color: #fff; font-size: 24px; font-weight: 900; margin-bottom: 30px;
+            text-transform: uppercase; letter-spacing: 3px; text-shadow: 0 4px 10px rgba(0,0,0,0.8), 0 0 20px rgba(255,255,255,0.2);
         }
-
-        .button-group {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-        }
-
+        .button-group { display: flex; gap: 25px; justify-content: center; flex-wrap: wrap; }
         .btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            padding: 15px 25px;
-            text-decoration: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: bold;
-            color: white;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 8px 0 rgba(0,0,0,0.3), 0 15px 20px rgba(0,0,0,0.2);
-            position: relative;
-            top: 0;
+            display: flex; align-items: center; justify-content: center; gap: 12px; padding: 18px 35px;
+            text-decoration: none; border-radius: 15px; font-size: 18px; font-weight: 700; color: white;
+            border: none; cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 0 rgba(0,0,0,0.4), 0 20px 25px rgba(0,0,0,0.3);
+            position: relative; top: 0; text-transform: uppercase; letter-spacing: 1px;
         }
-
-        .btn:active {
-            top: 8px;
-            box-shadow: 0 0 0 rgba(0,0,0,0.3), 0 5px 10px rgba(0,0,0,0.2);
-        }
-
-        .btn-exam {
-            background: linear-gradient(135deg, #2ecc71, #27ae60);
-        }
-
-        .btn-theory {
-            background: linear-gradient(135deg, #3498db, #2980b9);
-        }
-
-        .btn:hover {
-            filter: brightness(1.1);
-        }
-
-        /* --- ANIMATIONS --- */
-        @keyframes floatBoiler {
-            0%, 100% { transform: rotateY(-15deg) translateY(0); }
-            50% { transform: rotateY(-15deg) translateY(-8px); }
-        }
-
-        @keyframes floatEngineer {
-            0% { transform: rotateY(15deg) translateY(0); }
-            100% { transform: rotateY(15deg) translateY(-15px); }
-        }
-
-        @keyframes gaugeNeedle {
-            0% { transform: rotate(-30deg); }
-            100% { transform: rotate(30deg); }
-        }
-
-        @keyframes steamRise {
-            0% { transform: translateY(0) scale(1); opacity: 0.8; }
-            100% { transform: translateY(-60px) scale(2); opacity: 0; }
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px) translateZ(30px); }
-            to { opacity: 1; transform: translateY(0) translateZ(30px); }
-        }
-
-        /* Responsive */
-        @media (max-width: 600px) {
-            .button-group { flex-direction: column; }
+        .btn:active { top: 10px; box-shadow: 0 0 0 rgba(0,0,0,0.4), 0 5px 15px rgba(0,0,0,0.3); }
+        .btn-exam { background: linear-gradient(135deg, #2ecc71, #27ae60); border-bottom: 4px solid #1e8449; }
+        .btn-theory { background: linear-gradient(135deg, #3498db, #2980b9); border-bottom: 4px solid #1a5276; }
+        .btn:hover { filter: brightness(1.2); transform: scale(1.05); }
+        @keyframes floatBoiler { 0%, 100% { transform: rotateY(-20deg) rotateX(5deg) translateY(0); } 50% { transform: rotateY(-20deg) rotateX(5deg) translateY(-10px); } }
+        @keyframes floatEngineer { 0% { transform: rotateY(15deg) translateY(0); } 100% { transform: rotateY(15deg) translateY(-20px); } }
+        @keyframes gaugeNeedle { 0% { transform: rotate(-40deg); } 100% { transform: rotate(40deg); } }
+        @keyframes steamRise { 0% { transform: translateY(0) scale(1); opacity: 0.8; } 100% { transform: translateY(-80px) scale(2.5); opacity: 0; } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(30px) translateZ(40px) scale(0.9); } to { opacity: 1; transform: translateY(0) translateZ(40px) scale(1); } }
+        @media (max-width: 768px) {
             .scene-3d { height: 250px; transform: scale(0.8); }
+            .menu-container { padding: 30px 20px; width: 90%; }
+            h1 { font-size: 18px; }
+            .btn { padding: 15px 20px; font-size: 15px; width: 100%; }
+            .button-group { flex-direction: column; }
         }
     </style>
 </head>
 <body>
-
-    <!-- Khu vực hoạt hình 3D -->
     <div class="scene-3d">
-        <!-- Lò hơi -->
         <div class="boiler">
             <div class="boiler-top"></div>
             <div class="gauge"></div>
             <div class="pipe"></div>
             <div class="steam"></div>
-            <div class="steam" style="animation-delay: 1.5s; right: -5px;"></div>
+            <div class="steam" style="animation-delay: 1.2s; right: -10px;"></div>
         </div>
-        <!-- Kỹ sư an toàn -->
         <div class="engineer">👷‍♂️</div>
     </div>
-
-    <!-- Khu vực Menu chính -->
     <div class="menu-container">
-        <h1>Hệ Thống Ôn Tập Kỹ Thuật An Toàn</h1>
-        
+        <h1>Hệ Thống Ôn Tập An Toàn</h1>
         <div class="button-group">
-            <!-- Nút bài thi trắc nghiệm -->
-            <a href="tracnghiemlo.html" class="btn btn-exam">
-                📝 THI TRẮC NGHIỆM
-            </a>
-            
-            <!-- Nút lý thuyết an toàn (đã cập nhật theo file bạn up) -->
-            <a href="lythuyet.html" class="btn btn-theory">
-                📚 LÝ THUYẾT AN TOÀN
-            </a>
+            <a href="tracnghiemlo.html" class="btn btn-exam">📝 Thi Trắc Nghiệm</a>
+            <a href="lythuyet.html" class="btn btn-theory">📚 Lý Thuyết An Toàn</a>
         </div>
     </div>
-
 </body>
 </html>

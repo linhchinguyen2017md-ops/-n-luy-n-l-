@@ -2,105 +2,912 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ Thống Ôn Tập Kỹ Thuật An Toàn</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Hệ Thống Ôn Tập Kỹ Thuật & Vận Hành</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap');
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap');
+        
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent;
+        }
+
         body {
             font-family: 'Montserrat', sans-serif;
             background: radial-gradient(circle at center, #1e3c72 0%, #0f1a2c 100%);
-            min-height: 100vh; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; overflow: hidden; perspective: 1200px;
+            min-height: 100vh;
+            color: #fff;
+            overflow-x: hidden;
+            perspective: 1200px;
         }
-        .scene-3d { position: relative; width: 100%; height: 320px; display: flex; justify-content: center; align-items: flex-end; margin-bottom: 10px; }
+
+        /* ================= MÀN HÌNH 1: TRANG CHỦ GỐC ================= */
+        #homeScreen {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px 15px 110px;
+        }
+
+        .scene-3d { 
+            position: relative; 
+            width: 100%; 
+            height: 270px; 
+            display: flex; 
+            justify-content: center; 
+            align-items: flex-end; 
+            margin-bottom: 15px; 
+        }
+
         .boiler {
-            position: relative; width: 150px; height: 200px;
+            position: relative; 
+            width: 140px; 
+            height: 185px;
             background: linear-gradient(135deg, #444 0%, #999 50%, #222 100%);
             border-radius: 15px 15px 5px 5px;
             box-shadow: inset -15px 0 20px rgba(0,0,0,0.6), inset 15px 0 20px rgba(255,255,255,0.2), 20px 25px 35px rgba(0,0,0,0.7);
-            transform: rotateY(-20deg) rotateX(5deg); z-index: 2; animation: floatBoiler 4s ease-in-out infinite;
+            transform: rotateY(-20deg) rotateX(5deg); 
+            z-index: 2; 
+            animation: floatBoiler 4s ease-in-out infinite;
         }
+
         .boiler-top {
-            position: absolute; top: -25px; left: 0; width: 150px; height: 35px;
+            position: absolute; 
+            top: -22px; 
+            left: 0; 
+            width: 140px; 
+            height: 32px;
             background: linear-gradient(90deg, #333 0%, #888 50%, #333 100%);
-            border-radius: 50% / 100% 100% 0 0; box-shadow: 0 -5px 10px rgba(0,0,0,0.5);
+            border-radius: 50% / 100% 100% 0 0; 
+            box-shadow: 0 -5px 10px rgba(0,0,0,0.5);
         }
+
         .gauge {
-            position: absolute; top: 50px; left: 55px; width: 45px; height: 45px;
-            background: #f1c40f; border-radius: 50%; border: 6px solid #222;
+            position: absolute; 
+            top: 45px; 
+            left: 48px; 
+            width: 44px; 
+            height: 44px;
+            background: #f1c40f; 
+            border-radius: 50%; 
+            border: 5px solid #222;
             box-shadow: inset 0 0 15px rgba(0,0,0,0.6), 0 0 10px rgba(241, 196, 15, 0.5);
         }
+
         .gauge::after {
-            content: ''; position: absolute; top: 20px; left: 20px; width: 3px; height: 18px;
-            background: #e74c3c; transform-origin: bottom center; animation: gaugeNeedle 1.5s ease-in-out infinite alternate;
+            content: ''; 
+            position: absolute; 
+            top: 17px; 
+            left: 17px; 
+            width: 3px; 
+            height: 16px;
+            background: #e74c3c; 
+            transform-origin: bottom center; 
+            animation: gaugeNeedle 1.5s ease-in-out infinite alternate;
             box-shadow: 0 0 5px #e74c3c;
         }
+
         .pipe {
-            position: absolute; top: 90px; right: -25px; width: 25px; height: 70px;
-            background: linear-gradient(90deg, #555, #888); border-radius: 0 8px 8px 0; box-shadow: 8px 0 15px rgba(0,0,0,0.5);
+            position: absolute; 
+            top: 85px; 
+            right: -22px; 
+            width: 22px; 
+            height: 65px;
+            background: linear-gradient(90deg, #555, #888); 
+            border-radius: 0 8px 8px 0; 
+            box-shadow: 8px 0 15px rgba(0,0,0,0.5);
         }
+
         .steam {
-            position: absolute; top: -50px; right: -20px; width: 40px; height: 40px;
-            background: rgba(255, 255, 255, 0.7); border-radius: 50%; filter: blur(10px); animation: steamRise 2.5s ease-out infinite;
+            position: absolute; 
+            top: -45px; 
+            right: -18px; 
+            width: 38px; 
+            height: 38px;
+            background: rgba(255, 255, 255, 0.7); 
+            border-radius: 50%; 
+            filter: blur(10px); 
+            animation: steamRise 2.5s ease-out infinite;
         }
+
         .engineer {
-            font-size: 120px; position: relative; z-index: 3; margin-left: -40px;
-            filter: drop-shadow(10px 20px 15px rgba(0,0,0,0.8)); animation: floatEngineer 3.5s ease-in-out infinite alternate; transform: rotateY(15deg);
+            font-size: 110px; 
+            position: relative; 
+            z-index: 3; 
+            margin-left: -35px;
+            filter: drop-shadow(10px 20px 15px rgba(0,0,0,0.8)); 
+            animation: floatEngineer 3.5s ease-in-out infinite alternate; 
+            transform: rotateY(15deg);
+            user-select: none;
         }
+
         .menu-container {
-            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-            padding: 40px 50px; border-radius: 25px; border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.06); 
+            backdrop-filter: blur(15px); 
+            -webkit-backdrop-filter: blur(15px);
+            padding: 32px 38px; 
+            border-radius: 25px; 
+            border: 1px solid rgba(255, 255, 255, 0.18);
             box-shadow: 0 30px 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.2);
-            text-align: center; transform: translateZ(40px); animation: fadeIn 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-align: center; 
+            width: 100%;
+            max-width: 680px;
+            animation: fadeIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
+
         h1 {
-            color: #fff; font-size: 24px; font-weight: 900; margin-bottom: 30px;
-            text-transform: uppercase; letter-spacing: 3px; text-shadow: 0 4px 10px rgba(0,0,0,0.8), 0 0 20px rgba(255,255,255,0.2);
+            color: #fff; 
+            font-size: 22px; 
+            font-weight: 900; 
+            margin-bottom: 24px;
+            text-transform: uppercase; 
+            letter-spacing: 2px; 
+            text-shadow: 0 4px 10px rgba(0,0,0,0.8), 0 0 20px rgba(255,255,255,0.2);
         }
-        .button-group { display: flex; gap: 25px; justify-content: center; flex-wrap: wrap; }
+
+        .button-group { 
+            display: flex; 
+            gap: 18px; 
+            justify-content: center; 
+            flex-wrap: wrap; 
+        }
+
         .btn {
-            display: flex; align-items: center; justify-content: center; gap: 12px; padding: 18px 35px;
-            text-decoration: none; border-radius: 15px; font-size: 18px; font-weight: 700; color: white;
-            border: none; cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 10px 0 rgba(0,0,0,0.4), 0 20px 25px rgba(0,0,0,0.3);
-            position: relative; top: 0; text-transform: uppercase; letter-spacing: 1px;
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 10px; 
+            padding: 16px 26px;
+            text-decoration: none; 
+            border-radius: 15px; 
+            font-size: 16px; 
+            font-weight: 800; 
+            color: white;
+            border: none; 
+            cursor: pointer; 
+            transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 8px 0 rgba(0,0,0,0.45), 0 15px 25px rgba(0,0,0,0.35);
+            position: relative; 
+            top: 0; 
+            text-transform: uppercase; 
+            letter-spacing: 1px;
+            flex: 1 1 240px;
         }
-        .btn:active { top: 10px; box-shadow: 0 0 0 rgba(0,0,0,0.4), 0 5px 15px rgba(0,0,0,0.3); }
+
+        .btn:active { 
+            top: 6px; 
+            box-shadow: 0 2px 0 rgba(0,0,0,0.45), 0 5px 10px rgba(0,0,0,0.3); 
+        }
+
+        .btn:hover { 
+            filter: brightness(1.12); 
+            transform: translateY(-2px); 
+        }
+
         .btn-exam { background: linear-gradient(135deg, #2ecc71, #27ae60); border-bottom: 4px solid #1e8449; }
         .btn-theory { background: linear-gradient(135deg, #3498db, #2980b9); border-bottom: 4px solid #1a5276; }
-        .btn:hover { filter: brightness(1.2); transform: scale(1.05); }
-        @keyframes floatBoiler { 0%, 100% { transform: rotateY(-20deg) rotateX(5deg) translateY(0); } 50% { transform: rotateY(-20deg) rotateX(5deg) translateY(-10px); } }
-        @keyframes floatEngineer { 0% { transform: rotateY(15deg) translateY(0); } 100% { transform: rotateY(15deg) translateY(-20px); } }
-        @keyframes gaugeNeedle { 0% { transform: rotate(-40deg); } 100% { transform: rotate(40deg); } }
-        @keyframes steamRise { 0% { transform: translateY(0) scale(1); opacity: 0.8; } 100% { transform: translateY(-80px) scale(2.5); opacity: 0; } }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(30px) translateZ(40px) scale(0.9); } to { opacity: 1; transform: translateY(0) translateZ(40px) scale(1); } }
+        .btn-tuabin { 
+            background: linear-gradient(135deg, #f39c12, #d35400); 
+            border-bottom: 4px solid #a04000; 
+            flex: 1 1 100%;
+            font-size: 17px;
+        }
+
+        .badge-count {
+            background: rgba(0, 0, 0, 0.35);
+            padding: 3px 9px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 800;
+            border: 1px solid rgba(255,255,255,0.25);
+        }
+
+        /* ================= MÀN HÌNH 2: THƯ MỤC TRẮC NGHIỆM TUABIN ================= */
+        #folderScreen {
+            display: none;
+            min-height: 100vh;
+            padding: 16px 14px 120px;
+            max-width: 980px;
+            margin: 0 auto;
+            animation: fadeIn 0.35s ease;
+        }
+
+        .folder-topbar {
+            background: rgba(15, 26, 44, 0.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            border-radius: 18px;
+            padding: 14px 16px;
+            position: sticky;
+            top: 10px;
+            z-index: 20;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+            margin-bottom: 18px;
+        }
+
+        .folder-header-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .btn-back-home {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #f1c40f, #f39c12);
+            color: #0f1a2c;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 12px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 13px;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #b7791f;
+            text-transform: uppercase;
+            transition: transform 0.15s;
+            flex-shrink: 0;
+        }
+
+        .btn-back-home:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 #b7791f;
+        }
+
+        .folder-title-box {
+            text-align: right;
+            min-width: 0;
+        }
+
+        .folder-title-box h2 {
+            font-size: 16px;
+            font-weight: 900;
+            color: #f1c40f;
+            text-transform: uppercase;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .folder-title-box p {
+            font-size: 11px;
+            color: #cbd5e1;
+            font-weight: 600;
+        }
+
+        .search-box {
+            position: relative;
+            width: 100%;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            outline: none;
+        }
+
+        .search-box input::placeholder {
+            color: rgba(255, 255, 255, 0.55);
+        }
+
+        .search-box input:focus {
+            border-color: #f1c40f;
+            background: rgba(255, 255, 255, 0.13);
+        }
+
+        /* Lưới bài học trong thư mục */
+        .lesson-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(275px, 1fr));
+            gap: 12px;
+        }
+
+        .lesson-item {
+            background: rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 16px;
+            padding: 15px 16px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+            color: #fff;
+            width: 100%;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+
+        .lesson-item:hover {
+            background: rgba(255, 255, 255, 0.14);
+            border-color: #f1c40f;
+            transform: translateY(-2px);
+        }
+
+        .lesson-item:active {
+            transform: scale(0.97);
+        }
+
+        .lesson-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, rgba(241, 196, 15, 0.25), rgba(230, 126, 34, 0.25));
+            border: 1px solid rgba(241, 196, 15, 0.45);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .lesson-stt {
+            font-size: 9px;
+            font-weight: 800;
+            color: #f1c40f;
+            margin-top: 1px;
+        }
+
+        .lesson-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .lesson-tag {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 800;
+            color: #f1c40f;
+            background: rgba(0, 0, 0, 0.35);
+            padding: 2px 8px;
+            border-radius: 6px;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+
+        .lesson-name {
+            font-size: 14px;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 3px;
+            line-height: 1.3;
+        }
+
+        .lesson-desc {
+            font-size: 11px;
+            color: #cbd5e1;
+            line-height: 1.35;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .lesson-arrow {
+            font-size: 16px;
+            color: #f1c40f;
+            font-weight: 900;
+            flex-shrink: 0;
+        }
+
+        /* ================= MÀN HÌNH 3: KHUNG HỌC & LÀM BÀI TRỰC TIẾP ================= */
+        #viewerScreen {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 50;
+            background: #0f1a2c;
+            flex-direction: column;
+        }
+
+        .viewer-navbar {
+            background: #0b1322;
+            border-bottom: 2px solid rgba(241, 196, 15, 0.4);
+            padding: 9px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .viewer-nav-left {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .btn-nav {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 9px 13px;
+            border-radius: 10px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 12px;
+            font-weight: 800;
+            border: none;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: transform 0.12s;
+        }
+
+        .btn-nav:active {
+            transform: scale(0.94);
+        }
+
+        .btn-nav-home {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: #fff;
+            box-shadow: 0 3px 0 #1e8449;
+        }
+
+        .btn-nav-folder {
+            background: linear-gradient(135deg, #f39c12, #d35400);
+            color: #fff;
+            box-shadow: 0 3px 0 #a04000;
+        }
+
+        .viewer-title {
+            flex: 1;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 800;
+            color: #f1c40f;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding: 0 4px;
+        }
+
+        .btn-reload {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.2);
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            font-size: 15px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .iframe-wrapper {
+            flex: 1;
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+        }
+
+        #lessonIframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* ================= ANH KỸ SƯ ĐỨNG CẠNH CỔ VŨ (LUÔN ĐỒNG HÀNH) ================= */
+        .companion-box {
+            position: fixed;
+            bottom: 12px;
+            right: 12px;
+            z-index: 90;
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+            pointer-events: none;
+        }
+
+        .cheer-bubble {
+            pointer-events: auto;
+            background: rgba(15, 26, 44, 0.96);
+            border: 2px solid #f1c40f;
+            border-radius: 18px 18px 4px 18px;
+            padding: 11px 14px;
+            max-width: 245px;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.65);
+            position: relative;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .cheer-close {
+            position: absolute;
+            top: -9px;
+            left: -9px;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #e74c3c;
+            color: #fff;
+            border: 2px solid #0f1a2c;
+            font-size: 11px;
+            font-weight: 900;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cheer-header {
+            font-size: 10px;
+            font-weight: 900;
+            color: #f1c40f;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .cheer-content {
+            font-size: 11.5px;
+            line-height: 1.4;
+            color: #f8fafc;
+            font-weight: 600;
+        }
+
+        .engineer-avatar-btn {
+            pointer-events: auto;
+            width: 62px;
+            height: 62px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #2980b9, #0f1a2c);
+            border: 3px solid #f1c40f;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.6), 0 0 12px rgba(241, 196, 15, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            cursor: pointer;
+            animation: floatAvatar 3s ease-in-out infinite alternate;
+            position: relative;
+            user-select: none;
+            flex-shrink: 0;
+        }
+
+        .engineer-avatar-btn:active {
+            transform: scale(0.9);
+        }
+
+        .cheer-badge {
+            position: absolute;
+            bottom: -4px;
+            background: #2ecc71;
+            color: #0f1a2c;
+            font-size: 9px;
+            font-weight: 900;
+            padding: 2px 6px;
+            border-radius: 10px;
+            text-transform: uppercase;
+            border: 1px solid #0f1a2c;
+        }
+
+        @keyframes floatBoiler { 
+            0%, 100% { transform: rotateY(-20deg) rotateX(5deg) translateY(0); } 
+            50% { transform: rotateY(-20deg) rotateX(5deg) translateY(-10px); } 
+        }
+        @keyframes floatEngineer { 
+            0% { transform: rotateY(15deg) translateY(0); } 
+            100% { transform: rotateY(15deg) translateY(-18px); } 
+        }
+        @keyframes floatAvatar {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-6px); }
+        }
+        @keyframes gaugeNeedle { 
+            0% { transform: rotate(-40deg); } 
+            100% { transform: rotate(40deg); } 
+        }
+        @keyframes steamRise { 
+            0% { transform: translateY(0) scale(1); opacity: 0.8; } 
+            100% { transform: translateY(-75px) scale(2.4); opacity: 0; } 
+        }
+        @keyframes fadeIn { 
+            from { opacity: 0; transform: translateY(15px) scale(0.96); } 
+            to { opacity: 1; transform: translateY(0) scale(1); } 
+        }
+
+        /* ================= TỐI ƯU GIAO DIỆN ĐIỆN THOẠI ================= */
         @media (max-width: 768px) {
-            .scene-3d { height: 250px; transform: scale(0.8); }
-            .menu-container { padding: 30px 20px; width: 90%; }
-            h1 { font-size: 18px; }
-            .btn { padding: 15px 20px; font-size: 15px; width: 100%; }
-            .button-group { flex-direction: column; }
+            .scene-3d { height: 210px; transform: scale(0.82); margin-bottom: 5px; }
+            .menu-container { padding: 24px 18px; width: 96%; border-radius: 20px; }
+            h1 { font-size: 17px; margin-bottom: 18px; letter-spacing: 1.5px; }
+            .button-group { flex-direction: column; gap: 14px; }
+            .btn { padding: 15px 18px; font-size: 14px; width: 100%; flex: none; }
+            .lesson-grid { grid-template-columns: 1fr; }
+            .folder-header-row { flex-direction: row; }
+            .folder-title-box h2 { font-size: 14px; }
+            .viewer-title { font-size: 11.5px; }
+            .btn-nav { padding: 8px 10px; font-size: 11px; }
+            .cheer-bubble { max-width: 205px; padding: 9px 12px; }
+            .engineer-avatar-btn { width: 56px; height: 56px; font-size: 32px; }
         }
     </style>
 </head>
 <body>
-    <div class="scene-3d">
-        <div class="boiler">
-            <div class="boiler-top"></div>
-            <div class="gauge"></div>
-            <div class="pipe"></div>
-            <div class="steam"></div>
-            <div class="steam" style="animation-delay: 1.2s; right: -10px;"></div>
+
+    <!-- ================= 1. MÀN HÌNH TRANG CHỦ ================= -->
+    <div id="homeScreen">
+        <div class="scene-3d">
+            <div class="boiler">
+                <div class="boiler-top"></div>
+                <div class="gauge"></div>
+                <div class="pipe"></div>
+                <div class="steam"></div>
+                <div class="steam" style="animation-delay: 1.2s; right: -10px;"></div>
+            </div>
+            <div class="engineer">👷‍♂️</div>
         </div>
-        <div class="engineer">👷‍♂️</div>
-    </div>
-    <div class="menu-container">
-        <h1>Hệ Thống Ôn Tập An Toàn</h1>
-        <div class="button-group">
-            <a href="tracnghiemlo.html" class="btn btn-exam">📝 Thi Trắc Nghiệm</a>
-            <a href="lythuyet.html" class="btn btn-theory">📚 Lý Thuyết An Toàn</a>
+
+        <div class="menu-container">
+            <h1>Hệ Thống Ôn Tập Kỹ Thuật & An Toàn</h1>
+            <div class="button-group">
+                <!-- Nút mở Thư mục Trắc nghiệm Tuabin -->
+                <button type="button" onclick="openTuabinFolder()" class="btn btn-tuabin">
+                    📂 Trắc Nghiệm Tuabin <span class="badge-count">16 Bài</span>
+                </button>
+
+                <!-- 2 nút gốc mở ngay trong trình làm bài có nút Quay lại Trang chủ -->
+                <button type="button" onclick="openStudyFile('tracnghiemlo.html', 'Thi Trắc Nghiệm Lò & An Toàn', 'home')" class="btn btn-exam">
+                    📝 Thi Trắc Nghiệm Lò
+                </button>
+                <button type="button" onclick="openStudyFile('lythuyet.html', 'Lý Thuyết An Toàn', 'home')" class="btn btn-theory">
+                    📚 Lý Thuyết An Toàn
+                </button>
+            </div>
         </div>
     </div>
+
+    <!-- ================= 2. MÀN HÌNH THƯ MỤC TRẮC NGHIỆM TUABIN ================= -->
+    <div id="folderScreen">
+        <div class="folder-topbar">
+            <div class="folder-header-row">
+                <button type="button" onclick="backToHome()" class="btn-back-home">
+                    🏠 Quay lại Trang chủ
+                </button>
+                <div class="folder-title-box">
+                    <h2>📂 Trắc Nghiệm Tuabin</h2>
+                    <p>Chọn chuyên đề để bắt đầu làm bài</p>
+                </div>
+            </div>
+            <div class="search-box">
+                <input type="text" id="searchLesson" placeholder="🔍 Tìm nhanh bài học (VD: hơi chèn, nước cấp, dầu bôi trơn...)" oninput="renderTuabinLessons()">
+            </div>
+        </div>
+
+        <div id="lessonList" class="lesson-grid"></div>
+    </div>
+
+    <!-- ================= 3. MÀN HÌNH LÀM BÀI (CÓ NÚT QUAY LẠI TRANG CHỦ) ================= -->
+    <div id="viewerScreen">
+        <div class="viewer-navbar">
+            <div class="viewer-nav-left">
+                <button type="button" onclick="backToHome()" class="btn-nav btn-nav-home">
+                    🏠 Trang chủ
+                </button>
+                <button type="button" id="btnBackFolder" onclick="openTuabinFolder()" class="btn-nav btn-nav-folder">
+                    📂 DS Bài Tuabin
+                </button>
+            </div>
+
+            <div id="currentFileTitle" class="viewer-title">Đang học...</div>
+
+            <button type="button" onclick="reloadCurrentFile()" class="btn-reload" title="Làm lại bài này">
+                🔄
+            </button>
+        </div>
+
+        <div class="iframe-wrapper">
+            <iframe id="lessonIframe" src="about:blank"></iframe>
+        </div>
+    </div>
+
+    <!-- ================= 4. ANH KỸ SƯ ĐỨNG CẠNH CỔ VŨ ================= -->
+    <div class="companion-box">
+        <div id="cheerBubble" class="cheer-bubble">
+            <button type="button" class="cheer-close" onclick="hideCheer(event)" title="Thu gọn">✕</button>
+            <div class="cheer-header">👷‍♂️ Kỹ sư Trưởng ca cổ vũ</div>
+            <div id="cheerMessage" class="cheer-content">
+                Chào đồng nghiệp! Bấm vào thư mục <b>Trắc Nghiệm Tuabin</b> để luyện từng hệ thống nhé! 💪
+            </div>
+        </div>
+
+        <div class="engineer-avatar-btn" onclick="changeCheerMessage()" title="Chạm vào Kỹ sư để nhận lời cổ vũ">
+            👷‍♂️
+            <span class="cheer-badge">Cố lên!</span>
+        </div>
+    </div>
+
+    <script>
+        // Danh sách 16 file chuyên đề bên trong thư mục "Trắc nghiệm Tuabin"
+        const tuabinFiles = [
+            { stt: 1, file: "Tuabin – Lý thuyết chuyên ngành.html", title: "Tuabin – Lý thuyết chuyên ngành", desc: "Nguyên lý, cấu tạo và quy trình vận hành Tuabin hơi.", icon: "📘", tag: "Lý thuyết" },
+            { stt: 2, file: "tuabin.html", title: "Trắc nghiệm Hệ thống Tuabin", desc: "Thông số vận hành, khởi động, ngừng máy và bảo vệ Tuabin.", icon: "⚙️", tag: "Trọng tâm" },
+            { stt: 3, file: "boitron.html", title: "Hệ thống Dầu bôi trơn", desc: "Bơm dầu chính, bơm dầu sự cố DC, làm mát và liên động bảo vệ.", icon: "🛢️", tag: "Dầu máy" },
+            { stt: 4, file: "thuyluc.html", title: "Hệ thống Dầu thủy lực (EH)", desc: "Dầu áp lực cao điều khiển van điều tốc, van chặn Tuabin.", icon: "🎛️", tag: "Điều khiển" },
+            { stt: 5, file: "hơi chèn.html", title: "Hệ thống Hơi chèn", desc: "Cấp hơi làm kín trục Tuabin và duy trì chân không bình ngưng.", icon: "☁️", tag: "Làm kín" },
+            { stt: 6, file: "bơmbi.html", title: "Hệ thống Bơm bi làm sạch", desc: "Chu trình thu - phát bi xốp vệ sinh ống bình ngưng.", icon: "🔵", tag: "Bình ngưng" },
+            { stt: 7, file: "nươcngung.html", title: "Hệ thống Nước ngưng", desc: "Bơm nước ngưng, gia nhiệt hạ áp và điều chỉnh mức bình ngưng.", icon: "💧", tag: "Chu trình" },
+            { stt: 8, file: "nướccap.html", title: "Hệ thống Nước cấp", desc: "Bơm nước cấp, bình khử khí và các bình gia nhiệt cao áp.", icon: "🌊", tag: "Áp lực cao" },
+            { stt: 9, file: "tuanhoan.html", title: "Hệ thống Nước tuần hoàn", desc: "Bơm tuần hoàn làm mát bình ngưng và xử lý sự cố.", icon: "🔄", tag: "Làm mát" },
+            { stt: 10, file: "lmk.html", title: "Nước làm mát kín (CCW)", desc: "Hệ thống nước làm mát mạch kín cho thiết bị phụ trợ.", icon: "❄️", tag: "Phụ trợ" },
+            { stt: 11, file: "clo.html", title: "Hệ thống Châm Clo", desc: "Vận hành trạm Clo xử lý vi sinh vật nước tuần hoàn.", icon: "🧪", tag: "Hóa chất" },
+            { stt: 12, file: "phòng mòn.html", title: "Hệ thống Phòng mòn", desc: "Bảo vệ chống ăn mòn điện hóa cho thiết bị trao đổi nhiệt.", icon: "🛡️", tag: "Bảo vệ" },
+            { stt: 13, file: "stator.html", title: "Nước làm mát Stator", desc: "Hệ thống nước siêu tinh khiết làm mát cuộn dây Stator máy phát.", icon: "⚡", tag: "Máy phát" },
+            { stt: 14, file: "dauchen.html", title: "Hệ thống Dầu chèn máy phát", desc: "Hệ thống dầu làm kín khí Hydro trong máy phát điện.", icon: "🔒", tag: "An toàn H2" },
+            { stt: 15, file: "khinen.html", title: "Hệ thống Khí nén", desc: "Hệ thống máy nén khí, máy sấy khí điều khiển và công cụ.", icon: "🌬️", tag: "Khí nén" },
+            { stt: 16, file: "bomquat.html", title: "Hệ thống Bơm & Quạt", desc: "Đặc tính làm việc và quy trình vận hành bơm, quạt công nghiệp.", icon: "🌀", tag: "Cơ khí" }
+        ];
+
+        // Các câu cổ vũ của Anh Kỹ Sư
+        const cheerQuotes = [
+            "Bình tĩnh đọc kỹ từng câu nhé! Nắm chắc thông số bảo vệ và liên động là ăn trọn điểm! 💪",
+            "Chú ý các giá trị ngưỡng Alarm và Trip của Tuabin nhé, rất hay gặp trong đề thi đấy! ⚡",
+            "Mỗi câu làm đúng hôm nay là thêm một phần vững vàng trên bàn điều khiển trung tâm! 🛠️",
+            "Làm bài mỏi mắt thì nhấp ngụm cà phê đen cho tỉnh táo rồi vượt qua hết 16 bài nhé! ☕",
+            "Nhớ phân biệt kỹ điều kiện khởi động liên động (Auto Start) và điều kiện cho phép (Permissive) nhé! 🎯",
+            "Bạn đang làm rất tốt! Cứ giữ vững nhịp độ này là nắm chắc kiến thức vận hành Lò - Máy! 🏆",
+            "Khi cần đổi sang chuyên đề khác, bạn chỉ cần bấm nút Quay lại ở thanh trên cùng nhé! 👍"
+        ];
+
+        let quoteIndex = 0;
+
+        const homeScreen = document.getElementById('homeScreen');
+        const folderScreen = document.getElementById('folderScreen');
+        const viewerScreen = document.getElementById('viewerScreen');
+        const lessonList = document.getElementById('lessonList');
+        const searchLesson = document.getElementById('searchLesson');
+        const lessonIframe = document.getElementById('lessonIframe');
+        const currentFileTitle = document.getElementById('currentFileTitle');
+        const btnBackFolder = document.getElementById('btnBackFolder');
+        const cheerBubble = document.getElementById('cheerBubble');
+        const cheerMessage = document.getElementById('cheerMessage');
+
+        // Bỏ dấu tiếng Việt để tìm kiếm trên điện thoại dễ dàng
+        function removeTone(str) {
+            return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D').toLowerCase();
+        }
+
+        // Hiển thị danh sách các bài trong thư mục Trắc nghiệm Tuabin
+        function renderTuabinLessons() {
+            const keyword = removeTone(searchLesson.value.trim());
+            lessonList.innerHTML = '';
+
+            const filtered = tuabinFiles.filter(item => {
+                const content = removeTone(`${item.title} ${item.desc} ${item.file} ${item.tag}`);
+                return content.includes(keyword);
+            });
+
+            if (filtered.length === 0) {
+                lessonList.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding: 35px; color:#cbd5e1; font-weight:600;">Không tìm thấy bài học phù hợp. Hãy thử từ khóa khác!</div>`;
+                return;
+            }
+
+            filtered.forEach(item => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'lesson-item';
+                btn.onclick = () => openStudyFile(item.file, `Bài ${item.stt}: ${item.title}`, 'folder');
+                btn.innerHTML = `
+                    <div class="lesson-icon">
+                        <span>${item.icon}</span>
+                        <span class="lesson-stt">#${item.stt}</span>
+                    </div>
+                    <div class="lesson-info">
+                        <span class="lesson-tag">${item.tag}</span>
+                        <div class="lesson-name">${item.title}</div>
+                        <div class="lesson-desc">${item.desc}</div>
+                    </div>
+                    <div class="lesson-arrow">❯</div>
+                `;
+                lessonList.appendChild(btn);
+            });
+        }
+
+        // Mở thư mục Trắc nghiệm Tuabin
+        function openTuabinFolder() {
+            homeScreen.style.display = 'none';
+            viewerScreen.style.display = 'none';
+            folderScreen.style.display = 'block';
+            lessonIframe.src = 'about:blank';
+            window.scrollTo(0, 0);
+
+            showCheer("Đây là thư mục <b>16 chuyên đề Tuabin</b>! Chạm vào bài bất kỳ để bắt đầu ôn luyện nhé! 📂");
+            history.pushState({ page: 'folder' }, '', '#thu-muc-tuabin');
+        }
+
+        // Mở 1 bài học cụ thể
+        function openStudyFile(fileName, title, source) {
+            homeScreen.style.display = 'none';
+            folderScreen.style.display = 'none';
+            viewerScreen.style.display = 'flex';
+
+            // Ẩn/hiện nút quay về thư mục Tuabin tùy theo nguồn mở
+            btnBackFolder.style.display = (source === 'folder') ? 'inline-flex' : 'none';
+
+            currentFileTitle.textContent = title;
+            lessonIframe.src = encodeURI(fileName);
+
+            showCheer(`Đang làm bài: <b>${title}</b>. Đọc kỹ đề và chọn đáp án chính xác nhất nhé! Cố lên! 🔥`);
+            history.pushState({ page: 'viewer', source: source }, '', `#hoc-${encodeURIComponent(fileName)}`);
+        }
+
+        // Quay lại Trang chủ chính
+        function backToHome() {
+            folderScreen.style.display = 'none';
+            viewerScreen.style.display = 'none';
+            homeScreen.style.display = 'flex';
+            lessonIframe.src = 'about:blank';
+            window.scrollTo(0, 0);
+
+            showCheer("Đã quay về <b>Trang chủ</b>! Nghỉ ngơi chút rồi chọn phần tiếp theo để ôn tập nhé! 👷‍♂️👍");
+        }
+
+        // Làm mới bài đang học
+        function reloadCurrentFile() {
+            if (lessonIframe.src && lessonIframe.src !== 'about:blank') {
+                lessonIframe.contentWindow.location.reload();
+                showCheer("Đã tải lại đề bài mới! Quyết tâm đạt 100% điểm tuyệt đối nhé! 💯");
+            }
+        }
+
+        // Điều khiển lời cổ vũ của Anh Kỹ Sư
+        function showCheer(htmlText) {
+            cheerBubble.style.display = 'block';
+            cheerMessage.innerHTML = htmlText;
+        }
+
+        function hideCheer(e) {
+            e.stopPropagation();
+            cheerBubble.style.display = 'none';
+        }
+
+        function changeCheerMessage() {
+            cheerBubble.style.display = 'block';
+            quoteIndex = (quoteIndex + 1) % cheerQuotes.length;
+            cheerMessage.innerHTML = cheerQuotes[quoteIndex];
+        }
+
+        // Tự động đổi câu cổ vũ mỗi 25 giây khi đang làm bài
+        setInterval(() => {
+            if (viewerScreen.style.display === 'flex' && cheerBubble.style.display !== 'none') {
+                changeCheerMessage();
+            }
+        }, 25000);
+
+        // Hỗ trợ nút Back trên điện thoại quay lại mượt mà
+        window.addEventListener('popstate', (event) => {
+            if (viewerScreen.style.display === 'flex') {
+                if (btnBackFolder.style.display !== 'none') {
+                    openTuabinFolder();
+                } else {
+                    backToHome();
+                }
+            } else if (folderScreen.style.display === 'block') {
+                backToHome();
+            }
+        });
+
+        // Khởi tạo danh sách bài học ngay khi mở trang
+        renderTuabinLessons();
+    </script>
 </body>
 </html>

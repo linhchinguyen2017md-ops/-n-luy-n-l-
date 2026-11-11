@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trắc nghiệm Hệ thống Nước tuần hoàn – NĐMD (33 câu)</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f4f8; margin: 0; padding: 20px; color: #1a202c; line-height: 1.6; }
+  .container { max-width: 900px; margin: 0 auto; }
+  header { background: linear-gradient(135deg, #1e3a8a, #0ea5e9); color: white; padding: 30px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+  header h1 { margin: 0 0 8px; font-size: 1.55rem; }
+  header p { margin: 0; opacity: 0.9; }
+  .mode-hint { background: #fef3c7; border: 1px solid #fcd34d; color: #92400e; padding: 12px 18px; border-radius: 8px; margin-bottom: 16px; font-size: 0.9rem; display: flex; align-items: flex-start; gap: 10px; }
+  .mode-hint strong { color: #78350f; }
+  .progress-info { background: #fff; padding: 12px 20px; border-radius: 8px; margin-bottom: 16px; font-size: 0.9rem; color: #475569; box-shadow: 0 2px 6px rgba(0,0,0,0.05); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+  .toolbar { position: sticky; top: 10px; z-index: 10; display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+  .btn { padding: 12px 22px; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all .15s; }
+  .btn-primary { background: #0284c7; color: #fff; }
+  .btn-primary:hover { background: #0369a1; }
+  .btn-secondary { background: #e2e8f0; color: #334155; }
+  .btn-secondary:hover { background: #cbd5e1; }
+  .score-box { background: #fff; border-radius: 12px; padding: 24px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); display: none; text-align: center; }
+  .score-box.show { display: block; }
+  .score-box .score-number { font-size: 2.5rem; font-weight: 700; color: #0284c7; }
+  .score-box .score-label { color: #64748b; margin-top: 4px; }
+  .q-card { background: #fff; border-radius: 10px; padding: 20px 24px; margin-bottom: 16px; box-shadow: 0 2px 6px rgba(0,0,0,0.06); border-left: 4px solid #0ea5e9; transition: border-color .2s; }
+  .q-card.correct { border-left-color: #16a34a; }
+  .q-card.incorrect { border-left-color: #dc2626; }
+  .q-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+  .q-num { background: #e0f2fe; color: #075985; font-weight: 700; padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; white-space: nowrap; }
+  .q-diff { font-size: 0.75rem; padding: 3px 10px; border-radius: 12px; font-weight: 600; white-space: nowrap; }
+  .diff-Easy { background: #dcfce7; color: #166534; }
+  .diff-Medium { background: #fef9c3; color: #854d0e; }
+  .diff-Hard { background: #fee2e2; color: #991b1b; }
+  .q-text { font-weight: 600; margin-bottom: 12px; }
+  .options { display: flex; flex-direction: column; gap: 8px; }
+  .option { display: flex; align-items: flex-start; gap: 10px; padding: 10px 14px; border: 1.5px solid #e2e8f0; border-radius: 8px; cursor: pointer; transition: all .15s; background: #fff; }
+  .option:hover { border-color: #7dd3fc; background: #f8fafc; }
+  .option input { margin-top: 5px; cursor: pointer; accent-color: #0284c7; }
+  .option.selected { border-color: #0ea5e9; background: #f0f9ff; }
+  .option.correct-answer { border-color: #16a34a; background: #f0fdf4; }
+  .option.wrong-answer { border-color: #dc2626; background: #fef2f2; }
+  .option-letter { font-weight: 700; color: #0284c7; min-width: 20px; }
+  .option-text { white-space: pre-line; }
+  .feedback { margin-top: 12px; padding: 10px 14px; border-radius: 8px; font-size: 0.9rem; display: none; }
+  .feedback.show { display: block; }
+  .feedback.ok { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+  .feedback.no { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>Trắc nghiệm: Hệ thống Nước tuần hoàn – NĐMD</h1>
+    <p>33 câu hỏi trắc nghiệm • Trình độ L1 • Chế độ học tập tương tác</p>
+  </header>
+
+  <div class="mode-hint">
+    <span>💡</span>
+    <div>
+      <strong>Chế độ học:</strong> Kích chọn đáp án để xem kết quả ngay. Bộ câu hỏi này toàn bộ là <strong>MC (chọn 1 đáp án)</strong>.
+    </div>
+  </div>
+
+  <div class="progress-info">
+    <span>Đã hoàn thành: <strong id="answeredCount">0</strong> / <strong id="totalCount">0</strong></span>
+    <span id="statusText">Đang làm bài...</span>
+  </div>
+
+  <div class="toolbar">
+    <button class="btn btn-primary" id="submitBtn">Tổng kết điểm</button>
+    <button class="btn btn-secondary" id="resetBtn">Làm lại từ đầu</button>
+  </div>
+
+  <div class="score-box" id="scoreBox">
+    <div class="score-number" id="scoreNumber">0 / 0</div>
+    <div class="score-label" id="scoreLabel"></div>
+  </div>
+
+  <div id="quizContainer"></div>
+</div>
+
+<script>
+/* 33 câu Nước tuần hoàn (311–343) — toàn bộ MC 4 phương án A/B/C/D. */
+const questions = [
+{id:311,diff:'Easy',q:'Số lượng bơm tuần hoàn NĐMD?',opts:['2','3','4','5'],ans:3},
+{id:312,diff:'Easy',q:'Số lượng bơm tuần hoàn phục vụ cho mấy tổ máy?',opts:['1','2','3','4'],ans:2},
+{id:313,diff:'Easy',q:'Vào mùa đông khi nhiệt độ nước tuần hoàn thấp có thể vận hành mấy bơm tuần hoàn khi 02 tổ máy vận hành?',opts:['2','3','4','5'],ans:2},
+{id:314,diff:'Easy',q:'Nước tuần hoàn đi vào bình ngưng phải đi qua các thiết bị nào?',opts:['Cánh phai → Tấm chắn thưa → Tấm chắn mau → Lưới chắn rác kiểu quay → Bơm tuần hoàn → Van thủy lực đầu đẩy → Bình ngưng gian máy.','Cánh phai → Tấm chắn mau → Lưới chắn rác kiểu quay → Bơm tuần hoàn → Van thủy lực đầu đẩy → Bình ngưng gian máy.','Cánh phai → Tấm chắn thưa → Lưới chắn rác kiểu quay → Bơm tuần hoàn → Van thủy lực đầu đẩy → Bình ngưng gian máy.','Cánh phai → Tấm chắn thưa → Tấm chắn mau → Bơm tuần hoàn → Van thủy lực đầu đẩy → Bình ngưng gian máy.'],ans:1},
+{id:315,diff:'Medium',q:'Hệ thống nước tuần hoàn không cấp cho phụ tải nào?',opts:['Hệ thống clo','Hệ thống thải xỉ','Hệ thống EPS','Hệ thống nước làm mát hở'],ans:3},
+{id:316,diff:'Medium',q:'Nước được trích từ đầu đẩy bơm tuần hoàn để làm mát cho?',opts:['Làm mát gối chặn bơm','Làm mát cho stator động cơ bơm','Cấp nước chèn bơm','Tất cả các đáp án trên'],ans:1},
+{id:317,diff:'Easy',q:'Bơm tuần hoàn là kiểu nào?',opts:['Cánh nâng','Hướng trục, đơn tầng, trục đứng','Ly tâm, đa tầng, trục đứng','Ly tâm, đơn tầng, trục ngang'],ans:1},
+{id:318,diff:'Easy',q:'Bơm tuần hoàn vận hành với cấp tốc độ?',opts:['275 v/ph','375 v/ph','475 v/ph','575 v/ph'],ans:1},
+{id:319,diff:'Easy',q:'Các tấm chắn thưa và mau được đặt nghiêng bao nhiêu độ?',opts:['45 độ','75 độ','85 độ','90 độ'],ans:3},
+{id:320,diff:'Medium',q:'Bước thanh của 1 tấm chắn thưa là bao nhiêu?',opts:['30 mm','40 mm','50 mm','100 mm'],ans:3},
+{id:321,diff:'Medium',q:'Bước thanh của 1 tấm chắn mau là bao nhiêu?',opts:['30 mm','40 mm','50 mm','100 mm'],ans:1},
+{id:322,diff:'Easy',q:'Lưu lượng của bơm rửa lưới là?',opts:['100 m³/h','125 m³/h','140 m³/h','150 m³/h'],ans:3},
+{id:323,diff:'Easy',q:'Chiều cao cột áp của bơm rửa lưới là?',opts:['15 m','25 m','35 m','20 m'],ans:2},
+{id:324,diff:'Easy',q:'Bơm rửa lưới là loại bơm gì?',opts:['Bơm ly tâm, trục ngang','Bơm ly tâm, trục đứng','Bơm hướng trục, trục ngang','Bơm hướng trục, trục đứng'],ans:1},
+{id:325,diff:'Easy',q:'Công suất động cơ bơm rửa lưới là?',opts:['50 kW','40 kW','20 kW','30 kW'],ans:4},
+{id:326,diff:'Easy',q:'Số lượng bơm rửa lưới là?',opts:['2 bơm (2 làm việc, 0 dự phòng)','2 bơm (1 làm việc, 1 dự phòng)','3 bơm (2 làm việc, 1 dự phòng)','4 bơm (2 làm việc, 2 dự phòng)'],ans:2},
+{id:327,diff:'Easy',q:'Giá trị bảo vệ trip bơm tuần hoàn do nhiệt độ stator cao là?',opts:['120°C','130°C','135°C','140°C'],ans:4},
+{id:328,diff:'Easy',q:'Giá trị bảo vệ trip bơm tuần hoàn do nhiệt độ gối dưới động cơ cao là?',opts:['80°C','85°C','90°C','95°C'],ans:4},
+{id:329,diff:'Easy',q:'Bảo vệ trip bơm tuần hoàn do nhiệt độ gối trên động cơ là?',opts:['80°C','85°C','90°C','95°C'],ans:4},
+{id:330,diff:'Easy',q:'Bảo vệ trip bơm tuần hoàn do nhiệt độ gối chặn là?',opts:['85°C','99°C','111°C','121°C'],ans:3},
+{id:331,diff:'Hard',q:'Bảo vệ trip bơm tuần hoàn khi bơm chạy mà van đầu đẩy không mở sau thời gian bao lâu?',opts:['5 s','10 s','20 s','30 s'],ans:2},
+{id:332,diff:'Easy',q:'Bảo vệ trip bơm tuần hoàn khi bơm chạy và áp lực đầu đẩy lớn hơn hoặc bằng bao nhiêu?',opts:['2.1 bar','2.3 bar','2.4 bar','2.5 bar'],ans:2},
+{id:333,diff:'Easy',q:'Bảo vệ trip bơm tuần hoàn do độ rung gối động cơ là?',opts:['7,5 mm','8,5 mm','9,5 mm','6,5 mm'],ans:3},
+{id:334,diff:'Easy',q:'Bảo vệ trip bơm tuần hoàn do độ rung gối bơm là?',opts:['±900 µm','±1000 µm','±1100 µm','±1200 µm'],ans:3},
+{id:335,diff:'Easy',q:'Liên động mở van đầu đẩy bơm tuần hoàn khi?',opts:['Van đặt chế độ Man, van tự mở khi bơm chạy','Van đặt chế độ Auto, van tự mở khi bơm chạy','Van đặt chế độ Man, van tự mở khi bơm dừng','Van đặt chế độ AUTO, van tự mở khi bơm dừng'],ans:2},
+{id:336,diff:'Hard',q:'Liên động tự động đóng van đầu đẩy bơm tuần hoàn khi nào?',opts:['Van đặt chế độ Man, van tự đóng khi bơm chạy','Van đặt chế độ AUTO, van tự đóng khi bơm chạy','Van đặt chế độ Man, van tự đóng khi bơm dừng','Van đặt chế độ AUTO, van tự đóng khi bơm dừng'],ans:4},
+{id:337,diff:'Medium',q:'Chạy lưới quay bằng tay được thực hiện như thế nào?',opts:['Mở van rửa lưới → chạy bơm rửa lưới → chạy lưới quay','Chạy lưới quay → mở van rửa lưới → chạy bơm rửa lưới','Mở van rửa lưới → chạy lưới quay → chạy bơm rửa lưới','Chạy lưới quay → chạy bơm rửa lưới → mở van rửa lưới'],ans:1},
+{id:338,diff:'Hard',q:'Trình tự dừng hệ thống lưới quay tuần hoàn được thực hiện như thế nào?',opts:['Dừng lưới quay → dừng bơm rửa lưới → đóng van rửa lưới','Dừng lưới quay → đóng van rửa lưới → dừng bơm rửa lưới','Dừng bơm rửa lưới → dừng lưới quay → đóng van rửa lưới','Dừng bơm rửa lưới → đóng van rửa lưới → dừng lưới quay'],ans:1},
+{id:339,diff:'Medium',q:'Bơm tuần hoàn TRIP khi nào?',opts:['Nhiệt độ gối trục động cơ (gối trên) cao: >90°C.','Nhiệt độ gối chặn động cơ bơm tuần hoàn cao: >105°C.','Nhiệt độ cuộn dây động cơ bơm tuần hoàn cao: >130°C.','Độ rung gối bơm tuần hoàn cao: ±1100 µm p-p.'],ans:4},
+{id:340,diff:'Easy',q:'Lưu lượng định mức thiết kế của 1 bơm tuần hoàn bao nhiêu?',opts:['36000 m³/h','36500 m³/h','39000 m³/h','43000 m³/h'],ans:2},
+{id:341,diff:'Medium',q:'Trong quá trình vận hành bình thường, người vận hành điều chỉnh áp lực nước tuần hoàn bằng gì?',opts:['Van thủy lực đầu đẩy bơm tuần hoàn.','Van điện nước tuần hoàn đầu vào bình ngưng.','Van điện nước tuần hoàn đầu ra bình ngưng.','Điều chỉnh biến tần động cơ.'],ans:3},
+{id:342,diff:'Easy',q:'Nguyên nhân dẫn đến sự cố nhiệt độ gối trục bơm tuần hoàn tăng cao là gì?',opts:['Mất cân bằng động bơm.','Mức dầu bôi trơn gối bơm thấp hoặc chất lượng dầu không đảm bảo.','Ổ đỡ bơm bị hư hỏng.','Tất cả các phương án trên.'],ans:4},
+{id:343,diff:'Hard',q:'Trong các nhận định sau thì nhận định nào sai?',opts:['Bảo vệ nhà máy tác động khi không có bơm ngưng nào làm việc.','Bảo vệ nhà máy tác động khi không có bơm tuần hoàn nào làm việc.','Bảo vệ nhà máy tác động khi không có bơm nước làm mát phụ nào làm việc.','Bảo vệ nhà máy tác động khi không có bơm nước cấp nào làm việc.'],ans:1}
+];
+
+const letters = ['A','B','C','D'];
+const container = document.getElementById('quizContainer');
+const submitBtn = document.getElementById('submitBtn');
+const resetBtn = document.getElementById('resetBtn');
+const scoreBox = document.getElementById('scoreBox');
+const scoreNumber = document.getElementById('scoreNumber');
+const scoreLabel = document.getElementById('scoreLabel');
+const answeredCount = document.getElementById('answeredCount');
+const statusText = document.getElementById('statusText');
+
+let submitted = false;
+const userAnswers = {};
+const lockedQuestions = new Set();
+
+document.getElementById('totalCount').textContent = questions.length;
+scoreNumber.textContent = '0 / ' + questions.length;
+
+/* ==================== RENDER ==================== */
+function renderQuiz() {
+  container.innerHTML = '';
+  questions.forEach((q, idx) => {
+    const card = document.createElement('div');
+    card.className = 'q-card';
+    card.id = 'q-' + q.id;
+    let optionsHtml = '';
+    q.opts.forEach((opt, i) => {
+      optionsHtml += `
+        <label class="option" data-qid="${q.id}" data-opt="${i+1}">
+          <input type="radio" name="q${q.id}" value="${i+1}">
+          <span class="option-letter">${letters[i]}.</span>
+          <span class="option-text">${opt}</span>
+        </label>`;
+    });
+    card.innerHTML = `
+      <div class="q-header">
+        <span class="q-num">Câu ${idx+1}</span>
+        <span class="q-diff diff-${q.diff}">${q.diff}</span>
+      </div>
+      <div class="q-text">${q.q}</div>
+      <div class="options">${optionsHtml}</div>
+      <div class="feedback" id="fb-${q.id}"></div>`;
+    container.appendChild(card);
+  });
+  attachHandlers();
+}
+
+/* ==================== HANDLERS ==================== */
+function attachHandlers() {
+  container.querySelectorAll('input[type="radio"]').forEach(input => {
+    input.addEventListener('change', e => {
+      const qid = parseInt(e.target.name.replace('q',''));
+      if (submitted || lockedQuestions.has(qid)) return;
+      userAnswers[qid] = parseInt(e.target.value);
+      lockAndReveal(qid);
+      updateProgress();
+    });
+  });
+}
+
+/* ==================== LOCK & REVEAL ==================== */
+function lockAndReveal(qid) {
+  const q = questions.find(x => x.id === qid);
+  const card = document.getElementById('q-' + qid);
+  const fb = document.getElementById('fb-' + qid);
+  lockedQuestions.add(qid);
+  card.querySelectorAll('input').forEach(inp => inp.disabled = true);
+  card.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+
+  const userAns = userAnswers[qid];
+  const isCorrect = userAns === q.ans;
+
+  card.querySelectorAll('.option').forEach(o => {
+    const v = parseInt(o.dataset.opt);
+    if (v === q.ans) o.classList.add('correct-answer');
+    if (v === userAns && v !== q.ans) o.classList.add('wrong-answer');
+  });
+
+  if (isCorrect) {
+    card.classList.add('correct');
+    fb.className = 'feedback show ok';
+    fb.textContent = `✓ Chính xác! Đáp án đúng là ${letters[q.ans-1]}.`;
+  } else {
+    card.classList.add('incorrect');
+    fb.className = 'feedback show no';
+    fb.textContent = `✗ Sai. Bạn chọn ${letters[userAns-1]}, đáp án đúng là ${letters[q.ans-1]}.`;
+  }
+}
+
+/* ==================== PROGRESS ==================== */
+function updateProgress() {
+  answeredCount.textContent = lockedQuestions.size;
+  if (!submitted) {
+    statusText.textContent = lockedQuestions.size === questions.length
+      ? '🎉 Đã hoàn thành tất cả câu hỏi!'
+      : `Còn ${questions.length - lockedQuestions.size} câu chưa làm`;
+  }
+}
+
+/* ==================== SUBMIT ==================== */
+function submitQuiz() {
+  if (submitted) return;
+  submitted = true;
+  let correctCount = 0;
+  questions.forEach(q => {
+    if (lockedQuestions.has(q.id) && userAnswers[q.id] === q.ans) correctCount++;
+  });
+  const pct = Math.round((correctCount / questions.length) * 100);
+  let grade = '';
+  if (pct >= 90) grade = 'Xuất sắc! 🎉';
+  else if (pct >= 75) grade = 'Tốt! 👍';
+  else if (pct >= 50) grade = 'Trung bình — cần ôn thêm.';
+  else grade = 'Cần ôn luyện thêm.';
+  scoreBox.classList.add('show');
+  scoreNumber.textContent = `${correctCount} / ${questions.length}`;
+  scoreLabel.textContent = `Đúng ${pct}% — ${grade} (đã làm ${lockedQuestions.size}/${questions.length} câu)`;
+  statusText.textContent = 'Đã tổng kết';
+  scoreBox.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+/* ==================== RESET ==================== */
+function resetQuiz() {
+  if (!confirm('Bạn có chắc muốn làm lại từ đầu? Tất cả câu trả lời sẽ bị xóa.')) return;
+  submitted = false;
+  Object.keys(userAnswers).forEach(k => delete userAnswers[k]);
+  lockedQuestions.clear();
+  scoreBox.classList.remove('show');
+  renderQuiz();
+  answeredCount.textContent = '0';
+  statusText.textContent = 'Đang làm bài...';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+submitBtn.addEventListener('click', submitQuiz);
+resetBtn.addEventListener('click', resetQuiz);
+renderQuiz();
+</script>
+</body>
+</html>

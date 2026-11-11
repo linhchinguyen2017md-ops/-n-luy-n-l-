@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trắc nghiệm Hệ thống Dầu chèn (22 câu)</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f4f8; margin: 0; padding: 20px; color: #1a202c; line-height: 1.6; }
+  .container { max-width: 900px; margin: 0 auto; }
+  header { background: linear-gradient(135deg, #1e40af, #3b82f6); color: white; padding: 30px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+  header h1 { margin: 0 0 8px; font-size: 1.55rem; }
+  header p { margin: 0; opacity: 0.9; }
+  .mode-hint { background: #fef3c7; border: 1px solid #fcd34d; color: #92400e; padding: 12px 18px; border-radius: 8px; margin-bottom: 16px; font-size: 0.9rem; display: flex; align-items: flex-start; gap: 10px; }
+  .mode-hint strong { color: #78350f; }
+  .progress-info { background: #fff; padding: 12px 20px; border-radius: 8px; margin-bottom: 16px; font-size: 0.9rem; color: #475569; box-shadow: 0 2px 6px rgba(0,0,0,0.05); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+  .toolbar { position: sticky; top: 10px; z-index: 10; display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+  .btn { padding: 12px 22px; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all .15s; }
+  .btn-primary { background: #2563eb; color: #fff; }
+  .btn-primary:hover { background: #1d4ed8; }
+  .btn-secondary { background: #e2e8f0; color: #334155; }
+  .btn-secondary:hover { background: #cbd5e1; }
+  .score-box { background: #fff; border-radius: 12px; padding: 24px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); display: none; text-align: center; }
+  .score-box.show { display: block; }
+  .score-box .score-number { font-size: 2.5rem; font-weight: 700; color: #2563eb; }
+  .score-box .score-label { color: #64748b; margin-top: 4px; }
+  .q-card { background: #fff; border-radius: 10px; padding: 20px 24px; margin-bottom: 16px; box-shadow: 0 2px 6px rgba(0,0,0,0.06); border-left: 4px solid #3b82f6; transition: border-color .2s; }
+  .q-card.correct { border-left-color: #16a34a; }
+  .q-card.incorrect { border-left-color: #dc2626; }
+  .q-card.partial { border-left-color: #f59e0b; }
+  .q-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+  .q-num { background: #dbeafe; color: #1e40af; font-weight: 700; padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; white-space: nowrap; }
+  .q-num.multi { background: #fef3c7; color: #92400e; }
+  .q-diff { font-size: 0.75rem; padding: 3px 10px; border-radius: 12px; font-weight: 600; white-space: nowrap; }
+  .diff-Easy { background: #dcfce7; color: #166534; }
+  .diff-Medium { background: #fef9c3; color: #854d0e; }
+  .diff-Hard { background: #fee2e2; color: #991b1b; }
+  .q-text { font-weight: 600; margin-bottom: 12px; }
+  .options { display: flex; flex-direction: column; gap: 8px; }
+  .option { display: flex; align-items: flex-start; gap: 10px; padding: 10px 14px; border: 1.5px solid #e2e8f0; border-radius: 8px; cursor: pointer; transition: all .15s; background: #fff; }
+  .option:hover { border-color: #93c5fd; background: #f8fafc; }
+  .option input { margin-top: 5px; cursor: pointer; accent-color: #2563eb; }
+  .option.selected { border-color: #3b82f6; background: #eff6ff; }
+  .option.correct-answer { border-color: #16a34a; background: #f0fdf4; }
+  .option.wrong-answer { border-color: #dc2626; background: #fef2f2; }
+  .option.missed-answer { border-color: #16a34a; background: #f0fdf4; border-style: dashed; }
+  .option-letter { font-weight: 700; color: #2563eb; min-width: 20px; }
+  .option-text { white-space: pre-line; }
+  .check-btn { margin-top: 12px; padding: 9px 20px; border: none; border-radius: 6px; background: #f59e0b; color: #fff; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all .15s; }
+  .check-btn:hover:not(:disabled) { background: #d97706; }
+  .check-btn:disabled { background: #cbd5e1; cursor: not-allowed; }
+  .check-btn.hidden { display: none; }
+  .feedback { margin-top: 12px; padding: 10px 14px; border-radius: 8px; font-size: 0.9rem; display: none; }
+  .feedback.show { display: block; }
+  .feedback.ok { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+  .feedback.no { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+  .feedback.partial { background: #fef3c7; color: #854d0e; border: 1px solid #fcd34d; }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>Trắc nghiệm: Hệ thống Dầu chèn</h1>
+    <p>22 câu hỏi trắc nghiệm • Trình độ L1–L2 • Chế độ học tập tương tác</p>
+  </header>
+
+  <div class="mode-hint">
+    <span>💡</span>
+    <div>
+      <strong>Chế độ học:</strong> Kích chọn đáp án để xem kết quả ngay. Riêng câu <strong>MMC (chọn nhiều đáp án)</strong> — đánh dấu <strong>• chọn nhiều</strong> — yêu cầu chọn <strong>đúng chính xác</strong> tập đáp án đúng (không thừa, không thiếu), rồi bấm <strong>"Kiểm tra đáp án"</strong>.
+    </div>
+  </div>
+
+  <div class="progress-info">
+    <span>Đã hoàn thành: <strong id="answeredCount">0</strong> / <strong id="totalCount">0</strong></span>
+    <span id="statusText">Đang làm bài...</span>
+  </div>
+
+  <div class="toolbar">
+    <button class="btn btn-primary" id="submitBtn">Tổng kết điểm</button>
+    <button class="btn btn-secondary" id="resetBtn">Làm lại từ đầu</button>
+  </div>
+
+  <div class="score-box" id="scoreBox">
+    <div class="score-number" id="scoreNumber">0 / 0</div>
+    <div class="score-label" id="scoreLabel"></div>
+  </div>
+
+  <div id="quizContainer"></div>
+</div>
+
+<script>
+/* 22 câu Dầu chèn (175–196) — đầy đủ 4 phương án A/B/C/D.
+   - ans       → câu MC chọn 1 đáp án (1..4)
+   - mmcAns    → câu MMC chọn nhiều, phải chọn khớp chính xác tập này
+*/
+const questions = [
+{id:175,diff:'Easy',q:'Bơm dầu chèn chính là kiểu bơm nào?',opts:['Ly tâm','Trục vít','Trục đứng','Cánh nâng'],ans:2},
+{id:176,diff:'Easy',q:'Bơm chân không dầu chèn là bơm nào?',opts:['Ly tâm lệch trục','Trục vít','Trục đứng','Cánh nâng'],ans:1},
+{id:177,diff:'Easy',q:'Nội dung nào là đúng về chức năng của hệ thống dầu chèn?',opts:['Cấp dầu vào chèn Hydro để ngăn ngừa sự lọt không khí từ bên ngoài vào trong máy phát. Tránh hiện tượng cháy nổ máy phát.','Cấp dầu vào chèn Hydro để ngăn ngừa sự lọt khí Hydro từ bên trong Máy phát điện ra ngoài khí quyển, thông qua khe hở giữa trục và vành chèn hai đầu trục của Máy phát điện.','Cấp dầu vào chèn Hydro để ngăn ngừa sự lọt khí Nito từ bên trong Máy phát điện ra ngoài khí quyển, thông qua khe hở giữa trục và vành chèn hai đầu trục của Máy phát điện.','Cấp dầu vào chèn Hydro để ngăn ngừa sự lọt khí Hydro từ bên trong Máy phát điện ra ngoài khí quyển, thông qua khe hở giữa trục và vành chèn hai đầu trục của Máy phát điện.'],ans:2},
+{id:178,diff:'Easy',q:'Nội dung nào sau đây là sai đối với nguyên lý làm việc của hệ thống dầu chèn?',opts:['Trong quá trình hoạt động bình thường, dầu chèn được cung cấp bởi ống góp dầu bôi trơn, chảy qua một bộ lọc kép và đưa tới bể chân không.','Bơm dầu chèn chính là bơm kiểu ly tâm, động cơ điện xoay chiều. Trong quá trình vận hành bình thường, bơm này đưa dầu từ đáy của bể chân không cho lưu thông qua hệ thống dầu chèn.','Bẫy khí với van phao nổi, luôn giữ một mức dầu nhất định, có tác dụng chỉ cho dầu đi qua. Dầu qua bẫy hơi sẽ được đưa thẳng về bể chân không dầu chèn.','Bơm dầu sự cố là bơm kiểu ly tâm một tầng cánh, động cơ điện một chiều. Bơm làm việc trong trường hợp bơm dầu chính gặp sự cố do mất nguồn điện xoay chiều.'],ans:3},
+{id:179,diff:'Hard',q:'Nội dung nào là đúng về chức năng của bơm chân không dầu chèn?',opts:['Bơm chân không dầu chèn có chức năng hút khí không ngưng trong bể dầu chèn.','Bơm chân không dầu chèn có chức năng tạo áp lực âm cho bể dầu chèn tránh H2 lọt ra ngoài môi trường.','Bơm chân không dầu chèn có chức năng hút khí hydro lẫn trong dầu, tách nước trong dầu và tạo áp lực âm tại bể dầu để hình thành vòng tuần hoàn dầu.','Cả 3 đáp án trên đều đúng.'],ans:3},
+{id:180,diff:'Easy',q:'Nội dung nào sau đây không phải nguyên nhân gây lỗi bơm dầu chèn?',opts:['Do người vận hành thao tác nhầm: ấn ngừng bơm đang làm việc.','Kẹt bánh động của bơm làm trip bơm do quá dòng.','Nhiệt độ dầu chèn cao.','Đấu nối phần điện chưa chính xác.'],ans:3},
+{id:181,diff:'Easy',q:'Nội dung nào không phải là nguyên nhân sự cố áp lực bơm dầu chèn thấp?',opts:['Van điều áp dầu chèn lỗi.','Lỗi van một chiều bơm dự phòng.','Áp lực hydro cao.','Lỗi phần động cơ bơm.'],ans:3},
+{id:182,diff:'Easy',q:'Nội dung nào sau đây không phải nguyên nhân gây sự cố mức dầu bể chân không thấp?',opts:['Do lỗi tín hiệu báo mức.','Phin lọc đầu vào máy phát bị tắc.','Do hệ thống cấp dầu vào bể lỗi.','Phao trong bể chân không lỗi.'],ans:2},
+{id:183,diff:'Easy',q:'Nội dung nào sau đây là nguyên nhân gây nên sự cố trong máy phát có dầu?',opts:['Do áp lực Hydro cao hơn áp lực dầu chèn.','Do áp lực dầu bôi trơn cao.','Do khe hở giữa trục và vành gom dầu lớn.','Do áp lực đầu đẩy bơm dầu chèn cao.'],ans:3},
+{id:184,diff:'Medium',q:'Nội dung nào sau đây là đúng khi xử lý sự cố chênh áp dầu chèn và H2 thấp?',opts:['Khởi động bơm dầu chèn dự phòng, điều chỉnh van chênh áp.','Giảm áp lực Hydro nếu có thể.','Điều chỉnh van điều áp dầu chèn nếu áp lực đầu đẩy bơm thấp.','Cả 3 phương án trên.'],ans:4},
+{id:185,diff:'Hard',q:'Giá trị áp lực đầu đẩy bơm dầu chèn theo thiết kế:',opts:['12 Bar','11 Bar','9.8 Bar','10.8 Bar'],ans:3},
+{id:186,diff:'Medium',q:'Giá trị cảnh báo áp lực đầu đẩy bơm dầu chèn thấp:',opts:['8.5 Bar','9.5 Bar','10.5 Bar','11.5 Bar'],ans:1},
+{id:187,diff:'Hard',q:'Giá trị cảnh báo chênh áp dầu chèn và hydro thấp:',opts:['0.35 Bar','0.41 Bar','0.5 Bar','0.55 Bar'],ans:2},
+{id:188,diff:'Easy',q:'Giá trị cảnh báo chênh áp phin lọc đầu vào gối máy phát cao:',opts:['0.69 Bar','0.59 Bar','0.49 Bar','0.39 Bar'],ans:3},
+{id:189,diff:'Easy',q:'Giá trị cảnh báo chênh áp phin lọc đầu vào bình chân không:',opts:['0.69 Bar','0.59 Bar','0.49 Bar','0.39 Bar'],ans:4},
+{id:190,diff:'Hard',q:'Giá trị cảnh báo nhiệt độ cuộn dây động cơ cao:',opts:['130°C','135°C','120°C','125°C'],ans:1},
+{id:191,diff:'Easy',q:'Giá trị áp lực liên động bơm dầu chèn sự cố:',opts:['8.5 Bar','8 Bar','7.5 Bar','7 Bar'],ans:2},
+{id:192,diff:'Medium',q:'Nội dung nào sau đây là đúng với nguyên tắc nạp/xả khí hydro?',opts:['Dùng môi chất trung gian, khi nạp H2 thì dùng Hydro đuổi khí nén; khi xả H2 thì dùng CO2 đuổi H2, rồi dùng khí nén đuổi CO2. CO2 không được để trong máy phát lâu.','Dùng môi chất trung gian, khi nạp H2 thì dùng CO2 đuổi không khí, sau đó dùng H2 đuổi CO2; khi xả H2 thì dùng CO2 đuổi H2, rồi dùng khí nén đuổi CO2. CO2 không được để trong máy phát lâu.','Dùng môi chất trung gian, khi nạp H2 thì dùng hydro đuổi không khí; khi xả H2 thì dùng khí nén đuổi H2, rồi dùng CO2 đuổi khí nén.','Dùng môi chất trung gian, khi nạp H2 thì dùng Hydro đuổi không khí; khi xả H2 thì dùng khí nén đuổi H2. Ngăn chặn quá trình hình thành CO2 không được để trong máy phát lâu.'],ans:2},
+{id:193,diff:'Medium',q:'Trình tự khởi động hệ thống dầu chèn nào sau đây là đúng?',opts:['Bơm dầu chèn chính → Bơm tái tuần hoàn dầu chèn → Bơm chân không dầu chèn.','Bơm chân không dầu chèn → Bơm dầu chèn chính → Bơm tái tuần hoàn dầu chèn.','Bơm dầu chèn chính → Bơm chân không dầu chèn → Bơm tái tuần hoàn dầu chèn.','Bơm chân không dầu chèn → Bơm tái tuần hoàn dầu chèn → Bơm dầu chèn chính.'],ans:4},
+{id:194,diff:'Medium',q:'Trong quá trình trông coi hệ thống dầu chèn người vận hành cần:',opts:['Nhân viên vận hành phải thường xuyên kiểm tra hệ thống tuyến ống để phát hiện rò rỉ kịp thời.','Nhân viên vận hành theo dõi thường xuyên các thông số làm việc của hệ thống trên TCS và tại chỗ, luôn luôn đảm bảo giá trị chênh áp giữa dầu chèn và H2 trong máy phát.','Ghi chép mọi thông tin liên quan đến vận hành hệ thống vào sổ "Nhật ký vận hành" đúng theo yêu cầu.','Cả 3 đáp án trên đều đúng.'],ans:4},
+
+/* Câu 195 – MMC: đáp án B, C, D (2, 3, 4) */
+{id:195,diff:'Medium',mmc:true,mmcAns:[2,3,4],q:'Khi khởi động hệ thống dầu chèn, trạng thái van điều chỉnh chênh áp dầu chèn (chọn tất cả đáp án đúng):',opts:['Ở trạng thái đóng, chế độ Auto.','Duy trì trạng thái trước khi dừng hệ thống.','Đảm bảo các van cấp xung đến van đã mở.','Điều chỉnh bằng tay nếu chênh áp chưa đạt yêu cầu khi bơm đã vận hành ổn định.']},
+
+{id:196,diff:'Easy',q:'Điều kiện dừng hệ thống dầu chèn:',opts:['Tổ máy dừng vận hành.','Đã đuổi hết khí Hydro ra ngoài.','Trong máy phát là không khí.','Nhiệt độ tuabin dưới 150°C.'],ans:3}
+];
+
+const letters = ['A','B','C','D'];
+const container = document.getElementById('quizContainer');
+const submitBtn = document.getElementById('submitBtn');
+const resetBtn = document.getElementById('resetBtn');
+const scoreBox = document.getElementById('scoreBox');
+const scoreNumber = document.getElementById('scoreNumber');
+const scoreLabel = document.getElementById('scoreLabel');
+const answeredCount = document.getElementById('answeredCount');
+const statusText = document.getElementById('statusText');
+
+let submitted = false;
+const userAnswers = {};
+const lockedQuestions = new Set();
+
+document.getElementById('totalCount').textContent = questions.length;
+scoreNumber.textContent = '0 / ' + questions.length;
+
+/* ==================== RENDER ==================== */
+function renderQuiz() {
+  container.innerHTML = '';
+  questions.forEach((q, idx) => {
+    const card = document.createElement('div');
+    card.className = 'q-card';
+    card.id = 'q-' + q.id;
+    const isMulti = q.mmc;
+    let optionsHtml = '';
+    q.opts.forEach((opt, i) => {
+      const inputType = isMulti ? 'checkbox' : 'radio';
+      optionsHtml += `
+        <label class="option" data-qid="${q.id}" data-opt="${i+1}">
+          <input type="${inputType}" name="q${q.id}" value="${i+1}">
+          <span class="option-letter">${letters[i]}.</span>
+          <span class="option-text">${opt}</span>
+        </label>`;
+    });
+    const checkBtnHtml = isMulti
+      ? `<button class="check-btn" data-qid="${q.id}" disabled>Kiểm tra đáp án</button>`
+      : '';
+    card.innerHTML = `
+      <div class="q-header">
+        <span class="q-num ${isMulti ? 'multi' : ''}">Câu ${idx+1}${isMulti ? ' • chọn nhiều' : ''}</span>
+        <span class="q-diff diff-${q.diff}">${q.diff}</span>
+      </div>
+      <div class="q-text">${q.q}</div>
+      <div class="options">${optionsHtml}</div>
+      ${checkBtnHtml}
+      <div class="feedback" id="fb-${q.id}"></div>`;
+    container.appendChild(card);
+  });
+  attachHandlers();
+}
+
+/* ==================== HANDLERS ==================== */
+function attachHandlers() {
+  container.querySelectorAll('input[type="radio"]').forEach(input => {
+    input.addEventListener('change', e => {
+      const qid = parseInt(e.target.name.replace('q',''));
+      if (submitted || lockedQuestions.has(qid)) return;
+      userAnswers[qid] = parseInt(e.target.value);
+      lockAndReveal(qid);
+      updateProgress();
+    });
+  });
+  container.querySelectorAll('input[type="checkbox"]').forEach(input => {
+    input.addEventListener('change', e => {
+      const qid = parseInt(e.target.name.replace('q',''));
+      if (submitted || lockedQuestions.has(qid)) return;
+      if (!userAnswers[qid]) userAnswers[qid] = [];
+      const val = parseInt(e.target.value);
+      const arr = userAnswers[qid];
+      const idx = arr.indexOf(val);
+      if (idx >= 0) arr.splice(idx, 1); else arr.push(val);
+      const card = document.getElementById('q-' + qid);
+      e.target.closest('.option').classList.toggle('selected', arr.includes(val));
+      const btn = card.querySelector('.check-btn');
+      if (btn) btn.disabled = arr.length === 0;
+    });
+  });
+  container.querySelectorAll('.check-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const qid = parseInt(btn.dataset.qid);
+      if (submitted || lockedQuestions.has(qid)) return;
+      const arr = userAnswers[qid] || [];
+      if (arr.length === 0) return;
+      lockAndReveal(qid);
+      updateProgress();
+    });
+  });
+}
+
+/* ==================== CHECK MMC ==================== */
+function checkMmcAnswer(arr, q) {
+  if (!arr || arr.length !== q.mmcAns.length) return false;
+  const a = [...arr].sort((x,y) => x-y);
+  const b = [...q.mmcAns].sort((x,y) => x-y);
+  return a.every((v,i) => v === b[i]);
+}
+
+/* ==================== LOCK & REVEAL ==================== */
+function lockAndReveal(qid) {
+  const q = questions.find(x => x.id === qid);
+  const card = document.getElementById('q-' + qid);
+  const fb = document.getElementById('fb-' + qid);
+  lockedQuestions.add(qid);
+  card.querySelectorAll('input').forEach(inp => inp.disabled = true);
+  card.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+  const userAns = userAnswers[qid];
+  let isCorrect = false;
+
+  if (q.mmc) {
+    isCorrect = checkMmcAnswer(userAns, q);
+    card.querySelectorAll('.option').forEach(o => {
+      const v = parseInt(o.dataset.opt);
+      const isRight = q.mmcAns.includes(v);
+      const wasChosen = (userAns || []).includes(v);
+      if (isRight && wasChosen) o.classList.add('correct-answer');
+      else if (isRight && !wasChosen) o.classList.add('missed-answer');
+      else if (!isRight && wasChosen) o.classList.add('wrong-answer');
+    });
+    const btn = card.querySelector('.check-btn');
+    if (btn) btn.classList.add('hidden');
+  } else {
+    isCorrect = userAns === q.ans;
+    card.querySelectorAll('.option').forEach(o => {
+      const v = parseInt(o.dataset.opt);
+      if (v === q.ans) o.classList.add('correct-answer');
+      if (v === userAns && v !== q.ans) o.classList.add('wrong-answer');
+    });
+  }
+
+  if (isCorrect) {
+    card.classList.add('correct');
+    fb.className = 'feedback show ok';
+    if (q.mmc) fb.textContent = `✓ Chính xác! Đáp án đúng: ${q.mmcAns.map(a => letters[a-1]).join(', ')}.`;
+    else fb.textContent = `✓ Chính xác! Đáp án đúng là ${letters[q.ans-1]}.`;
+  } else {
+    if (q.mmc) {
+      card.classList.add('partial');
+      const chosen = (userAns || []).map(a => letters[a-1]).join(', ') || '(chưa chọn)';
+      const missing = q.mmcAns.filter(a => !(userAns || []).includes(a));
+      const extra = (userAns || []).filter(a => !q.mmcAns.includes(a));
+      let detail = `Đáp án đúng: ${q.mmcAns.map(a => letters[a-1]).join(', ')}. Bạn đã chọn: ${chosen}.`;
+      if (missing.length) detail += ` Thiếu: ${missing.map(a => letters[a-1]).join(', ')}.`;
+      if (extra.length) detail += ` Sai: ${extra.map(a => letters[a-1]).join(', ')}.`;
+      fb.className = 'feedback show partial';
+      fb.textContent = '✗ Chưa đúng. ' + detail;
+    } else {
+      card.classList.add('incorrect');
+      fb.className = 'feedback show no';
+      fb.textContent = `✗ Sai. Bạn chọn ${letters[userAns-1]}, đáp án đúng là ${letters[q.ans-1]}.`;
+    }
+  }
+}
+
+/* ==================== PROGRESS ==================== */
+function updateProgress() {
+  answeredCount.textContent = lockedQuestions.size;
+  if (!submitted) {
+    statusText.textContent = lockedQuestions.size === questions.length
+      ? '🎉 Đã hoàn thành tất cả câu hỏi!'
+      : `Còn ${questions.length - lockedQuestions.size} câu chưa làm`;
+  }
+}
+
+/* ==================== SUBMIT ==================== */
+function submitQuiz() {
+  if (submitted) return;
+  submitted = true;
+  let correctCount = 0;
+  questions.forEach(q => {
+    let isCorrect = false;
+    if (lockedQuestions.has(q.id)) {
+      if (q.mmc) isCorrect = checkMmcAnswer(userAnswers[q.id] || [], q);
+      else isCorrect = userAnswers[q.id] === q.ans;
+    }
+    if (isCorrect) correctCount++;
+  });
+  const pct = Math.round((correctCount / questions.length) * 100);
+  let grade = '';
+  if (pct >= 90) grade = 'Xuất sắc! 🎉';
+  else if (pct >= 75) grade = 'Tốt! 👍';
+  else if (pct >= 50) grade = 'Trung bình — cần ôn thêm.';
+  else grade = 'Cần ôn luyện thêm.';
+  scoreBox.classList.add('show');
+  scoreNumber.textContent = `${correctCount} / ${questions.length}`;
+  scoreLabel.textContent = `Đúng ${pct}% — ${grade} (đã làm ${lockedQuestions.size}/${questions.length} câu)`;
+  statusText.textContent = 'Đã tổng kết';
+  scoreBox.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+/* ==================== RESET ==================== */
+function resetQuiz() {
+  if (!confirm('Bạn có chắc muốn làm lại từ đầu? Tất cả câu trả lời sẽ bị xóa.')) return;
+  submitted = false;
+  Object.keys(userAnswers).forEach(k => delete userAnswers[k]);
+  lockedQuestions.clear();
+  scoreBox.classList.remove('show');
+  renderQuiz();
+  answeredCount.textContent = '0';
+  statusText.textContent = 'Đang làm bài...';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+submitBtn.addEventListener('click', submitQuiz);
+resetBtn.addEventListener('click', resetQuiz);
+renderQuiz();
+</script>
+</body>
+</html>

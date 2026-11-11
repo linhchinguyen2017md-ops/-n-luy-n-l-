@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trắc nghiệm Tuabin – Vận hành & Bảo vệ (129 câu)</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f4f8; margin: 0; padding: 20px; color: #1a202c; line-height: 1.6; }
+  .container { max-width: 900px; margin: 0 auto; }
+  header { background: linear-gradient(135deg, #1e3a8a, #2563eb); color: white; padding: 30px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+  header h1 { margin: 0 0 8px; font-size: 1.55rem; }
+  header p { margin: 0; opacity: 0.9; }
+  .mode-hint { background: #fef3c7; border: 1px solid #fcd34d; color: #92400e; padding: 12px 18px; border-radius: 8px; margin-bottom: 16px; font-size: 0.9rem; display: flex; align-items: flex-start; gap: 10px; }
+  .mode-hint strong { color: #78350f; }
+  .progress-info { background: #fff; padding: 12px 20px; border-radius: 8px; margin-bottom: 16px; font-size: 0.9rem; color: #475569; box-shadow: 0 2px 6px rgba(0,0,0,0.05); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+  .toolbar { position: sticky; top: 10px; z-index: 10; display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+  .btn { padding: 12px 22px; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all .15s; }
+  .btn-primary { background: #2563eb; color: #fff; }
+  .btn-primary:hover { background: #1d4ed8; }
+  .btn-secondary { background: #e2e8f0; color: #334155; }
+  .btn-secondary:hover { background: #cbd5e1; }
+  .score-box { background: #fff; border-radius: 12px; padding: 24px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); display: none; text-align: center; }
+  .score-box.show { display: block; }
+  .score-box .score-number { font-size: 2.5rem; font-weight: 700; color: #2563eb; }
+  .score-box .score-label { color: #64748b; margin-top: 4px; }
+  .q-card { background: #fff; border-radius: 10px; padding: 20px 24px; margin-bottom: 16px; box-shadow: 0 2px 6px rgba(0,0,0,0.06); border-left: 4px solid #3b82f6; transition: border-color .2s; }
+  .q-card.correct { border-left-color: #16a34a; }
+  .q-card.incorrect { border-left-color: #dc2626; }
+  .q-card.partial { border-left-color: #f59e0b; }
+  .q-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+  .q-num { background: #dbeafe; color: #1e40af; font-weight: 700; padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; white-space: nowrap; }
+  .q-num.multi { background: #fef3c7; color: #92400e; }
+  .q-diff { font-size: 0.75rem; padding: 3px 10px; border-radius: 12px; font-weight: 600; white-space: nowrap; }
+  .diff-Easy { background: #dcfce7; color: #166534; }
+  .diff-Medium { background: #fef9c3; color: #854d0e; }
+  .diff-Hard { background: #fee2e2; color: #991b1b; }
+  .q-text { font-weight: 600; margin-bottom: 12px; }
+  .options { display: flex; flex-direction: column; gap: 8px; }
+  .option { display: flex; align-items: flex-start; gap: 10px; padding: 10px 14px; border: 1.5px solid #e2e8f0; border-radius: 8px; cursor: pointer; transition: all .15s; background: #fff; }
+  .option:hover { border-color: #93c5fd; background: #f8fafc; }
+  .option input { margin-top: 5px; cursor: pointer; accent-color: #2563eb; }
+  .option.selected { border-color: #3b82f6; background: #eff6ff; }
+  .option.correct-answer { border-color: #16a34a; background: #f0fdf4; }
+  .option.wrong-answer { border-color: #dc2626; background: #fef2f2; }
+  .option.missed-answer { border-color: #16a34a; background: #f0fdf4; border-style: dashed; }
+  .option-letter { font-weight: 700; color: #2563eb; min-width: 20px; }
+  .option-text { white-space: pre-line; }
+  .check-btn { margin-top: 12px; padding: 9px 20px; border: none; border-radius: 6px; background: #f59e0b; color: #fff; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all .15s; }
+  .check-btn:hover:not(:disabled) { background: #d97706; }
+  .check-btn:disabled { background: #cbd5e1; cursor: not-allowed; }
+  .check-btn.hidden { display: none; }
+  .feedback { margin-top: 12px; padding: 10px 14px; border-radius: 8px; font-size: 0.9rem; display: none; }
+  .feedback.show { display: block; }
+  .feedback.ok { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+  .feedback.no { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+  .feedback.partial { background: #fef3c7; color: #854d0e; border: 1px solid #fcd34d; }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>Trắc nghiệm: Tuabin – Vận hành &amp; Bảo vệ</h1>
+    <p>129 câu hỏi trắc nghiệm • Trình độ L1 • Chế độ học tập tương tác</p>
+  </header>
+
+  <div class="mode-hint">
+    <span>💡</span>
+    <div>
+      <strong>Chế độ học:</strong> Kích chọn đáp án để xem kết quả ngay. Riêng các câu <strong>MMC (chọn nhiều đáp án)</strong> — đánh dấu <strong>• chọn nhiều</strong> — yêu cầu chọn <strong>đúng chính xác</strong> tập đáp án đúng (không thừa, không thiếu), rồi bấm <strong>"Kiểm tra đáp án"</strong>.
+    </div>
+  </div>
+
+  <div class="progress-info">
+    <span>Đã hoàn thành: <strong id="answeredCount">0</strong> / <strong id="totalCount">0</strong></span>
+    <span id="statusText">Đang làm bài...</span>
+  </div>
+
+  <div class="toolbar">
+    <button class="btn btn-primary" id="submitBtn">Tổng kết điểm</button>
+    <button class="btn btn-secondary" id="resetBtn">Làm lại từ đầu</button>
+  </div>
+
+  <div class="score-box" id="scoreBox">
+    <div class="score-number" id="scoreNumber">0 / 0</div>
+    <div class="score-label" id="scoreLabel"></div>
+  </div>
+
+  <div id="quizContainer"></div>
+</div>
+
+<script>
+/* 129 câu Tuabin (369–497) — MC và MMC.
+   - ans    → câu MC (chỉ số đáp án 1..4)
+   - mmcAns → câu MMC (mảng chỉ số đáp án đúng) */
+const questions = [
+{id:369,diff:'Medium',q:'Hiệu suất tuabin thiết kế ở chế độ định mức (RO) là?',opts:['33%','39,12%','43%','46,33%'],ans:4},
+{id:370,diff:'Medium',q:'Theo thiết kế, tổ máy vận hành ở chế độ định mức (RO) thì lượng nước bổ xung cho bình ngưng là?',opts:['0%','1,5%','2%','3%'],ans:1},
+{id:371,diff:'Medium',q:'Theo thiết kế, tổ máy vận hành ở chế độ thực (TTC) thì lượng nước bổ xung cho bình ngưng là?',opts:['0%','1,5%','2%','3%'],ans:4},
+{id:372,diff:'Medium',q:'Theo thiết kế, tổ máy vận hành ở chế độ mở lớn tất cả các van điều chỉnh hơi vào tuabin (VWO) thì lượng nước bổ xung cho bình ngưng là?',opts:['0%','1,5%','2%','3%'],ans:4},
+{id:373,diff:'Hard',q:'Theo qui định tài liệu hướng dẫn vận hành và bảo dưỡng (O&M), số lần tuabin khởi động lạnh trong 1 năm là?',opts:['1 lần','2 lần','3 lần','5 lần'],ans:2},
+{id:374,diff:'Hard',q:'Theo qui định tài liệu hướng dẫn vận hành và bảo dưỡng (O&M), số lần tuabin khởi động ấm trong 1 năm là?',opts:['2 lần','4 lần','8 lần','10 lần'],ans:4},
+{id:375,diff:'Hard',q:'Theo qui định tài liệu hướng dẫn vận hành và bảo dưỡng (O&M), số lần tuabin khởi động nóng trong 1 năm là?',opts:['10 lần','20 lần','40 lần','60 lần'],ans:4},
+{id:376,diff:'Hard',q:'Theo qui định tài liệu hướng dẫn vận hành và bảo dưỡng (O&M), số lần tuabin khởi động cực nóng trong 1 năm là?',opts:['2 lần','5 lần','10 lần','20 lần'],ans:1},
+{id:377,diff:'Easy',q:'Van điều chỉnh phun giảm ôn hơi thoát tự động mở khi nhiệt độ hơi thoát tuabin tăng đến?',opts:['65°C','79°C','89°C','98°C'],ans:2},
+{id:378,diff:'Hard',q:'Gối 1~3 của tuabin là loại gì?',opts:['Gối tự lựa (DTP)','Dạng Elip','Gối chặn','Cả a và b'],ans:1},
+{id:379,diff:'Hard',q:'Gối 1~6 của tuabin là loại gì?',opts:['Gối tự lựa (DTP)','Dạng Elip','Gối chặn','Cả a và b'],ans:2},
+{id:380,diff:'Hard',q:'Số lượng van hơi chính của 01 tuabin (van MSV, CV, RSV, IV, BVV) được điều chỉnh bằng van Servo là?',opts:['5','6','7','8'],ans:3},
+{id:381,diff:'Easy',q:'Giá trị bảo vệ Trip tuabin do áp lực dầu bôi trơn thấp?',opts:['1,12 bar','1,21 bar','1,31 bar','1,46 bar'],ans:2},
+{id:382,diff:'Easy',q:'Giá trị bảo vệ Trip tuabin do mức bể dầu bôi trơn thấp?',opts:['≤ 406 mm','≤ 456 mm','≤ 506 mm','≤ 476 mm'],ans:1},
+{id:383,diff:'Easy',q:'Giá trị bảo vệ Trip tuabin do áp lực dầu thủy lực thấp?',opts:['110 bar','121 bar','131 bar','151 bar'],ans:1},
+{id:384,diff:'Easy',q:'Giá trị bảo vệ Trip tuabin do mức bể dầu thủy lực thấp?',opts:['≤ 252 mm','≤ 254 mm','≤ 282 mm','≤ 296 mm'],ans:3},
+{id:385,diff:'Easy',q:'Giá trị bảo vệ Trip tuabin do nhiệt độ hơi thoát tuabin HP cao (sau 15 phút)?',opts:['482,2°C','510°C','520°C','565°C'],ans:1},
+{id:386,diff:'Easy',q:'Giá trị bảo vệ Trip tuabin do nhiệt độ hơi thoát tuabin HP cao (trip luôn)?',opts:['482,2°C','510°C','520°C','565°C'],ans:2},
+{id:387,diff:'Easy',q:'Giá trị bảo vệ Trip tuabin do nhiệt độ hơi thoát tuabin hạ áp cao?',opts:['107,2°C','129°C','102,7°C','79°C'],ans:1},
+{id:388,diff:'Easy',q:'Giá trị bảo vệ Trip tuabin do nhiệt độ hơi chính cao?',opts:['482,2°C','510°C','520°C','565°C'],ans:4},
+{id:389,diff:'Easy',q:'Giá trị bảo vệ Trip tuabin do nhiệt độ hơi tái nóng cao?',opts:['482,2°C','510°C','520°C','565°C'],ans:4},
+{id:390,diff:'Easy',q:'Giá trị bảo vệ Trip tuabin do mất chân không bình ngưng khi tốc độ tuabin ≥ 300 vòng/phút?',opts:['0,129 bar','0,167 bar','0,229 bar','0,292 bar'],ans:3},
+{id:391,diff:'Easy',q:'Giá trị bảo vệ Trip tuabin do độ di trục tuabin vượt quá giá trị cho phép là?',opts:['≥ 0,89 mm; ≤ -0,89 mm','≥ 0,831 mm; ≤ -0,831 mm','≥ 15,52 mm; ≤ -8,31 mm','≤ -14,12 mm; ≥ 46,3 mm'],ans:1},
+{id:392,diff:'Easy',q:'Giá trị bảo vệ Trip tuabin do độ chênh giãn nở tuabin vượt quá giá trị cho phép là?',opts:['≥ 0,89 mm; ≤ -0,89 mm','≥ 0,831 mm; ≤ -0,831 mm','≥ 15,52 mm; ≤ -8,31 mm','≤ -14,12 mm; ≥ 46,3 mm'],ans:3},
+{id:393,diff:'Easy',q:'Giá trị bảo vệ Trip tuabin do độ chênh giãn nở rotor vượt quá giá trị cho phép là?',opts:['≥ 0,89 mm; ≤ -0,89 mm','≥ 0,831 mm; ≤ -0,831 mm','≥ 15,52 mm; ≤ -8,31 mm','≤ -14,12 mm; ≥ 46,3 mm'],ans:4},
+{id:394,diff:'Easy',q:'Giá trị bảo vệ Trip tuabin do độ rung tuabin vượt quá giá trị cho phép là?',opts:['≥ 161,2 µm','≥ 254 µm','≥ 229 µm','≥ 329 µm'],ans:3},
+{id:395,diff:'Easy',q:'Giá trị bảo vệ Trip tuabin do vượt tốc tuabin mức 1?',opts:['3100 vòng/phút','3300 vòng/phút','3315 vòng/phút','3350 vòng/phút'],ans:2},
+{id:396,diff:'Easy',q:'Giá trị bảo vệ Trip tuabin do vượt tốc tuabin mức 2?',opts:['3100 vòng/phút','3300 vòng/phút','3315 vòng/phút','3350 vòng/phút'],ans:3},
+{id:397,diff:'Medium',mmc:true,mmcAns:[2,3],q:'Giá trị bảo vệ Trip tuabin do vượt tốc tuabin? (chọn tất cả đáp án đúng)',opts:['3100 vòng/phút','3300 vòng/phút','3315 vòng/phút','3350 vòng/phút']},
+{id:398,diff:'Easy',q:'Giá trị bảo vệ Trip tuabin do nhiệt độ gối chặn tăng cao?',opts:['105°C','121°C','127°C','99°C'],ans:1},
+{id:399,diff:'Easy',q:'Giá trị bảo vệ Trip tuabin do nhiệt độ gối đỡ 1~3 tăng cao?',opts:['105°C','121°C','127°C','99°C'],ans:3},
+{id:400,diff:'Easy',q:'Giá trị bảo vệ Trip tuabin do nhiệt độ gối đỡ 4~6 tăng cao?',opts:['105°C','121°C','127°C','99°C'],ans:2},
+{id:401,diff:'Easy',q:'Giá trị bảo vệ Trip tuabin do nhiệt độ kim loại tầng cánh cuối tuabin hạ áp tăng cao?',opts:['107,2°C','254°C','260°C','482,2°C'],ans:3},
+{id:402,diff:'Medium',q:'Giá trị bảo vệ Trip tuabin do chênh lệch giữa các điểm đo tốc độ tuabin lớn?',opts:['2%','2,5%','3%','5%'],ans:4},
+{id:403,diff:'Hard',mmc:true,mmcAns:[1,2],q:'Bảo vệ nhà máy tác động khi? (chọn tất cả đáp án đúng)',opts:['Không có bơm tuần hoàn nào làm việc.','Không có bơm cấp nào làm việc.','Không có bơm ngưng nào làm việc.','Cả 1, 2, 3.']},
+{id:404,diff:'Hard',q:'Bảo vệ nhà máy tác động khi?',opts:['Không có bơm tuần hoàn nào làm việc.','Không có bơm cấp nào làm việc.','Không có bơm làm mát phụ nào làm việc.','Cả 1, 2, 3.'],ans:4},
+{id:405,diff:'Hard',q:'Bảo vệ nhà máy tác động khi?',opts:['Không có bơm tuần hoàn nào làm việc.','Không có bơm cấp nào làm việc.','Không có bơm làm mát kín nào làm việc.','Cả 1, 2, 3.'],ans:4},
+{id:406,diff:'Hard',mmc:true,mmcAns:[1,3],q:'Bảo vệ nhà máy tác động khi? (chọn tất cả đáp án đúng)',opts:['Áp lực khí nén thấp < 4 bar.','Không có bơm cấp nào làm việc.','Không có bơm ngưng nào làm việc.','Cả 1, 2, 3.']},
+{id:407,diff:'Hard',mmc:true,mmcAns:[1,2],q:'Bảo vệ nhà máy tác động khi? (chọn tất cả đáp án đúng)',opts:['Không có bơm nước làm mát kín nào làm việc.','Không có bơm nước làm mát phụ nào làm việc.','Không có bơm ngưng nào làm việc.','Áp lực khí nén thấp < 6 bar.']},
+{id:408,diff:'Hard',mmc:true,mmcAns:[1,2,4],q:'Bảo vệ nhà máy tác động khi? (chọn tất cả đáp án đúng)',opts:['Áp lực khí nén thấp < 4 bar.','Không có bơm cấp nào làm việc.','Không có bơm ngưng nào làm việc.','Không có bơm nước làm mát phụ nào làm việc.']},
+{id:409,diff:'Medium',q:'Liên động tự động mở van nước phun giảm ôn hơi thoát Tuabin LP khi nhiệt độ hơi thoát Tuabin LP tăng cao đến?',opts:['> 39°C','> 57,2°C','> 69°C','> 79°C'],ans:4},
+{id:410,diff:'Medium',q:'Liên động tự động đóng van nước phun giảm ôn hơi thoát Tuabin LP khi nhiệt độ hơi thoát Tuabin LP giảm xuống?',opts:['< 39°C','< 57,2°C','< 69°C','< 79°C'],ans:1},
+{id:411,diff:'Medium',q:'Liên động tự động đóng van bypass hạ áp khi nhiệt độ tăng?',opts:['107,2°C','250°C','360°C','482,2°C'],ans:2},
+{id:412,diff:'Medium',q:'Liên động tự động đóng van bypass cao áp khi nhiệt độ tăng?',opts:['107,2°C','250°C','360°C','482,2°C'],ans:3},
+{id:413,diff:'Medium',q:'Tải tổ máy > 315 MW mà Trip 1 bơm tuần hoàn thì tải tổ máy runback về mức?',opts:['40%RO','50%RO','60%RO','75%RO'],ans:1},
+{id:414,diff:'Medium',q:'Tải tổ máy > 315 MW mà chỉ có 1 bơm ngưng làm việc thì tải tổ máy runback về mức?',opts:['40%RO','50%RO','60%RO','75%RO'],ans:3},
+{id:415,diff:'Medium',q:'Tải tổ máy > 315 MW mà chỉ có 1 bơm cấp làm việc, trip 1 lò có lưu lượng hơi chính thấp hơn thì tải lò còn lại runback về mức?',opts:['60%RO lò còn lại','75%RO lò còn lại','80%RO lò còn lại','85%RO lò còn lại'],ans:4},
+{id:416,diff:'Hard',mmc:true,mmcAns:[1,2],q:'Tổ máy sẽ tự động giảm tải theo lò nếu lò runback? (chọn tất cả đáp án đúng)',opts:['Quạt khói.','Quạt gió sơ, gió thứ.','Quạt Loopseal.','Quạt Tripper.']},
+{id:417,diff:'Easy',q:'Khởi động tuabin từ trạng thái lạnh khi tuabin đã dừng thời gian bao lâu?',opts:['Dưới 10 tiếng','Từ 10 tiếng đến 72 tiếng','Trên 72 tiếng','Trên 10 ngày'],ans:3},
+{id:418,diff:'Easy',q:'Khởi động tuabin từ trạng thái ấm khi tuabin đã dừng thời gian bao lâu?',opts:['Dưới 10 tiếng','Từ 10 tiếng đến 72 tiếng','Trên 72 tiếng','Trên 10 ngày'],ans:2},
+{id:419,diff:'Easy',q:'Khởi động tuabin từ trạng thái nóng khi tuabin đã dừng thời gian bao lâu?',opts:['Dưới 10 tiếng','Từ 10 tiếng đến 72 tiếng','Trên 72 tiếng','Trên 10 ngày'],ans:1},
+{id:420,diff:'Medium',q:'Trình tự khởi động hệ thống phụ trước khi khởi động tuabin là?',opts:['Tuần hoàn → làm mát phụ → làm mát kín → máy nén khí → dầu bôi trơn → dầu chèn → nước làm mát stator → dầu EH → hơi tự dùng → nước ngưng → nước cấp → hơi chèn.','Tuần hoàn → máy nén khí → làm mát phụ → làm mát kín → dầu bôi trơn → dầu chèn → nước làm mát stator → dầu EH → hơi tự dùng → hơi chèn → nước ngưng → nước cấp.','Tuần hoàn → làm mát phụ → làm mát kín → máy nén khí → dầu bôi trơn → dầu chèn → nước làm mát stator → dầu EH → hơi tự dùng → nước cấp → nước ngưng → hơi chèn.','Tuần hoàn → làm mát phụ → làm mát kín → máy nén khí → dầu bôi trơn → dầu chèn → nước làm mát stator → dầu EH → hơi chèn → hơi tự dùng → nước ngưng → nước cấp.'],ans:1},
+{id:421,diff:'Medium',q:'Quá trình tạo chân không bình ngưng được coi là đạt khi chân không?',opts:['≤ 0,0711 bar','≤ 0,084 bar','≤ 0,1 bar','≤ 0,12 bar'],ans:3},
+{id:422,diff:'Medium',q:'Hoàn thành đưa hệ thống hơi chèn vào làm việc khi đảm bảo thông số?',opts:['Áp lực hơi chèn khoảng 0,21 bar ~ 0,34 bar, nhiệt độ hơi chèn 150°C ~200°C.','Áp lực hơi chèn khoảng 0,21 bar ~ 0,34 bar, nhiệt độ hơi chèn 250°C ~300°C.','Áp lực hơi chèn khoảng 0,12 bar ~ 0,2 bar, nhiệt độ hơi chèn 150°C ~200°C.','Áp lực hơi chèn khoảng 0,35 bar ~ 0,5 bar, nhiệt độ hơi chèn 100°C ~150°C.'],ans:1},
+{id:423,diff:'Medium',q:'Thực hiện sấy rotor tuabin bằng việc cấp hơi qua van nào?',opts:['HSPV','BVV','HSBV','BDV'],ans:1},
+{id:424,diff:'Hard',q:'Kết thúc quá trình sấy Rotor tuabin thì trạng thái các van xả ở chế độ nào?',opts:['Van xả nhóm A - Auto, nhóm B, C - manual','Van xả nhóm A, B - Auto, nhóm C - manual','Van xả nhóm A, B, C manual','Van xả nhóm A, B, C Auto'],ans:4},
+{id:425,diff:'Hard',q:'Quá trình sấy Rotor tuabin phải đảm bảo tốc độ tăng nhiệt độ?',opts:['≤ 50°C/h','≤ 70°C/h','≤ 85°C/h','≤ 111°C/h'],ans:1},
+{id:426,diff:'Hard',q:'Quá trình sấy Rotor tuabin hoàn thành khi nhiệt độ hiển thị tại HP - Rotor bore Temp. khoảng?',opts:['105°C','150°C','185°C','250°C'],ans:3},
+{id:427,diff:'Hard',q:'Vận hành bình thường, quá trình sấy rotor tuabin qua van HSPV thì van BVV sẽ?',opts:['Tự động đóng hoàn toàn','Tự động mở hoàn toàn','Vận hành đóng tại chỗ từ từ','Vận hành mở tại chỗ từ từ'],ans:1},
+{id:428,diff:'Hard',q:'Kết thúc quá trình sấy ngực van là khi chênh nhiệt độ bên trong và bên ngoài van điều chỉnh là?',opts:['≤ 65°C','≤ 42°C','≤ 50°C','≤ 79°C'],ans:2},
+{id:429,diff:'Easy',q:'Quá trình sấy Rotor tuabin sẽ tăng dần độ mở van AOV-HSPV lớn nhất khoảng?',opts:['40%','50%','75%','100%'],ans:3},
+{id:430,diff:'Easy',q:'Quá trình sấy ngực van CV sẽ tăng dần độ mở van MSV2 và giữ độ mở ở?',opts:['15%','20%','30%','50%'],ans:3},
+{id:431,diff:'Medium',q:'Chuyển nguồn hơi tự dùng sang hơi chính khi?',opts:['Sau khi hoàn thành sấy ngực van','Áp lực hơi chính p > 15 bar, nhiệt độ > 350°C','Áp lực hơi chính p > 80 bar, nhiệt độ > 400°C','Áp lực hơi chính p > 30 bar, nhiệt độ > 350°C'],ans:3},
+{id:432,diff:'Medium',mmc:true,mmcAns:[1,2,3],q:'Các điều kiện trước khi xung động tuabin tại màn hình điều khiển START PERMISSIVES (chọn tất cả đáp án đúng)',opts:['Áp lực hơi chính khoảng 80 bar.','Nhiệt độ hơi chính 296 < T < 400 thay đổi theo nhiệt độ hơi chính.','Nhiệt độ hơi tái nóng 232°C < T < 400°C thay đổi theo nhiệt độ hơi tái.','Điểm đặt tốc độ tuabin > L79.']},
+{id:433,diff:'Medium',mmc:true,mmcAns:[1,3],q:'Các điều kiện trước khi xung động tuabin tại màn hình điều khiển START PERMISSIVES (chọn tất cả đáp án đúng)',opts:['Nhiệt độ ống góp hơi chèn 148,9°C < T < 398,9°C.','Nhiệt độ dầu bôi trơn khi vần trục < 26,7°C.','Không tín hiệu Trip do Chênh lệch giãn nở Tuabin.','Không tín hiệu Trip do Chênh lệch giãn nở tuabin (trùng C).']},
+{id:434,diff:'Medium',mmc:true,mmcAns:[1,2],q:'Các điều kiện trước khi xung động tuabin tại màn hình điều khiển START PERMISSIVES (chọn tất cả đáp án đúng)',opts:['Rô to đã được sấy nóng.','Độ lệch tâm rô to khi vần trục: Nor < 0,06 mm.','Tuabin đã được vần trục (>2 giờ).','Độ quá nhiệt hơi tái nhiệt đạt.']},
+{id:435,diff:'Medium',mmc:true,mmcAns:[1,2],q:'Các thông số chất lượng hơi chính, hơi tái cần được giám sát liên tục trong quá trình vận hành là? (chọn tất cả đáp án đúng)',opts:['Độ dẫn CC (µS/cm).','Hàm lượng Na (ppb).','SO4 (ppb).','Cl (ppb).']},
+{id:436,diff:'Medium',mmc:true,mmcAns:[1,2],q:'Các thông số chất lượng hơi chính, hơi tái cần được giám sát liên tục trong quá trình vận hành là? (chọn tất cả đáp án đúng)',opts:['Silica (ppb).','Hàm lượng Na (ppb).','SO4 (ppb).','Hàm lượng C.']},
+{id:437,diff:'Medium',q:'Quá trình khởi động, khi xung hơi tuabin phải đảm bảo độ dẫn CC hơi mới là?',opts:['< 1 µS/cm','< 0,55 µS/cm','< 0,45 µS/cm','< 0,3 µS/cm'],ans:3},
+{id:438,diff:'Medium',q:'Quá trình khởi động, khi xung hơi tuabin phải đảm bảo hàm lượng Na hơi mới là?',opts:['< 5 ppb','< 10 ppb','< 12 ppb','< 20 ppb'],ans:3},
+{id:439,diff:'Easy',q:'Khởi động trạng thái lạnh thì tốc độ tăng tốc tuabin là?',opts:['100 v/p','150 v/p','200 v/p','300 v/p'],ans:1},
+{id:440,diff:'Easy',q:'Khởi động trạng thái ấm thì tốc độ tăng tốc tuabin là?',opts:['100 v/p','150 v/p','200 v/p','300 v/p'],ans:2},
+{id:441,diff:'Easy',q:'Khởi động trạng thái nóng thì tốc độ tăng tốc tuabin là?',opts:['100 v/p','150 v/p','200 v/p','300 v/p'],ans:4},
+{id:442,diff:'Easy',q:'Khởi động trạng thái lạnh thì giữ sấy tuabin ở tốc độ 800 v/p trong thời gian bao lâu?',opts:['10 phút','30 phút','45 phút','5 phút'],ans:1},
+{id:443,diff:'Easy',q:'Khởi động trạng thái lạnh thì giữ sấy tuabin ở tốc độ 2500 v/p trong thời gian bao lâu?',opts:['10 phút','30 phút','45 phút','5 phút'],ans:2},
+{id:444,diff:'Easy',q:'Khởi động trạng thái lạnh thì giữ sấy tuabin ở tốc độ 3000 v/p trong thời gian bao lâu?',opts:['10 phút','30 phút','45 phút','5 phút'],ans:4},
+{id:445,diff:'Easy',q:'Khởi động trạng thái ấm thì giữ sấy tuabin ở tốc độ 800 v/p trong thời gian bao lâu?',opts:['5 phút','10 phút','15 phút','Tất cả đáp án đều sai'],ans:4},
+{id:446,diff:'Easy',q:'Khởi động trạng thái ấm thì giữ sấy tuabin ở tốc độ 2500 v/p trong thời gian bao lâu?',opts:['5 phút','10 phút','15 phút','30 phút'],ans:2},
+{id:447,diff:'Easy',q:'Khởi động trạng thái ấm thì giữ sấy tuabin ở tốc độ 3000 v/p trong thời gian bao lâu?',opts:['5 phút','10 phút','15 phút','30 phút'],ans:1},
+{id:448,diff:'Easy',q:'Khởi động trạng thái nóng thì giữ sấy tuabin ở tốc độ 800 v/p trong thời gian bao lâu?',opts:['5 phút','10 phút','15 phút','Tất cả đáp án đều sai'],ans:4},
+{id:449,diff:'Easy',q:'Khởi động trạng thái nóng thì giữ sấy tuabin ở tốc độ 2500 v/p trong thời gian bao lâu?',opts:['5 phút','10 phút','15 phút','30 phút'],ans:2},
+{id:450,diff:'Easy',q:'Khởi động trạng thái nóng thì giữ sấy tuabin ở tốc độ 3000 v/p trong thời gian bao lâu?',opts:['5 phút','10 phút','15 phút','30 phút'],ans:1},
+{id:451,diff:'Easy',q:'Quá trình khởi động tuabin, khi tốc độ đạt 3000 v/p thì đảm bảo nhiệt độ dầu bôi trơn?',opts:['< 32°C','< 43°C','43°C ~ 49°C','> 49°C'],ans:3},
+{id:452,diff:'Medium',q:'Quá trình khởi động tuabin, khi tốc độ đạt 2250 v/p thì?',opts:['Van RFV tự động mở để cho hơi đi qua vào làm mát tuabin HP','Chuyển chế độ dòng thuận','Giữ sấy 5 phút','Tất cả đáp án đều đúng'],ans:1},
+{id:453,diff:'Medium',q:'Quá trình khởi động tuabin, tuabin chuyển sang chế độ dòng thuận khi?',opts:['Độ mở IV > 50%','Lưu lượng qua IV > 50%','Độ mở CV > 50%','Lưu lượng qua CV > 50%'],ans:2},
+{id:454,diff:'Medium',q:'Quá trình khởi động tuabin, các van xả nhóm A tự động đóng khi?',opts:['Kết thúc quá trình chuyển sang chế độ điều khiển phần cung','Tải đạt 15%','Kết thúc quá trình chuyển đổi dòng thuận','Tải đạt 25%'],ans:3},
+{id:455,diff:'Medium',q:'Quá trình khởi động tuabin, các van xả nhóm B tự động đóng khi?',opts:['Kết thúc quá trình chuyển sang chế độ điều khiển phần cung','Tải đạt 15%','Kết thúc quá trình chuyển đổi dòng thuận','Tải đạt 25%'],ans:2},
+{id:456,diff:'Easy',q:'Đưa các bình gia nhiệt hạ áp vào làm việc tốt nhất khi?',opts:['Tốc độ tuabin đạt 2500 vòng/phút','Tải đạt 15%','Kết thúc quá trình chuyển đổi dòng thuận','Tải đạt 25%'],ans:1},
+{id:457,diff:'Easy',q:'Đưa các bình gia nhiệt cao áp vào làm việc tốt nhất khi?',opts:['Kết thúc quá trình chuyển sang chế độ điều khiển phần cung','Tải đạt 15%','Kết thúc quá trình chuyển đổi dòng thuận','Tải đạt 25%'],ans:4},
+{id:458,diff:'Easy',q:'Quá trình dừng bình thường thì duy trì bộ vần trục làm việc tới khi nhiệt độ kim loại vỏ Tuabin giảm xuống bao nhiêu?',opts:['150°C','200°C','250°C','300°C'],ans:1},
+{id:459,diff:'Hard',q:'Trường hợp dừng vần trục để tháo vỏ tuabin thì phải đảm bảo nhiệt độ kim loại tại đầu vào tuabin cao/trung áp bao nhiêu?',opts:['150°C','200°C','250°C','300°C'],ans:1},
+{id:460,diff:'Hard',q:'Trường hợp sự cố cần phải sửa chữa liên quan đến tuabin, máy phát thì có thể dừng vần trục khi nhiệt độ kim loại tại đầu vào tuabin cao/trung áp giảm đến?',opts:['150°C','200°C','250°C','300°C'],ans:3},
+{id:461,diff:'Hard',q:'Trường hợp sự cố cần phải sửa chữa liên quan đến tuabin khi nhiệt độ kim loại tại đầu vào tuabin cao/trung áp > 250°C thì có thể dừng vần trục trong thời gian bao lâu?',opts:['5 phút','10 phút','15 phút','Không được dừng'],ans:2},
+{id:462,diff:'Hard',q:'Sau khi dừng vần trục để sửa chữa tuabin/máy phát thì có thể dừng dầu bôi trơn khi nhiệt độ kim loại tại đầu vào tuabin cao/trung áp giảm đến?',opts:['150°C','200°C','250°C','300°C'],ans:2},
+{id:463,diff:'Hard',q:'Vận hành bình thường, đảm bảo nhiệt độ hơi chính không được lớn hơn nhiệt độ định mức?',opts:['8,3°C','13,9°C','27,8°C','50°C'],ans:1},
+{id:464,diff:'Hard',q:'Vận hành bình thường, cho phép vận hành khi nhiệt độ hơi chính vượt quá đến 13,9°C so với định mức trong bao lâu?',opts:['< 300 giờ/1 năm','< 350 giờ/1 năm','< 380 giờ/1 năm','< 400 giờ/1 năm'],ans:4},
+{id:465,diff:'Hard',q:'Vận hành bình thường, cho phép duy trì vận hành khi nhiệt độ hơi chính vượt quá đến 27,8°C so với định mức trong bao lâu?',opts:['Sau 5 phút','Sau 10 phút','Sau 15 phút','Sau 20 phút'],ans:3},
+{id:466,diff:'Hard',q:'Vận hành bình thường, cho phép vận hành khi nhiệt độ hơi chính vượt quá đến 27,8°C so với định mức trong bao lâu?',opts:['< 80 giờ/1 năm','< 90 giờ/1 năm','< 100 giờ/1 năm','< 120 giờ/1 năm'],ans:1},
+{id:467,diff:'Hard',q:'Vận hành bình thường, cho phép vận hành chênh lệch nhiệt độ giữa các đường hơi vào cùng 1 loại van trong các van chính tuabin bao nhiêu?',opts:['25°C','41,7°C','27,8°C','50°C'],ans:2},
+{id:468,diff:'Hard',q:'Vận hành bình thường, cho phép vận hành chênh lệch nhiệt độ giữa các đường hơi vào cùng 1 loại van trong các van chính tuabin 41,7°C trong bao nhiêu?',opts:['< 15 phút và lần xuất hiện trước đó cách nhau ít nhất 4 tiếng.','< 10 phút và lần xuất hiện trước đó cách nhau ít nhất 2 tiếng.','< 20 phút và lần xuất hiện trước đó cách nhau ít nhất 4 tiếng.','< 15 phút và lần xuất hiện trước đó cách nhau ít nhất 2 tiếng.'],ans:1},
+{id:469,diff:'Hard',q:'Vận hành bình thường, đảm bảo áp lực hơi thoát tuabin cao áp không được vượt quá áp lực hơi thoát?',opts:['< 15 phút và lần xuất hiện trước đó cách nhau ít nhất 4 tiếng.','< 10 phút và lần xuất hiện trước đó cách nhau ít nhất 2 tiếng.','< 20 phút và lần xuất hiện trước đó cách nhau ít nhất 4 tiếng.','< 15 phút và lần xuất hiện trước đó cách nhau ít nhất 2 tiếng.'],ans:1},
+{id:470,diff:'Hard',q:'Trong quá trình vận hành bình thường, áp lực hơi thoát tuabin cao áp không được vượt quá áp lực hơi thoát tuabin cao áp ở 100% định mức (RO) (khi van điều chỉnh mở) bao nhiêu?',opts:['10%','15%','20%','25%'],ans:4},
+{id:471,diff:'Easy',q:'Quá trình vận hành bình thường phải đảm bảo độ dẫn CC hơi chính, hơi tái là?',opts:['≤ 1 µS/cm','≤ 0,55 µS/cm','≤ 0,45 µS/cm','≤ 0,3 µS/cm'],ans:4},
+{id:472,diff:'Easy',q:'Quá trình vận hành bình thường phải đảm bảo hàm lượng Na hơi chính, hơi tái là?',opts:['≤ 5 ppb','≤ 10 ppb','≤ 12 ppb','≤ 20 ppb'],ans:1},
+{id:473,diff:'Easy',q:'Quá trình vận hành bình thường phải đảm bảo hàm lượng Na hơi chính, hơi tái là?',opts:['≤ 5 ppb','≤ 10 ppb','≤ 12 ppb','≤ 20 ppb'],ans:1},
+{id:474,diff:'Easy',q:'Quá trình vận hành bình thường phải đảm bảo hàm lượng Silica hơi chính, hơi tái là?',opts:['≤ 10 ppb','≤ 20 ppb','≤ 30 ppb','≤ 40 ppb'],ans:1},
+{id:475,diff:'Easy',q:'Quá trình vận hành bình thường phải đảm bảo hàm lượng SO4 hơi chính, hơi tái là?',opts:['≤ 3 ppb','≤ 6 ppb','≤ 9 ppb','≤ 12 ppb'],ans:1},
+{id:476,diff:'Easy',q:'Quá trình vận hành bình thường phải đảm bảo hàm lượng Cl hơi chính, hơi tái là?',opts:['≤ 3 ppb','≤ 6 ppb','≤ 9 ppb','≤ 12 ppb'],ans:1},
+{id:477,diff:'Medium',q:'Trong quá trình vận hành bình thường, cho phép vận hành chất lượng hơi chính, hơi mới ở Mức 1 trong thời gian bao lâu?',opts:['Cho phép vận hành 720 giờ/năm, yêu cầu đưa về giá trị "Mức bình thường" trong vòng 2 tuần.','Cho phép vận hành 672 giờ/năm, yêu cầu đưa về giá trị "Mức bình thường" trong vòng 1 tuần.','Cho phép vận hành 96 giờ/năm, yêu cầu đưa về giá trị "Mức bình thường" trong vòng 24 giờ.','Cho phép vận hành 16 giờ/năm, phải tiến hành dừng tổ máy nếu vận hành quá 4 giờ liên tục.'],ans:2},
+{id:478,diff:'Medium',q:'Vận hành bình thường thì lượng Oxy hòa tan trong nước cấp trước bình khử khí là?',opts:['≤ 4 ppb O2','≤ 5 ppb O2','≤ 6 ppb O2','≤ 7 ppb O2'],ans:4},
+{id:479,diff:'Medium',q:'Vận hành bình thường thì lượng Oxy hòa tan trong nước cấp sau bình khử khí là?',opts:['≤ 4 ppb O2','≤ 5 ppb O2','≤ 6 ppb O2','≤ 7 ppb O2'],ans:2},
+{id:480,diff:'Easy',q:'Vận hành bình thường thì độ dẫn điện cation trong nước cấp yêu cầu?',opts:['≤ 0,3 µm/cm','≤ 0,45 µm/cm','≤ 0,55 µm/cm','≤ 1 µm/cm'],ans:1},
+{id:481,diff:'Easy',q:'Vận hành bình thường thì độ dẫn điện chung trong nước cấp yêu cầu?',opts:['≤ 0,3 µm/cm','≤ 1 µm/cm','≤ 10 µm/cm','< 20 µm/cm'],ans:4},
+{id:482,diff:'Easy',q:'Vận hành bình thường thì độ dẫn điện cation trong nước ngưng yêu cầu?',opts:['≤ 0,3 µm/cm','≤ 0,45 µm/cm','≤ 0,55 µm/cm','≤ 1 µm/cm'],ans:1},
+{id:483,diff:'Easy',q:'Vận hành bình thường thì độ dẫn điện chung trong nước ngưng yêu cầu?',opts:['≤ 0,3 µm/cm','≤ 1 µm/cm','≤ 10 µm/cm','< 20 µm/cm'],ans:4},
+{id:484,diff:'Medium',q:'Trong quá trình vận hành bình thường, cho phép vận hành chất lượng hơi chính, hơi mới ở Mức 2 trong thời gian bao lâu?',opts:['Cho phép vận hành 720 giờ/năm, yêu cầu đưa về giá trị "Mức bình thường" trong vòng 2 tuần.','Cho phép vận hành 672 giờ/năm, yêu cầu đưa về giá trị "Mức bình thường" trong vòng 1 tuần.','Cho phép vận hành 96 giờ/năm, yêu cầu đưa về giá trị "Mức bình thường" trong vòng 24 giờ.','Cho phép vận hành 16 giờ/năm, phải tiến hành dừng tổ máy nếu vận hành quá 4 giờ liên tục.'],ans:3},
+{id:485,diff:'Medium',q:'Trong quá trình vận hành bình thường, cho phép vận hành chất lượng hơi chính, hơi mới ở Mức 3 trong thời gian bao lâu?',opts:['Cho phép vận hành 720 giờ/năm, yêu cầu đưa về giá trị "Mức bình thường" trong vòng 2 tuần.','Cho phép vận hành 672 giờ/năm, yêu cầu đưa về giá trị "Mức bình thường" trong vòng 1 tuần.','Cho phép vận hành 96 giờ/năm, yêu cầu đưa về giá trị "Mức bình thường" trong vòng 24 giờ.','Cho phép vận hành 16 giờ/năm, phải tiến hành dừng tổ máy nếu vận hành quá 4 giờ liên tục.'],ans:4},
+{id:486,diff:'Medium',q:'Trường hợp nào ngừng tuabin không có phá hoại chân không?',opts:['Khi tốc độ tuabin > 3300 v/ph nhưng bảo vệ vượt tốc không tác động.','Khi hư hỏng tất cả tín hiệu đo lường và bảo vệ tuabin.','Bảo vệ khối không tác động ở các giá trị tác động.','Hệ thống DEH làm việc không bình thường dẫn đến mất khả năng điều khiển tải và tốc độ.'],ans:4},
+{id:487,diff:'Medium',q:'Trường hợp nào ngừng tuabin có phá hoại chân không?',opts:['Hư hỏng các đầu rò di trục tuabin.','Hư hỏng các sensor đo tốc độ tuabin.','Hư hỏng hệ thống hydro máy phát.','Xuất hiện khói, lửa từ thân tuabin, máy phát.'],ans:4},
+{id:488,diff:'Medium',q:'Trường hợp nào ngừng tuabin có phá hoại chân không?',opts:['Khi nhiệt độ hơi thoát khỏi tuabin hạ áp cao ≥ 107,2°C.','Khi nhiệt độ hơi thoát tuabin cao áp cao ≥ 482,2°C mà kéo dài liên tục quá 15 phút hay khi nhiệt độ hơi thoát tuabin cao áp cao > 510°C.','Khi áp suất dầu EH ≤ 110 bar.','Nhiệt độ các gối tuabin > 105°C.'],ans:4},
+{id:489,diff:'Medium',q:'Trường hợp nào ngừng tuabin không có phá hoại chân không?',opts:['Khi tốc độ quay rô to TB tăng quá mức cho phép ≥ 110% (và được bảo vệ vượt tốc tác động).','Độ di trục tuabin ≥ +0,89 mm; ≤ -0,89 mm.','Độ rung gối tuabin cao > 0,229 mm.','Khi tốc độ quay rô to TB tăng > 110,5% tốc độ định mức nhưng bộ bảo vệ vượt tốc không tác động.'],ans:1},
+{id:490,diff:'Medium',mmc:true,mmcAns:[2,3,4],q:'Nguyên nhân sự cố mất chân không bình ngưng? (chọn tất cả đáp án đúng)',opts:['Áp lực hơi chèn cao.','Lưu lượng nước tuần hoàn giảm.','Ống trao đổi nhiệt bình ngưng bẩn.','Lọt khí vào bình ngưng.']},
+{id:491,diff:'Easy',mmc:true,mmcAns:[1,2,3],q:'Nguyên nhân sự cố độ di trục của tuabin cao? (chọn tất cả đáp án đúng)',opts:['Các tầng cánh bị đóng cáu hoặc bị gẫy.','Gối chặn bị mòn.','Tải khối, thông số của hơi có sự thay đổi đột ngột.','Sự thay đổi của áp lực dầu bôi trơn, nhiệt độ dầu bôi trơn và nhiệt độ dầu chèn.']},
+{id:492,diff:'Easy',mmc:true,mmcAns:[2,3,4],q:'Nguyên nhân sự cố độ rung của tuabin cao? (chọn tất cả đáp án đúng)',opts:['Gối chặn bị mòn.','Xuất hiện nước trong Tuabin.','Rô to bị cong.','Sự thay đổi của áp lực dầu bôi trơn, nhiệt độ dầu bôi trơn và nhiệt độ dầu chèn.']},
+{id:493,diff:'Easy',mmc:true,mmcAns:[1,2,3],q:'Nguyên nhân sự cố vượt tốc tuabin? (chọn tất cả đáp án đúng)',opts:['Lỗi hệ thống bảo vệ vượt tốc.','Van đường cấp hơi vào tuabin không thể đóng bình thường.','Tải của khối giảm đột ngột về 0, hệ thống điều chỉnh tốc độ vòng quay của tuabin không thể điều chỉnh được xuống dưới 3000 v/p.','Mất chân không bình ngưng.']},
+{id:494,diff:'Easy',mmc:true,mmcAns:[1,2,3],q:'Nguyên nhân sự cố thủy kích tuabin? (chọn tất cả đáp án đúng)',opts:['Tốc độ bốc hơi của lò hơi quá cao, hoặc tốc độ bốc hơi không đồng đều dẫn đến nước bay theo hơi.','Trong quá trình khởi động Tuabin, nguồn hơi của hệ thống hơi chèn không được sấy phù hợp, hoặc chưa xả hết nước, dẫn nước lẫn vào trong hơi chèn.','Vỡ các ống bình gia nhiệt cao áp, hạ áp mà các thiết bị bảo vệ lỗi, van một chiều trên đường hơi trích không kín, nước sẽ quay lại Tua bin qua đường ống hơi trích.','Van đường cấp hơi vào tuabin không thể đóng bình thường.']},
+{id:495,diff:'Easy',mmc:true,mmcAns:[1,2,3],q:'Nguyên nhân sự cố nhiệt độ hơi quá nhiệt quá cao? (chọn tất cả đáp án đúng)',opts:['Áp lực hơi quá nhiệt tăng nhanh; hoặc nhiệt độ nước cấp bị giảm.','Vùng quá nhiệt nhiệt độ thấp của phần đuôi lò bị tắc hoặc bị rạn nứt; hoặc dễ cháy chính vì thế có thể gây cháy lại ở phần đuôi lò.','Hệ thống nước cấp và hệ thống nước phun giảm ôn hoặc các thiết bị tự động bị lỗi, chính vì điều đó làm lượng nước phun giảm ôn bị giảm so với bình thường.','Bục ống quá nhiệt.']},
+{id:496,diff:'Easy',mmc:true,mmcAns:[1,2,3],q:'Nguyên nhân sự cố hơi tái nhiệt quá cao? (chọn tất cả đáp án đúng)',opts:['Quá trình cháy của lò bị dao động lên phía trên của các cyclon và nước phun giảm ôn tái nhiệt không đủ.','Bộ tái nhiệt bị rò rỉ và bị nổ ống.','Hệ thống nước cấp và hệ thống nước phun giảm ôn hoặc các thiết bị tự động bị lỗi, chính vì điều đó làm lượng nước phun giảm ôn bị giảm so với bình thường.','Lưu lượng gió quá ít.']},
+{id:497,diff:'Easy',mmc:true,mmcAns:[1,2],q:'Nguyên nhân sự cố tải thay đổi đột ngột? (chọn tất cả đáp án đúng)',opts:['Hệ thống điều khiển Tuabin bị lỗi.','Sự thay đổi bất thường của tải lưới hoặc lò hơi vận hành không bình thường.','Chân không tăng.','Chất lượng hơi không đảm bảo.']}
+];
+
+const letters = ['A','B','C','D'];
+const container = document.getElementById('quizContainer');
+const submitBtn = document.getElementById('submitBtn');
+const resetBtn = document.getElementById('resetBtn');
+const scoreBox = document.getElementById('scoreBox');
+const scoreNumber = document.getElementById('scoreNumber');
+const scoreLabel = document.getElementById('scoreLabel');
+const answeredCount = document.getElementById('answeredCount');
+const statusText = document.getElementById('statusText');
+
+let submitted = false;
+const userAnswers = {};
+const lockedQuestions = new Set();
+
+document.getElementById('totalCount').textContent = questions.length;
+scoreNumber.textContent = '0 / ' + questions.length;
+
+/* ==================== RENDER ==================== */
+function renderQuiz() {
+  container.innerHTML = '';
+  questions.forEach((q, idx) => {
+    const card = document.createElement('div');
+    card.className = 'q-card';
+    card.id = 'q-' + q.id;
+    const isMulti = !!q.mmc;
+    let optionsHtml = '';
+    q.opts.forEach((opt, i) => {
+      const inputType = isMulti ? 'checkbox' : 'radio';
+      optionsHtml += `
+        <label class="option" data-qid="${q.id}" data-opt="${i+1}">
+          <input type="${inputType}" name="q${q.id}" value="${i+1}">
+          <span class="option-letter">${letters[i]}.</span>
+          <span class="option-text">${opt}</span>
+        </label>`;
+    });
+    const checkBtnHtml = isMulti
+      ? `<button class="check-btn" data-qid="${q.id}" disabled>Kiểm tra đáp án</button>`
+      : '';
+    card.innerHTML = `
+      <div class="q-header">
+        <span class="q-num ${isMulti ? 'multi' : ''}">Câu ${idx+1}${isMulti ? ' • chọn nhiều' : ''}</span>
+        <span class="q-diff diff-${q.diff}">${q.diff}</span>
+      </div>
+      <div class="q-text">${q.q}</div>
+      <div class="options">${optionsHtml}</div>
+      ${checkBtnHtml}
+      <div class="feedback" id="fb-${q.id}"></div>`;
+    container.appendChild(card);
+  });
+  attachHandlers();
+}
+
+/* ==================== HANDLERS ==================== */
+function attachHandlers() {
+  container.querySelectorAll('input[type="radio"]').forEach(input => {
+    input.addEventListener('change', e => {
+      const qid = parseInt(e.target.name.replace('q',''));
+      if (submitted || lockedQuestions.has(qid)) return;
+      userAnswers[qid] = parseInt(e.target.value);
+      lockAndReveal(qid);
+      updateProgress();
+    });
+  });
+  container.querySelectorAll('input[type="checkbox"]').forEach(input => {
+    input.addEventListener('change', e => {
+      const qid = parseInt(e.target.name.replace('q',''));
+      if (submitted || lockedQuestions.has(qid)) return;
+      if (!userAnswers[qid]) userAnswers[qid] = [];
+      const val = parseInt(e.target.value);
+      const arr = userAnswers[qid];
+      const idx = arr.indexOf(val);
+      if (idx >= 0) arr.splice(idx, 1); else arr.push(val);
+      const card = document.getElementById('q-' + qid);
+      e.target.closest('.option').classList.toggle('selected', arr.includes(val));
+      const btn = card.querySelector('.check-btn');
+      if (btn) btn.disabled = arr.length === 0;
+    });
+  });
+  container.querySelectorAll('.check-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const qid = parseInt(btn.dataset.qid);
+      if (submitted || lockedQuestions.has(qid)) return;
+      const arr = userAnswers[qid] || [];
+      if (arr.length === 0) return;
+      lockAndReveal(qid);
+      updateProgress();
+    });
+  });
+}
+
+/* ==================== CHECK MMC ==================== */
+function checkMmcAnswer(arr, q) {
+  if (!arr || arr.length !== q.mmcAns.length) return false;
+  const a = [...arr].sort((x,y) => x-y);
+  const b = [...q.mmcAns].sort((x,y) => x-y);
+  return a.every((v,i) => v === b[i]);
+}
+
+/* ==================== LOCK & REVEAL ==================== */
+function lockAndReveal(qid) {
+  const q = questions.find(x => x.id === qid);
+  const card = document.getElementById('q-' + qid);
+  const fb = document.getElementById('fb-' + qid);
+  lockedQuestions.add(qid);
+  card.querySelectorAll('input').forEach(inp => inp.disabled = true);
+  card.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+  const userAns = userAnswers[qid];
+  let isCorrect = false;
+
+  if (q.mmc) {
+    isCorrect = checkMmcAnswer(userAns, q);
+    card.querySelectorAll('.option').forEach(o => {
+      const v = parseInt(o.dataset.opt);
+      const isRight = q.mmcAns.includes(v);
+      const wasChosen = (userAns || []).includes(v);
+      if (isRight && wasChosen) o.classList.add('correct-answer');
+      else if (isRight && !wasChosen) o.classList.add('missed-answer');
+      else if (!isRight && wasChosen) o.classList.add('wrong-answer');
+    });
+    const btn = card.querySelector('.check-btn');
+    if (btn) btn.classList.add('hidden');
+  } else {
+    isCorrect = userAns === q.ans;
+    card.querySelectorAll('.option').forEach(o => {
+      const v = parseInt(o.dataset.opt);
+      if (v === q.ans) o.classList.add('correct-answer');
+      if (v === userAns && v !== q.ans) o.classList.add('wrong-answer');
+    });
+  }
+
+  if (isCorrect) {
+    card.classList.add('correct');
+    fb.className = 'feedback show ok';
+    if (q.mmc) fb.textContent = `✓ Chính xác! Đáp án đúng: ${q.mmcAns.map(a => letters[a-1]).join(', ')}.`;
+    else fb.textContent = `✓ Chính xác! Đáp án đúng là ${letters[q.ans-1]}.`;
+  } else {
+    if (q.mmc) {
+      card.classList.add('partial');
+      const chosen = (userAns || []).map(a => letters[a-1]).join(', ') || '(chưa chọn)';
+      const missing = q.mmcAns.filter(a => !(userAns || []).includes(a));
+      const extra = (userAns || []).filter(a => !q.mmcAns.includes(a));
+      let detail = `Đáp án đúng: ${q.mmcAns.map(a => letters[a-1]).join(', ')}. Bạn đã chọn: ${chosen}.`;
+      if (missing.length) detail += ` Thiếu: ${missing.map(a => letters[a-1]).join(', ')}.`;
+      if (extra.length) detail += ` Sai: ${extra.map(a => letters[a-1]).join(', ')}.`;
+      fb.className = 'feedback show partial';
+      fb.textContent = '✗ Chưa đúng. ' + detail;
+    } else {
+      card.classList.add('incorrect');
+      fb.className = 'feedback show no';
+      fb.textContent = `✗ Sai. Bạn chọn ${letters[userAns-1]}, đáp án đúng là ${letters[q.ans-1]}.`;
+    }
+  }
+}
+
+/* ==================== PROGRESS ==================== */
+function updateProgress() {
+  answeredCount.textContent = lockedQuestions.size;
+  if (!submitted) {
+    statusText.textContent = lockedQuestions.size === questions.length
+      ? '🎉 Đã hoàn thành tất cả câu hỏi!'
+      : `Còn ${questions.length - lockedQuestions.size} câu chưa làm`;
+  }
+}
+
+/* ==================== SUBMIT ==================== */
+function submitQuiz() {
+  if (submitted) return;
+  submitted = true;
+  let correctCount = 0;
+  questions.forEach(q => {
+    let isCorrect = false;
+    if (lockedQuestions.has(q.id)) {
+      if (q.mmc) isCorrect = checkMmcAnswer(userAnswers[q.id] || [], q);
+      else isCorrect = userAnswers[q.id] === q.ans;
+    }
+    if (isCorrect) correctCount++;
+  });
+  const pct = Math.round((correctCount / questions.length) * 100);
+  let grade = '';
+  if (pct >= 90) grade = 'Xuất sắc! 🎉';
+  else if (pct >= 75) grade = 'Tốt! 👍';
+  else if (pct >= 50) grade = 'Trung bình — cần ôn thêm.';
+  else grade = 'Cần ôn luyện thêm.';
+  scoreBox.classList.add('show');
+  scoreNumber.textContent = `${correctCount} / ${questions.length}`;
+  scoreLabel.textContent = `Đúng ${pct}% — ${grade} (đã làm ${lockedQuestions.size}/${questions.length} câu)`;
+  statusText.textContent = 'Đã tổng kết';
+  scoreBox.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+/* ==================== RESET ==================== */
+function resetQuiz() {
+  if (!confirm('Bạn có chắc muốn làm lại từ đầu? Tất cả câu trả lời sẽ bị xóa.')) return;
+  submitted = false;
+  Object.keys(userAnswers).forEach(k => delete userAnswers[k]);
+  lockedQuestions.clear();
+  scoreBox.classList.remove('show');
+  renderQuiz();
+  answeredCount.textContent = '0';
+  statusText.textContent = 'Đang làm bài...';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+submitBtn.addEventListener('click', submitQuiz);
+resetBtn.addEventListener('click', resetQuiz);
+renderQuiz();
+</script>
+</body>
+</html>

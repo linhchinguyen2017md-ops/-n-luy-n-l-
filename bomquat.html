@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trắc nghiệm Sự cố chung bơm, quạt – Hệ thống phụ tuabin (44 câu)</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f4f8; margin: 0; padding: 20px; color: #1a202c; line-height: 1.6; }
+  .container { max-width: 900px; margin: 0 auto; }
+  header { background: linear-gradient(135deg, #7f1d1d, #dc2626); color: white; padding: 30px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+  header h1 { margin: 0 0 8px; font-size: 1.55rem; }
+  header p { margin: 0; opacity: 0.9; }
+  .mode-hint { background: #fef3c7; border: 1px solid #fcd34d; color: #92400e; padding: 12px 18px; border-radius: 8px; margin-bottom: 16px; font-size: 0.9rem; display: flex; align-items: flex-start; gap: 10px; }
+  .mode-hint strong { color: #78350f; }
+  .progress-info { background: #fff; padding: 12px 20px; border-radius: 8px; margin-bottom: 16px; font-size: 0.9rem; color: #475569; box-shadow: 0 2px 6px rgba(0,0,0,0.05); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+  .toolbar { position: sticky; top: 10px; z-index: 10; display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+  .btn { padding: 12px 22px; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all .15s; }
+  .btn-primary { background: #dc2626; color: #fff; }
+  .btn-primary:hover { background: #b91c1c; }
+  .btn-secondary { background: #e2e8f0; color: #334155; }
+  .btn-secondary:hover { background: #cbd5e1; }
+  .score-box { background: #fff; border-radius: 12px; padding: 24px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); display: none; text-align: center; }
+  .score-box.show { display: block; }
+  .score-box .score-number { font-size: 2.5rem; font-weight: 700; color: #dc2626; }
+  .score-box .score-label { color: #64748b; margin-top: 4px; }
+  .q-card { background: #fff; border-radius: 10px; padding: 20px 24px; margin-bottom: 16px; box-shadow: 0 2px 6px rgba(0,0,0,0.06); border-left: 4px solid #ef4444; transition: border-color .2s; }
+  .q-card.correct { border-left-color: #16a34a; }
+  .q-card.incorrect { border-left-color: #dc2626; }
+  .q-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+  .q-num { background: #fee2e2; color: #991b1b; font-weight: 700; padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; white-space: nowrap; }
+  .q-diff { font-size: 0.75rem; padding: 3px 10px; border-radius: 12px; font-weight: 600; white-space: nowrap; }
+  .diff-Easy { background: #dcfce7; color: #166534; }
+  .diff-Medium { background: #fef9c3; color: #854d0e; }
+  .diff-Hard { background: #fee2e2; color: #991b1b; }
+  .q-text { font-weight: 600; margin-bottom: 12px; }
+  .options { display: flex; flex-direction: column; gap: 8px; }
+  .option { display: flex; align-items: flex-start; gap: 10px; padding: 10px 14px; border: 1.5px solid #e2e8f0; border-radius: 8px; cursor: pointer; transition: all .15s; background: #fff; }
+  .option:hover { border-color: #fca5a5; background: #f8fafc; }
+  .option input { margin-top: 5px; cursor: pointer; accent-color: #dc2626; }
+  .option.selected { border-color: #ef4444; background: #fef2f2; }
+  .option.correct-answer { border-color: #16a34a; background: #f0fdf4; }
+  .option.wrong-answer { border-color: #dc2626; background: #fef2f2; }
+  .option-letter { font-weight: 700; color: #dc2626; min-width: 20px; }
+  .option-text { white-space: pre-line; }
+  .feedback { margin-top: 12px; padding: 10px 14px; border-radius: 8px; font-size: 0.9rem; display: none; }
+  .feedback.show { display: block; }
+  .feedback.ok { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+  .feedback.no { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>Trắc nghiệm: Sự cố chung bơm, quạt – Hệ thống phụ tuabin</h1>
+    <p>44 câu hỏi trắc nghiệm • Trình độ L1 • Chế độ học tập tương tác</p>
+  </header>
+
+  <div class="mode-hint">
+    <span>💡</span>
+    <div>
+      <strong>Chế độ học:</strong> Kích chọn đáp án để xem kết quả ngay. Bộ câu hỏi này toàn bộ là <strong>MC (chọn 1 đáp án)</strong>.
+    </div>
+  </div>
+
+  <div class="progress-info">
+    <span>Đã hoàn thành: <strong id="answeredCount">0</strong> / <strong id="totalCount">0</strong></span>
+    <span id="statusText">Đang làm bài...</span>
+  </div>
+
+  <div class="toolbar">
+    <button class="btn btn-primary" id="submitBtn">Tổng kết điểm</button>
+    <button class="btn btn-secondary" id="resetBtn">Làm lại từ đầu</button>
+  </div>
+
+  <div class="score-box" id="scoreBox">
+    <div class="score-number" id="scoreNumber">0 / 0</div>
+    <div class="score-label" id="scoreLabel"></div>
+  </div>
+
+  <div id="quizContainer"></div>
+</div>
+
+<script>
+/* 44 câu Sự cố chung bơm, quạt (498–541) — toàn bộ MC 4 phương án A/B/C/D. */
+const questions = [
+{id:498,diff:'Easy',q:'Một trong số các nguyên nhân khiến bơm không khởi động được?',opts:['Hư hỏng phần cấp điện, động cơ','Không thiết lập nước điền đầy thân bơm','Không thiết lập nước làm mát gối bơm, động cơ','Không thiết lập đường nước chèn'],ans:1},
+{id:499,diff:'Easy',q:'Một trong số các nguyên nhân khiến bơm không khởi động được?',opts:['Không thiết lập nước điền đầy thân bơm','Hư hỏng bộ khởi động','Không thiết lập nước làm mát gối bơm, động cơ','Không thiết lập đường nước chèn'],ans:2},
+{id:500,diff:'Easy',q:'Một trong số các nguyên nhân khiến bơm không khởi động được?',opts:['Không thiết lập nước điền đầy thân bơm','Không thiết lập nước làm mát gối bơm, động cơ','Bơm bị kẹt cơ khí','Không thiết lập đường nước chèn'],ans:3},
+{id:501,diff:'Easy',q:'Một trong số các nguyên nhân khiến bơm không khởi động được?',opts:['Không thiết lập nước điền đầy thân bơm','Không thiết lập nước làm mát gối bơm, động cơ','Không thiết lập đường nước chèn','Bơm ở tình trạng trip'],ans:4},
+{id:502,diff:'Easy',q:'Một trong số các nguyên nhân khiến bơm làm việc kém?',opts:['Hư hỏng nguồn cấp điện hoặc động cơ dẫn động','Thiếu nước làm mát gối','Bơm bị rung','Bơm bị di'],ans:1},
+{id:503,diff:'Easy',q:'Một trong số các nguyên nhân khiến bơm làm việc kém?',opts:['Chiều quay không đúng','Thiếu nước làm mát gối','Bơm bị rung','Bơm bị di'],ans:1},
+{id:504,diff:'Easy',q:'Một trong số các nguyên nhân khiến bơm làm việc kém?',opts:['Van đầu hút, đầu đẩy không mở hoàn toàn','Thiếu nước làm mát gối','Bơm bị rung','Bơm bị di'],ans:1},
+{id:505,diff:'Easy',q:'Một trong số các nguyên nhân khiến bơm làm việc kém?',opts:['Các bộ phận bên trong bị mòn quá mức','Thiếu nước làm mát gối','Bơm bị rung','Bơm bị di'],ans:1},
+{id:506,diff:'Easy',q:'Một trong số các nguyên nhân khiến bơm làm việc kém?',opts:['Có tạp vật đầu vào bơm','Thiếu nước làm mát gối','Bơm bị rung','Bơm bị di'],ans:1},
+{id:507,diff:'Easy',q:'Một trong số các nguyên nhân khiến bơm bị rung và ồn quá mức?',opts:['Mất đồng tâm giữa bơm và động cơ','Thiếu nước làm mát gối','Bơm bị rung','Bơm bị di'],ans:1},
+{id:508,diff:'Easy',q:'Một trong số các nguyên nhân khiến bơm bị rung và ồn quá mức?',opts:['Thiếu nước làm mát','Bulong giữ bơm lỏng','Nhiệt độ gối cao','Nhiệt độ cuộn dây cao'],ans:2},
+{id:509,diff:'Easy',q:'Một trong số các nguyên nhân khiến bơm bị rung và ồn quá mức?',opts:['Nhiệt độ gối cao','Nhiệt độ cuộn dây cao','Khớp nối bị mài mòn, hoặc hư hỏng','Thiếu nước làm mát'],ans:3},
+{id:510,diff:'Easy',q:'Một trong số các nguyên nhân khiến bơm bị rung và ồn quá mức?',opts:['Nhiệt độ gối cao','Nhiệt độ cuộn dây cao','Thiếu nước làm mát','Các bộ phận bên trong bơm bị mài mòn quá mức'],ans:4},
+{id:511,diff:'Easy',q:'Nguyên nhân khiến bơm quay ngược khi dừng?',opts:['Áp lực hệ thống quá cao','Van 1 chiều, van đầu đẩy không đóng hoặc đóng không kín','Áp lực hệ thống thấp đột ngột','Bơm hỏng'],ans:2},
+{id:512,diff:'Easy',q:'Một trong số các nguyên nhân khiến nhiệt độ gối trục bơm, quạt cao là?',opts:['Bơm bị e bơm','Ổ đỡ bị hỏng','Bơm bị thủy kích','Bơm bị mất lưu lượng'],ans:2},
+{id:513,diff:'Easy',q:'Một trong số các nguyên nhân khiến nhiệt độ gối trục bơm, quạt cao là?',opts:['Nhiệt độ dầu bôi trơn cao','Động cơ bị hỏng','Bơm bị mất lưu lượng','Bơm bị thủy kích'],ans:1},
+{id:514,diff:'Easy',q:'Một trong số các nguyên nhân khiến nhiệt độ gối trục bơm, quạt cao là?',opts:['Động cơ bị hỏng','Bơm bị mất lưu lượng','Chất lượng dầu kém','Bơm bị thủy kích'],ans:3},
+{id:515,diff:'Easy',q:'Một trong số các nguyên nhân khiến nhiệt độ stator động cơ cao là?',opts:['Bơm bị thủy kích','Lưu lượng nước làm mát ít','Bơm bị mất lưu lượng','Nhiệt độ dầu bôi trơn cao'],ans:2},
+{id:516,diff:'Easy',q:'Một trong số các nguyên nhân khiến nhiệt độ stator động cơ cao là?',opts:['Lá trao đổi nhiệt làm mát khí bị bẩn','Nhiệt độ dầu bôi trơn cao','Bơm bị mất lưu lượng','Bơm bị thủy kích'],ans:1},
+{id:517,diff:'Easy',q:'Một trong số các nguyên nhân khiến nhiệt độ stator động cơ cao là?',opts:['Bơm, quạt chạy mà nguồn sấy vẫn làm việc','Nhiệt độ dầu bôi trơn cao','Bơm bị mất lưu lượng','Bơm bị thủy kích'],ans:1},
+{id:518,diff:'Easy',q:'Một trong số các trường hợp phải dừng khẩn cấp bơm là?',opts:['Bơm bị mất lưu lượng','Bơm bị mất áp lực','Khi có khói bốc ra từ gối động cơ','Bơm bị quay ngược'],ans:3},
+{id:519,diff:'Easy',q:'Một trong số các trường hợp phải dừng khẩn cấp bơm là?',opts:['Bơm bị mất lưu lượng','Bơm bị mất áp lực','Bơm bị quay ngược','Rung lớn ở gối đỡ hoặc đứt, lỏng bulong bệ đỡ bơm, động cơ'],ans:4},
+{id:520,diff:'Easy',q:'Một trong số các trường hợp phải dừng khẩn cấp bơm là?',opts:['Bơm bị mất lưu lượng','Bơm bị mất áp lực','Khi có tiếng va chạm trong thân bơm và xuất hiện rung lớn','Bơm bị quay ngược'],ans:3},
+{id:521,diff:'Easy',q:'Một trong số các trường hợp phải dừng khẩn cấp bơm là?',opts:['Bơm bị mất lưu lượng','Bơm bị mất áp lực','Bơm bị quay ngược','Khi có người bị tai nạn quấn vào thiết bị quay của bơm đang làm việc'],ans:4},
+{id:522,diff:'Easy',q:'Một trong số các trường hợp phải dừng khẩn cấp bơm là?',opts:['Khi có tia lửa, khói xì ra ở động cơ hoặc hộp đấu đầu cốt động cơ','Bơm bị mất lưu lượng','Bơm bị mất áp lực','Bơm bị quay ngược'],ans:1},
+{id:523,diff:'Easy',q:'Một trong số các trường hợp phải dừng khẩn cấp bơm là?',opts:['Bơm bị mất lưu lượng','Khi có hỏa hoạn trên thiết bị đang làm việc chưa có khả năng dập tắt đe dọa an toàn cho con người và thiết bị','Bơm bị mất áp lực','Bơm bị quay ngược'],ans:2},
+{id:524,diff:'Easy',q:'Khi bơm không khởi động được nhân viên vận hành cần phải kiểm tra?',opts:['Nguồn nước làm mát','Nguồn nước chèn','Nguồn cấp động cơ','Nhiệt độ các gối'],ans:3},
+{id:525,diff:'Easy',q:'Khi bơm không khởi động được nhân viên vận hành cần phải kiểm tra?',opts:['Nhiệt độ các gối','Tháo khớp nối quay tay để xác định kẹt, báo đơn vị sửa chữa xử lý','Nguồn nước làm mát','Nguồn nước chèn'],ans:2},
+{id:526,diff:'Easy',q:'Khi bơm làm việc kém nhân viên vận hành phải kiểm tra?',opts:['Nhiệt độ các gối','Nguồn nước làm mát','Nguồn nước chèn','Động cơ và nguồn cấp'],ans:4},
+{id:527,diff:'Easy',q:'Khi bơm làm việc kém nhân viên vận hành phải kiểm tra?',opts:['Chiều quay','Nhiệt độ các gối','Nguồn nước làm mát','Nguồn nước chèn'],ans:1},
+{id:528,diff:'Easy',q:'Khi bơm làm việc kém nhân viên vận hành phải kiểm tra?',opts:['Nhiệt độ các gối','Nguồn nước làm mát','Mở hết van đầu hút, đầu đẩy','Nguồn nước chèn'],ans:3},
+{id:529,diff:'Easy',q:'Khi bơm làm việc rung, ồn quá mức nhân viên vận hành phải kiểm tra?',opts:['Nhiệt độ các gối','Nguồn nước làm mát','Nguồn nước chèn','Độ đồng trục'],ans:4},
+{id:530,diff:'Easy',q:'Khi bơm làm việc rung, ồn quá mức nhân viên vận hành phải kiểm tra?',opts:['Độ chắc chắn của các bulong, xiết lại nếu cần thiết','Nhiệt độ các gối','Nguồn nước làm mát','Nguồn nước chèn'],ans:1},
+{id:531,diff:'Easy',q:'Khi bơm làm việc rung, ồn quá mức nhân viên vận hành phải kiểm tra?',opts:['Nhiệt độ các gối','Nguồn nước làm mát','Khớp nối bơm và động cơ','Nguồn nước chèn'],ans:3},
+{id:532,diff:'Easy',q:'Khi bơm bị quay ngược khi dừng nhân viên vận hành phải làm gì?',opts:['Kiểm tra nguồn nước làm mát','Kiểm tra nguồn nước chèn','Nạp lại nước, xả khí thân bơm và đường ống','Tìm cách đóng cách ly van đầu đẩy'],ans:4},
+{id:533,diff:'Easy',q:'Khi nhiệt độ gối trục bơm, động cơ cao nhân viên vận hành phải xử lý?',opts:['Nạp lại nước, xả khí thân bơm và đường ống','Dừng bơm ngay lập tức','Kiểm tra ổ đỡ, thay thế ổ đỡ nếu cần thiết','Tìm cách đóng cách ly van đầu đẩy'],ans:3},
+{id:534,diff:'Easy',q:'Khi nhiệt độ gối trục bơm, động cơ cao nhân viên vận hành phải xử lý?',opts:['Kiểm tra lưu lượng và nhiệt độ nước làm mát','Nạp lại nước, xả khí thân bơm và đường ống','Tìm cách đóng cách ly van đầu đẩy','Kiểm tra độ đồng trục bơm và động cơ'],ans:1},
+{id:535,diff:'Easy',q:'Khi nhiệt độ gối trục bơm, động cơ cao nhân viên vận hành phải xử lý?',opts:['Kiểm tra độ đồng trục bơm và động cơ','Kiểm tra mức dầu, bổ sung dầu nếu quá thấp','Tìm cách đóng cách ly van đầu đẩy','Nạp lại nước, xả khí thân bơm và đường ống'],ans:2},
+{id:536,diff:'Easy',q:'Khi nhiệt độ gối trục bơm, động cơ cao nhân viên vận hành phải xử lý?',opts:['Tìm cách đóng cách ly van đầu đẩy','Nạp lại nước, xả khí thân bơm và đường ống','Thay dầu nếu không đảm bảo chất lượng','Kiểm tra độ đồng trục bơm và động cơ'],ans:3},
+{id:537,diff:'Easy',q:'Khi bơm chạy không đều, rung động và ồn nhân viên vận hành phải xử lý?',opts:['Kiểm tra, căn chỉnh lại độ đồng trục','Tìm cách đóng cách ly van đầu đẩy','Nạp lại nước, xả khí thân bơm và đường ống','Kiểm tra mức dầu, bổ sung dầu nếu quá thấp'],ans:1},
+{id:538,diff:'Easy',q:'Khi bơm chạy không đều, rung động và ồn nhân viên vận hành phải xử lý?',opts:['Tìm cách đóng cách ly van đầu đẩy','Kiểm tra nền móng, xiết lại bulong nếu cần thiết','Nạp lại nước, xả khí thân bơm và đường ống','Kiểm tra mức dầu, bổ sung dầu nếu quá thấp'],ans:2},
+{id:539,diff:'Easy',q:'Khi nhiệt độ stator động cơ cao nhân viên vận hành phải kiểm tra?',opts:['Kiểm tra áp lực, lưu lượng nước làm mát, các van nước vào, ra hộp trao đổi nhiệt làm mát khí làm mát động cơ','Nạp lại nước, xả khí thân bơm và đường ống','Kiểm tra mức dầu, bổ sung dầu nếu quá thấp','Tìm cách đóng cách ly van đầu đẩy'],ans:1},
+{id:540,diff:'Easy',q:'Khi nhiệt độ stator động cơ cao nhân viên vận hành phải kiểm tra?',opts:['Nạp lại nước, xả khí thân bơm và đường ống','Đưa bơm ra sửa chữa, vệ sinh lại các lá trao đổi nhiệt','Kiểm tra mức dầu, bổ sung dầu nếu quá thấp','Tìm cách đóng cách ly van đầu đẩy'],ans:2},
+{id:541,diff:'Easy',q:'Khi nhiệt độ stator động cơ cao nhân viên vận hành phải kiểm tra?',opts:['Nạp lại nước, xả khí thân bơm và đường ống','Báo bên điện kiểm tra, ngắt nguồn sấy động cơ','Kiểm tra mức dầu, bổ sung dầu nếu quá thấp','Tìm cách đóng cách ly van đầu đẩy'],ans:2}
+];
+
+const letters = ['A','B','C','D'];
+const container = document.getElementById('quizContainer');
+const submitBtn = document.getElementById('submitBtn');
+const resetBtn = document.getElementById('resetBtn');
+const scoreBox = document.getElementById('scoreBox');
+const scoreNumber = document.getElementById('scoreNumber');
+const scoreLabel = document.getElementById('scoreLabel');
+const answeredCount = document.getElementById('answeredCount');
+const statusText = document.getElementById('statusText');
+
+let submitted = false;
+const userAnswers = {};
+const lockedQuestions = new Set();
+
+document.getElementById('totalCount').textContent = questions.length;
+scoreNumber.textContent = '0 / ' + questions.length;
+
+/* ==================== RENDER ==================== */
+function renderQuiz() {
+  container.innerHTML = '';
+  questions.forEach((q, idx) => {
+    const card = document.createElement('div');
+    card.className = 'q-card';
+    card.id = 'q-' + q.id;
+    let optionsHtml = '';
+    q.opts.forEach((opt, i) => {
+      optionsHtml += `
+        <label class="option" data-qid="${q.id}" data-opt="${i+1}">
+          <input type="radio" name="q${q.id}" value="${i+1}">
+          <span class="option-letter">${letters[i]}.</span>
+          <span class="option-text">${opt}</span>
+        </label>`;
+    });
+    card.innerHTML = `
+      <div class="q-header">
+        <span class="q-num">Câu ${idx+1}</span>
+        <span class="q-diff diff-${q.diff}">${q.diff}</span>
+      </div>
+      <div class="q-text">${q.q}</div>
+      <div class="options">${optionsHtml}</div>
+      <div class="feedback" id="fb-${q.id}"></div>`;
+    container.appendChild(card);
+  });
+  attachHandlers();
+}
+
+/* ==================== HANDLERS ==================== */
+function attachHandlers() {
+  container.querySelectorAll('input[type="radio"]').forEach(input => {
+    input.addEventListener('change', e => {
+      const qid = parseInt(e.target.name.replace('q',''));
+      if (submitted || lockedQuestions.has(qid)) return;
+      userAnswers[qid] = parseInt(e.target.value);
+      lockAndReveal(qid);
+      updateProgress();
+    });
+  });
+}
+
+/* ==================== LOCK & REVEAL ==================== */
+function lockAndReveal(qid) {
+  const q = questions.find(x => x.id === qid);
+  const card = document.getElementById('q-' + qid);
+  const fb = document.getElementById('fb-' + qid);
+  lockedQuestions.add(qid);
+  card.querySelectorAll('input').forEach(inp => inp.disabled = true);
+  card.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+
+  const userAns = userAnswers[qid];
+  const isCorrect = userAns === q.ans;
+
+  card.querySelectorAll('.option').forEach(o => {
+    const v = parseInt(o.dataset.opt);
+    if (v === q.ans) o.classList.add('correct-answer');
+    if (v === userAns && v !== q.ans) o.classList.add('wrong-answer');
+  });
+
+  if (isCorrect) {
+    card.classList.add('correct');
+    fb.className = 'feedback show ok';
+    fb.textContent = `✓ Chính xác! Đáp án đúng là ${letters[q.ans-1]}.`;
+  } else {
+    card.classList.add('incorrect');
+    fb.className = 'feedback show no';
+    fb.textContent = `✗ Sai. Bạn chọn ${letters[userAns-1]}, đáp án đúng là ${letters[q.ans-1]}.`;
+  }
+}
+
+/* ==================== PROGRESS ==================== */
+function updateProgress() {
+  answeredCount.textContent = lockedQuestions.size;
+  if (!submitted) {
+    statusText.textContent = lockedQuestions.size === questions.length
+      ? '🎉 Đã hoàn thành tất cả câu hỏi!'
+      : `Còn ${questions.length - lockedQuestions.size} câu chưa làm`;
+  }
+}
+
+/* ==================== SUBMIT ==================== */
+function submitQuiz() {
+  if (submitted) return;
+  submitted = true;
+  let correctCount = 0;
+  questions.forEach(q => {
+    if (lockedQuestions.has(q.id) && userAnswers[q.id] === q.ans) correctCount++;
+  });
+  const pct = Math.round((correctCount / questions.length) * 100);
+  let grade = '';
+  if (pct >= 90) grade = 'Xuất sắc! 🎉';
+  else if (pct >= 75) grade = 'Tốt! 👍';
+  else if (pct >= 50) grade = 'Trung bình — cần ôn thêm.';
+  else grade = 'Cần ôn luyện thêm.';
+  scoreBox.classList.add('show');
+  scoreNumber.textContent = `${correctCount} / ${questions.length}`;
+  scoreLabel.textContent = `Đúng ${pct}% — ${grade} (đã làm ${lockedQuestions.size}/${questions.length} câu)`;
+  statusText.textContent = 'Đã tổng kết';
+  scoreBox.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+/* ==================== RESET ==================== */
+function resetQuiz() {
+  if (!confirm('Bạn có chắc muốn làm lại từ đầu? Tất cả câu trả lời sẽ bị xóa.')) return;
+  submitted = false;
+  Object.keys(userAnswers).forEach(k => delete userAnswers[k]);
+  lockedQuestions.clear();
+  scoreBox.classList.remove('show');
+  renderQuiz();
+  answeredCount.textContent = '0';
+  statusText.textContent = 'Đang làm bài...';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+submitBtn.addEventListener('click', submitQuiz);
+resetBtn.addEventListener('click', resetQuiz);
+renderQuiz();
+</script>
+</body>
+</html>

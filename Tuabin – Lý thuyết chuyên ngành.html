@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bài trắc nghiệm: Tuabin – Lý thuyết chuyên ngành</title>
+<style>
+  :root{
+    --bg:#f4f6f9; --card:#ffffff; --text:#1f2937; --muted:#6b7280;
+    --primary:#2563eb; --primary-dark:#1d4ed8; --border:#e5e7eb;
+    --correct:#16a34a; --correct-bg:#ecfdf5; --wrong:#dc2626; --wrong-bg:#fef2f2;
+    --partial:#d97706; --partial-bg:#fffbeb;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; padding:24px 12px; background:var(--bg); color:var(--text);
+    font-family:"Segoe UI", Roboto, Arial, sans-serif; line-height:1.55;
+  }
+  .wrap{max-width:900px; margin:0 auto;}
+  header{
+    background:linear-gradient(135deg,#1e3a8a,#2563eb);
+    color:#fff; padding:24px 28px; border-radius:14px; margin-bottom:20px;
+    box-shadow:0 6px 20px rgba(37,99,235,.25);
+  }
+  header h1{margin:0 0 6px; font-size:1.5rem;}
+  header p{margin:0; opacity:.9; font-size:.95rem;}
+  .toolbar{
+    position:sticky; top:0; z-index:10; background:var(--bg);
+    padding:12px 0; display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+  }
+  .toolbar .progress{margin-left:auto; font-size:.9rem; color:var(--muted);}
+  button{
+    font:inherit; cursor:pointer; border:none; border-radius:10px;
+    padding:10px 18px; font-weight:600; transition:.18s;
+  }
+  .btn-primary{background:var(--primary); color:#fff;}
+  .btn-primary:hover{background:var(--primary-dark);}
+  .btn-ghost{background:#fff; color:var(--text); border:1px solid var(--border);}
+  .btn-ghost:hover{background:#f3f4f6;}
+  .q{
+    background:var(--card); border:1px solid var(--border); border-radius:14px;
+    padding:18px 20px; margin-bottom:14px; box-shadow:0 1px 3px rgba(0,0,0,.04);
+  }
+  .q .num{
+    display:inline-block; background:#eef2ff; color:var(--primary-dark);
+    font-weight:700; font-size:.8rem; padding:2px 10px; border-radius:999px;
+    margin-bottom:10px;
+  }
+  .q .num.multi{background:#fef3c7; color:#b45309;}
+  .q .num.multi::after{content:" · nhiều đáp án";}
+  .q .stem{font-weight:600; margin-bottom:12px;}
+  .opt{
+    display:flex; gap:10px; align-items:flex-start; padding:10px 12px;
+    border:1px solid var(--border); border-radius:10px; margin-bottom:8px;
+    cursor:pointer; transition:.15s; background:#fff;
+  }
+  .opt:hover{background:#f9fafb; border-color:#c7d2fe;}
+  .opt input{margin-top:4px; accent-color:var(--primary); cursor:pointer;}
+  .opt .label{font-weight:700; color:var(--primary-dark); min-width:18px;}
+  .opt.sel{border-color:var(--primary); background:#eff6ff;}
+  .opt.correct{border-color:var(--correct); background:var(--correct-bg);}
+  .opt.wrong{border-color:var(--wrong); background:var(--wrong-bg);}
+  .opt.missed{border-color:var(--partial); background:var(--partial-bg);}
+  .opt.correct .label{color:var(--correct);}
+  .opt.wrong .label{color:var(--wrong);}
+  .opt.missed .label{color:var(--partial);}
+  .explain{
+    display:none; margin-top:10px; padding:12px 14px; border-radius:10px;
+    background:#f8fafc; border-left:4px solid var(--primary); font-size:.93rem;
+  }
+  .explain.show{display:block;}
+  .explain .tag{font-weight:700; color:var(--correct);}
+  .explain .tag.partial{color:var(--partial);}
+  .explain .tag.wrong{color:var(--wrong);}
+  .q.result-correct{border-color:var(--correct);}
+  .q.result-wrong{border-color:var(--wrong);}
+  .q.result-partial{border-color:var(--partial);}
+  .summary{
+    display:none; background:var(--card); border:1px solid var(--border);
+    border-radius:14px; padding:22px; margin-top:18px; text-align:center;
+  }
+  .summary.show{display:block;}
+  .summary .score{font-size:2.6rem; font-weight:800; color:var(--primary);}
+  .summary .detail{color:var(--muted); margin-top:4px;}
+  .summary .msg{margin-top:12px; font-weight:600;}
+  @media (max-width:520px){
+    header{padding:18px;}
+    header h1{font-size:1.2rem;}
+    .toolbar .progress{width:100%; margin-left:0;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>Bài trắc nghiệm: Tuabin – Lý thuyết chuyên ngành</h1>
+    <p>50 câu hỏi – Đáp án và giải thích hiện ngay khi bạn chọn. Một số câu có <b>nhiều đáp án đúng</b> (chọn nhiều).</p>
+  </header>
+
+  <div class="toolbar">
+    <button class="btn-primary" onclick="checkAll()">Kiểm tra tổng kết</button>
+    <button class="btn-ghost" onclick="resetAll()">Làm lại</button>
+    <span class="progress" id="progress">Đã trả lời: 0/50</span>
+  </div>
+
+  <form id="quiz"></form>
+
+  <div class="summary" id="summary">
+    <div class="score" id="score">0/50</div>
+    <div class="detail" id="detail"></div>
+    <div class="msg" id="msg"></div>
+  </div>
+
+</div>
+
+<script>
+/* ====== DỮ LIỆU CÂU HỎI ======
+   ans: mảng chỉ số đáp án đúng. Nếu mảng có >1 phần tử => câu nhiều đáp án.
+   Ví dụ: ans:[1] là câu 1 đáp án; ans:[0,2] là câu 2 đáp án đúng (A và C). */
+const QUESTIONS = [
+  {q:"Để nâng công suất cho một tổ máy lò hơi – tuabin và gia tăng hiệu suất chu trình nhiệt, các nhà máy nhiệt điện thường:",
+   opts:["Sử dụng tuabin ngưng hơi, áp suất không quá 170 bar, nhiệt độ không quá 545°C và không sử dụng quá nhiệt trung gian.",
+         "Sử dụng thông số hơi cận và trên tới hạn kết hợp với tái nhiệt trung gian, nhiệt độ hơi mới và hơi tái nhiệt thường bằng và trên 540°C.",
+         "Sử dụng tuabin một thân có đối áp hơi thoát và thông số áp suất hơi mới nhỏ hơn 100 bar, nhiệt độ hơi mới dưới 538°C."],
+   ans:[1], ex:"Dùng thông số hơi cận/trên tới hạn kết hợp tái nhiệt trung gian giúp nâng công suất và hiệu suất chu trình."},
+
+  {q:"Xu hướng để gia tăng hiệu suất và hiệu quả kinh tế của chu trình nhà máy nhiệt điện hiện nay là:",
+   opts:["Áp dụng chu trình kết hợp khí – hơi, áp dụng tối đa việc trích hơi từ tuabin để gia nhiệt và hồi nhiệt nước cấp.",
+         "Tăng áp suất hơi mới, tăng nhiệt độ hơi mới, áp dụng quá nhiệt trung gian, hạ thấp chân không bình ngưng.",
+         "Áp dụng đồng thời các giải pháp nói trên."],
+   ans:[2], ex:"Kết hợp đồng thời nhiều giải pháp mới đạt hiệu quả kinh tế – kỹ thuật tối ưu."},
+
+  {q:"Để có công suất đơn vị lớn, hiệu suất cao, tuabin hơi nước được thiết kế với một số đặc điểm chính:",
+   opts:["Tăng cao thông số áp suất hơi mới và sử dụng các tuabin một tầng hoặc tuabin có ít số tầng cánh.",
+         "Tăng cao thông số hơi mới (gồm nhiệt độ to, áp suất po), áp dụng tái nhiệt và sử dụng tuabin nhiều tầng ghép nối tiếp với nhau, áp dụng triệt để trích hơi, gia nhiệt, hồi nhiệt nước cấp.",
+         "Sử dụng các tuabin ngưng hơi thuần túy, không có gia nhiệt hồi nhiệt nước cấp, với lò hơi có thông số cao áp."],
+   ans:[1], ex:"Tăng thông số hơi mới + tái nhiệt + nhiều tầng + trích hơi hồi nhiệt là đặc điểm tuabin công suất lớn."},
+
+  {q:"Một vài nguyên nhân chính thường dẫn đến sự suy giảm hiệu suất tương đối của tuabin hơi trong quá trình vận hành là:",
+   opts:["Chất lượng hơi nước không đảm bảo, gây hiện tượng cáu bám trên phần truyền dòng, dẫn đến làm tăng ma sát trong các dãy cánh.",
+         "Các thông số vận hành như nhiệt độ - áp suất hơi mới thường thấp hơn định mức, áp suất tuyệt đối trong bình ngưng cao hơn chế độ thiết kế.",
+         "Cả hai nguyên nhân kể trên."],
+   ans:[2], ex:"Cả cáu bám và thông số vận hành lệch định mức đều làm giảm hiệu suất tương đối."},
+
+  {q:"Trong các tuabin hơi nước hiện đại, hiệu suất trong tương đối lớn nhất sẽ thuộc phần thân:",
+   opts:["Cao áp.","Trung áp.","Hạ áp."],
+   ans:[1], ex:"Phần trung áp thường có hiệu suất trong tương đối lớn nhất."},
+
+  {q:"Tầng cánh điều chỉnh của tuabin hơi thường có đặc điểm đặc trưng như sau:",
+   opts:["Là tầng cánh có độ phản lực thấp nhất, nhiệt giáng cao nhất, làm việc trong vùng nhiệt độ và áp suất cao nhất.",
+         "Tầng cánh có đường kính trung bình, không chịu ảnh hưởng lớn của độ ẩm, không làm việc trong vùng áp suất cao, nhưng chịu ảnh hưởng lớn nhất bởi nhiệt độ từ lò hơi đưa sang.",
+         "Tầng cánh có đường kính đỉnh cánh lớn nhất, chiều dài cánh lớn nhất, chịu sự chênh áp suất hai bên dãy cánh lớn nhất, và thường nằm trong vùng hơi bão hòa ẩm."],
+   ans:[0], ex:"Tầng điều chỉnh: độ phản lực thấp nhất, nhiệt giáng cao nhất, làm việc vùng nhiệt độ/áp suất cao nhất."},
+
+  {q:"Trong quá trình điều chỉnh lưu lượng hơi mới qua các xupap vào tầng điều chỉnh đầu tiên của tuabin bằng phương pháp tiết lưu thì:",
+   opts:["Nhiệt độ của hơi mới tăng lên, áp suất của dòng hơi giữ không thay đổi và lưu lượng giảm đi.",
+         "Nhiệt độ của hơi mới giữ không đổi, áp suất của dòng hơi giảm đi, lưu lượng của dòng hơi giảm đi.",
+         "Năng lượng entanpi của dòng hơi là hằng số, lưu lượng giảm đi."],
+   ans:[2], ex:"Tiết lưu là quá trình entanpi không đổi; lưu lượng giảm."},
+
+  {q:"Tuabin xung lực được hiểu là:",
+   opts:["Tuabin mà dòng hơi chỉ giãn nở trong các ống phun (hay trong các dãy cánh bất động), còn động năng của dòng hơi được chuyển hóa thành cơ công trong các dãy cánh động.",
+         "Tuabin mà dòng hơi không chỉ giãn nở và sinh công trong các ống phun mà còn cả trên dãy cánh động.",
+         "Tuabin mà dòng hơi chỉ giãn nở trong các dãy cánh động, và động năng của dòng hơi được chuyển hóa thành cơ công trong các dãy cánh động."],
+   ans:[0], ex:"Tuabin xung lực: giãn nở chỉ trong ống phun; cánh động nhận động năng."},
+
+  {q:"Tuabin ngưng hơi sử dụng trong các nhà máy nhiệt điện có công suất lớn thường:",
+   opts:["Là tuabin ngưng hơi có trích hơi điều chỉnh, số cửa trích từ 3-5.",
+         "Sử dụng từ 5 đến 9 cửa trích hơi cho gia nhiệt và hồi nhiệt nước cấp, tỷ lệ trích hơi có thể đạt đến 40% lượng hơi qua tuabin.",
+         "Là tuabin đối áp, có số cửa trích từ 1-3 và áp suất sau tầng cánh cuối được sử dụng cho các mục đích công nghệ như sấy, sưởi, gia nhiệt."],
+   ans:[1], ex:"Tuabin ngưng hơi công suất lớn có 5–9 cửa trích, trích tới ~40% lưu lượng hơi."},
+
+  {q:"Trong các bộ chèn đầu trục của tuabin hơi, môi chất chèn hơi nước có tác dụng chính là:",
+   opts:["Hạn chế lực dọc trục trong tuabin và bổ sung thêm lưu lượng hơi cho bình khử khí.",
+         "Gia nhiệt cho các bình gia nhiệt cao áp, hạ áp và cải thiện hiệu suất của lò hơi.",
+         "Không cho hơi nước có thông số cao và năng lượng lớn từ phần truyền dòng trong tuabin ra ngoài môi trường hoặc không cho không khí từ môi trường lọt vào bình ngưng."],
+   ans:[2], ex:"Chèn trục ngăn hơi rò ra ngoài và ngăn không khí lọt vào bình ngưng."},
+
+  {q:"Để xác định được trạng thái trong vùng hơi ẩm hay các thông số nhiệt động học của dòng hơi sau tầng cánh cuối cùng nằm trong vùng hơi ẩm, làm cơ sở tính toán hiệu suất trong tương đối phần hạ áp của tuabin ngưng hơi, chúng ta cần xác định được thông số nhiệt động sau:",
+   opts:["Áp suất và nhiệt độ sau tầng cánh cuối cùng của tuabin.",
+         "Áp suất hoặc nhiệt độ sau tầng cánh cuối cùng của tuabin và độ khô của hơi.",
+         "Áp suất hoặc nhiệt độ sau tầng cánh cuối cùng của tuabin."],
+   ans:[1], ex:"Vùng hơi ẩm cần thêm độ khô bên cạnh áp suất hoặc nhiệt độ."},
+
+  {q:"Để mang lại hiệu quả kinh tế và kỹ thuật tốt nhất cho chu trình khi sử dụng tái nhiệt trung gian trong các nhà máy điện thì thông số nhiệt động của hơi nước sau tái nhiệt thường:",
+   opts:["Áp suất hơi tái nhiệt ptn = (0,2÷0,3)po áp suất hơi mới đầu vào tuabin và nhiệt độ hơi tái nhiệt ttn = to nhiệt độ hơi mới đầu vào tuabin.",
+         "Áp suất hơi tái nhiệt ptn < 0,2.po và nhiệt độ hơi tái nhiệt ttn = to.",
+         "Áp suất hơi tái nhiệt ptn > 0,3.po và nhiệt độ hơi tái nhiệt ttn = to."],
+   ans:[0], ex:"Thông số tối ưu: ptn = (0,2÷0,3)po và ttn = to."},
+
+  {q:"Khi nâng cao thông số nhiệt độ hơi mới lên trên 535°C và áp suất hơi mới đầu vào tuabin đến giá trị cận và trên tới hạn (> 165 bar) thì:",
+   opts:["Việc áp dụng bộ tái nhiệt hay quá nhiệt trung gian hơi nước là yêu cầu bắt buộc đối với chu trình nhiệt tuabin ngưng hơi để cải thiện hiệu suất chu trình.",
+         "Nên sử dụng tuabin ngưng hơi một thân và không có quá nhiệt trung gian.",
+         "Việc áp dụng bộ tái nhiệt hay quá nhiệt trung gian hơi nước là không cần thiết hay không bắt buộc đối với chu trình nhiệt tuabin ngưng hơi."],
+   ans:[0], ex:"Thông số cận/trên tới hạn bắt buộc phải có tái nhiệt trung gian."},
+
+  {q:"Đối với các tuabin ngưng hơi công suất lớn sử dụng trong các nhà máy điện hiện đại, chiều và lưu lượng dòng hơi đi trong các phần cao - trung - hạ áp thường có đặc điểm:",
+   opts:["Đi theo một chiều cố định mà không đảo chiều, nằm trong một thân tuabin để giảm bớt tổn thất thủy lực của dòng hơi từ đầu vào đến đầu ra.",
+         "Đi thành một dòng mà không chia tách, không đảo chiều, tăng cường trích hơi để gia nhiệt và hồi nhiệt nước cấp càng nhiều càng tốt.",
+         "Đi theo chiều đối xứng (hay ngược nhau) và với lưu lượng tương đồng nhau nhằm hạn chế tối đa lực dọc trục và nâng cao tối đa công suất giới hạn của các tầng cánh cuối."],
+   ans:[2], ex:"Dòng đối xứng/ngược chiều, lưu lượng tương đồng để triệt lực dọc trục."},
+
+  {q:"Dọc theo phần truyền dòng của tuabin hơi nhiều tầng, từ đầu vào là phần cao áp đến đầu ra là phần hạ áp, chiều cao của các tầng cánh tương ứng là tiết diện phần lưu thoát của dòng hơi:",
+   opts:["Sẽ tăng dần theo sự giảm nhiệt độ, sự giảm áp suất của dòng hơi hoặc được điều chỉnh giảm phù hợp với sự giảm lưu lượng hơi tại vị trí các cửa trích.",
+         "Sẽ giữ ổn định từ đầu vào đến đầu ra của tuabin, mà không thay đổi dù có sự thay đổi của các thông số trong dòng hơi.",
+         "Sẽ giảm dần do sự giảm của nhiệt độ, giảm áp suất của dòng hơi từ đầu vào đến đầu ra của tuabin."],
+   ans:[0], ex:"Tiết diện lưu thoát tăng dần khi hơi giãn nở (giảm p, t)."},
+
+  {q:"Theo dòng hơi đi trong các tuabin, tầng cánh đầu tiên thuộc phần cao áp thường được thiết kế và chế tạo là:",
+   opts:["Kiểu tầng cánh phản lực để nâng cao hiệu suất chuyển đổi năng lượng trong tầng và hạn chế sự tạo xoáy trong dãy cánh động.",
+         "Kiểu tầng cánh xung lực hoặc có sự giãn nở rất nhỏ trong các tầng cánh động để có nhiệt giáng tầng cánh lớn và nâng cao hiệu suất chuyển đổi năng lượng trong tầng.",
+         "Dạng tầng cánh dài và xoắn để hạn chế các tổn thất do dòng hơi ẩm."],
+   ans:[1], ex:"Tầng đầu cao áp dùng kiểu xung lực/giãn nở nhỏ trong cánh động."},
+
+  {q:"Để hạn chế dòng rò của hơi nước tại đỉnh cánh - chân cánh giữa phần tĩnh và phần động hay trong các bộ chèn (cao áp, trung áp, hạ áp) của tuabin hơi, người ta thực hiện:",
+   opts:["Dùng dãy cánh hay profil của tuabin có hiệu suất cao, áp dụng độ phản lực lớn trên các tầng cánh.",
+         "Tiết lưu nhiều cấp đối với dòng hơi rò trên các bộ chèn để triệt tiêu áp suất, bằng cách cho dòng hơi đi qua các khe hẹp của răng (râu) chèn đặt ngắt quãng.",
+         "Sử dụng tuabin có ít tầng cánh và độ phản lực lớn trên mỗi tầng cánh để hạn chế sự rò rỉ này."],
+   ans:[1], ex:"Tiết lưu nhiều cấp qua các khe răng chèn để triệt áp suất rò."},
+
+  {q:"Một trong các giải pháp chính để nâng cao hiệu suất nhiệt của thiết bị tuabin hơi trong các nhà máy nhiệt điện, người ta áp dụng?",
+   opts:["Gia nhiệt tối đa cho nước cấp từ việc trích hơi trên phần truyền dòng của tuabin. Lượng hơi trích này có thể đạt đến 40% lượng hơi mới đưa vào tuabin.",
+         "Tăng cường tối đa lưu lượng hơi đi qua toàn bộ các tầng cánh tuabin mà không trích hơi từ phần truyền dòng của tuabin cho các bình gia nhiệt hạ áp, khử khí hay các bình gia nhiệt cao áp.",
+         "Nâng cao áp suất bình khử khí để tăng cường mức độ gia nhiệt cho nước cấp."],
+   ans:[0], ex:"Trích hơi gia nhiệt nước cấp (tới ~40%) nâng cao hiệu suất nhiệt chu trình."},
+
+  {q:"Đường kính trung bình của tầng điều chỉnh đầu tiên thuộc tuabin cao áp lớn hơn đường kính trung bình của các tầng không điều chỉnh ngay kế tiếp nó vì:",
+   opts:["Tầng điều chỉnh là tầng có thông số nhiệt độ và áp suất cao nhất trong phần truyền dòng của tuabin.",
+         "Là tầng đầu tiên của tuabin có lưu lượng lớn nhất.",
+         "Nhiệt giáng của tầng điều chỉnh lớn hơn nhiệt giáng các tầng không điều chỉnh ngay sau nó."],
+   ans:[2], ex:"Nhiệt giáng tầng điều chỉnh lớn hơn nên đường kính trung bình lớn hơn."},
+
+  {q:"Nhiệt giáng hay năng lượng đối với 1kg hơi nước được phân bổ trên các tầng cánh trong tuabin có thông số cận tới hạn theo chiều giảm dần như sau:",
+   opts:["Tầng cánh điều chỉnh, tầng cánh trung áp và tầng cánh hạ áp.",
+         "Tầng cánh điều chỉnh, tầng cánh hạ áp, tầng cánh trung áp.",
+         "Tầng cánh hạ áp, tầng cánh trung áp và tầng cánh điều chỉnh."],
+   ans:[1], ex:"Thứ tự giảm dần: điều chỉnh → hạ áp → trung áp."},
+
+  {q:"Khi so sánh số tầng cánh của tuabin xung lực và phản lực có cùng công suất phát điện, cùng thông số nhiệt động hơi mới po, to đầu vào và cùng áp suất hơi thoát đầu ra thì:",
+   opts:["Số tầng cánh trong tuabin xung lực và phản lực bằng nhau.",
+         "Số tầng cánh trong tuabin xung lực nhiều hơn số tầng cánh trong tuabin phản lực.",
+         "Số tầng cánh của tuabin phản lực lớn hơn số tầng cánh của tuabin xung lực."],
+   ans:[2], ex:"Tuabin phản lực có nhiều tầng hơn do nhiệt giáng mỗi tầng nhỏ hơn."},
+
+  {q:"Tại các chế độ phụ tải thấp dưới 50%, thông thường áp suất tuyệt đối trong bình ngưng xuống thấp hơn chế độ định mức khá nhiều, nhưng suất tiêu hao hơi của tuabin vẫn cao hay suất tiêu hao nhiệt của tổ máy tăng lên là vì:",
+   opts:["Hiệu suất trong tương đối của tuabin hơi giảm xuống quá nhiều so với chế độ định mức.",
+         "Hiệu suất của máy phát điện giảm quá nhiều so với chế độ thiết kế.",
+         "Tại các chế độ này các thông số nhiệt độ và áp suất hơi mới đầu vào tuabin thường thấp hơn chế độ định mức khá nhiều, dẫn đến các tổn thất trong phần truyền dòng của tuabin tăng, làm giảm nhiệt giáng hữu ích trong toàn bộ tuabin."],
+   ans:[2], ex:"Thông số hơi mới thấp hơn định mức nhiều → tổn thất tăng, nhiệt giáng hữu ích giảm."},
+
+  {q:"Tổn thất năng lượng đứng thứ nhất và thứ hai trong nhà máy nhiệt điện than sử dụng tuabin hơi nước được xếp theo thứ tự như sau:",
+   opts:["Thứ nhất là: Tổn thất trong bình ngưng do truyền nhiệt từ nước ngưng cho nước tuần hoàn; Thứ hai là tổn thất nhiệt từ khói thải ra môi trường.",
+         "Thứ nhất là: Tổn thất nhiệt từ khói thải ra môi trường; Thứ hai là tổn thất do thành phần các bon không cháy hết trong tro xỉ đáy và tro bay.",
+         "Thứ nhất là: Tổn thất nhiệt từ khói thải ra môi trường; Thứ hai là tổn thất trong bình ngưng do truyền nhiệt từ nước ngưng cho nước tuần hoàn."],
+   ans:[0], ex:"Lớn nhất là tổn thất bình ngưng, thứ hai là tổn thất khói thải."},
+
+  {q:"Nếu cho rằng lượng nhiệt của dòng hơi dẫn vào tuabin là 100% thì lượng nhiệt chiếm tỷ lệ lớn nhất sẽ là:",
+   opts:["Lượng nhiệt cấp trở lại lò hơi.",
+         "Lượng nhiệt tổn thất trong bình ngưng, hay lượng nhiệt truyền cho nước tuần hoàn qua bình ngưng.",
+         "Lượng nhiệt dùng để sản xuất điện năng."],
+   ans:[1], ex:"Phần lớn nhiệt thoát ra bình ngưng (truyền cho nước tuần hoàn)."},
+
+  {q:"Để đảm bảo hiệu suất cao cho các tầng cánh cuối cùng thân hạ áp của tuabin, thì độ khô (x) của hơi trước khi vào bình ngưng thường phải:",
+   opts:[" > 14% và ≤ 86%.","≤ 14%.","≥ 90%."],
+   ans:[2], ex:"Độ khô ≥ 90% để hạn chế tổn thất và ăn mòn cánh cuối."},
+
+  {q:"Nhiệm vụ chủ yếu của công tác vận hành thiết bị tuabin là:",
+   opts:["Duy trì thiết bị với độ tin cậy cao và hiệu quả kinh tế tối đa.",
+         "Đáp ứng yêu cầu về điện năng hoặc nhiệt năng cho các hộ tiêu thụ một cách liên tục, an toàn.",
+         "Đồng thời cả A và B."],
+   ans:[2], ex:"Vận hành phải đảm bảo cả độ tin cậy/kinh tế lẫn cung cấp liên tục, an toàn."},
+
+  {q:"Khi vận hành ổn định ở các chế độ tải thấp hơn (<75%) so với chế độ định mức (100%), để đảm bảo hiệu suất cao trong phần truyền dòng của tuabin, các thông số nhiệt độ và áp suất hơi mới đầu vào phần cao áp tuabin có đặc điểm?",
+   opts:["Giảm thấp thông số nhiệt độ và áp suất hơi mới đưa vào tuabin, bằng cách vận hành theo thông số trượt, phụ tải theo lò, mở 100% các xupap điều chỉnh.",
+         "Giữ nguyên nhiệt độ và áp suất hơi mới từ lò hơi như chế độ định mức, sử dụng phương án tiết lưu dòng hơi qua các xupap điều chỉnh trước khi đưa vào tuabin.",
+         "Giữ nguyên nhiệt độ hơi mới so với chế độ định mức, chỉ áp dụng việc tiết lưu dòng hơi qua các xupap điều chỉnh để điều chỉnh áp suất và lưu lượng hơi vào tuabin cho phù hợp với tải."],
+   ans:[0], ex:"Vận hành thông số trượt, mở 100% xupap để giữ hiệu suất cao."},
+
+  {q:"Để tạo chân không trong bình ngưng, các công việc chính phải thực hiện gồm:",
+   opts:["Đưa hệ thống hơi chèn trục tuabin vào làm việc.",
+         "Khởi động bơm chân không hoặc ejectơ khởi động.",
+         "Kết hợp đồng thời cả A và B."],
+   ans:[2], ex:"Cần cả hơi chèn trục và bơm/ejectơ chân không."},
+
+  {q:"Sự cố thủy kích tuabin hơi được xem là nguy hiểm nhất trong khi vận hành. Đây là hiện tượng:",
+   opts:["Hay quá trình chuyển hóa từ nước thành hơi nước trong các dàn ống sinh hơi của lò hơi.",
+         "Nước đột ngột xâm nhập hoặc xuất hiện trong phần truyền dòng của tuabin dưới nhiều nguyên nhân khác nhau.",
+         "Ngưng tụ hơi nước thành nước trên bề mặt ống đồng hoặc các ống trao đổi nhiệt trong bình ngưng."],
+   ans:[1], ex:"Thủy kích là nước xâm nhập vào phần truyền dòng tuabin."},
+
+  {q:"Thông số rung động trên các gối trục tuabin là một yêu cầu bắt buộc phải giám sát, và không cho phép vượt quá một giá trị quy định đối với từng loại tuabin, vì?",
+   opts:["Qua phân tích các đại lượng của rung động, có thể xác định chính xác nguyên nhân để từ đó có biện pháp phù hợp để khắc phục hoặc hạn chế chúng.",
+         "Nó đặc trưng cho hiệu suất chuyển đổi năng lượng của dây chuyền thiết bị công nghệ được sử dụng tại nhà máy.",
+         "Nó đặc trưng cho bội số tuần hoàn trong bình ngưng của tuabin."],
+   ans:[0], ex:"Giám sát rung động để xác định nguyên nhân và khắc phục."},
+
+  {q:"Khi tuabin không quay hay đứng yên, tuyệt đối không cấp hơi chèn trục tuabin là vì?",
+   opts:["Có thể làm cong trục tuabin, biến dạng các răng chèn, gây ra sự giãn nở không đều trong thân tuabin do sự phân bố nhiệt độ không đều.",
+         "Dòng hơi chèn trục sẽ làm tuabin quay, gây nguy hiểm cho tuabin và máy phát điện.",
+         "Làm xuất hiện thủy kích gây nguy hiểm cho hệ thống thiết bị tuabin hơi và hệ thống bình ngưng."],
+   ans:[0], ex:"Cấp hơi chèn khi roto đứng yên gây cong trục, biến dạng răng chèn."},
+
+  {q:"Trong quá trình sấy xilanh hay stator để khởi động tuabin công suất lớn (thường trên 300MW) thì hiệu số chênh lệch nhiệt độ giữa vách trên và vách dưới của xi lanh thuộc phần cao áp, trung áp cao nằm trong khoảng giá trị dưới đây phải dừng và cấm khởi động tuabin:",
+   opts:["~ 0°C.","< 50°C.","> 50°C."],
+   ans:[2], ex:"Chênh nhiệt vách trên/dưới > 50°C phải dừng, cấm khởi động."},
+
+  {q:"Trong quá trình vận hành, hệ thống điều khiển tuabin làm việc không bình thường dẫn đến mất khả năng điều khiển tải và tốc độ tuabin, hư hỏng các sensor đo tốc độ thì?",
+   opts:["Giữ ổn định tải cùng tốc độ tuabin và tìm nguyên nhân hư hỏng, khắc phục.",
+         "Tiến hành ngừng tuabin mà không phá hoại chân không.",
+         "Tiến hành ngừng tuabin có phá hoại chân không."],
+   ans:[1], ex:"Mất điều khiển tải/tốc độ → ngừng tuabin không phá hoại chân không."},
+
+  {q:"Trong quá trình vận hành thiết bị tuabin, một trong các nguyên nhân cơ bản làm áp suất bình ngưng tăng, nhiệt độ hơi thoát ra khỏi tuabin hạ áp tăng cao, nhiệt độ nước tuần hoàn đầu ra bình ngưng tăng là?",
+   opts:["Do thông số nhiệt độ khói thải của lò hơi tăng cao, nên kéo theo tăng chân không trong bình ngưng.",
+         "Do tải của tuabin giảm kéo theo nhiệt độ hơi thoát tăng cao.",
+         "Lưu lượng nước tuần hoàn giảm, các bơm chân không bị lỗi, rò lọt khí lớn và các ống trao đổi nhiệt bình ngưng bị bẩn."],
+   ans:[2], ex:"Nước tuần hoàn giảm, bơm chân không lỗi, rò khí, ống bẩn → p bình ngưng tăng."},
+
+  {q:"Sau khi bị sự cố thủy kích tuabin, tuyệt đối không được khởi động lại tuabin trong vòng 24 giờ. Thông thường, việc khởi động tuabin chỉ nên tiến hành khi hiệu nhiệt độ giữa phần trên và phần dưới của xi lanh nên nhỏ hơn giá trị:",
+   opts:["40°C và độ đảo trục < 0,038mm.",
+         "40-80°C và độ đảo trục < 0,038mm.",
+         ">80°C và độ đảo trục < 0,038mm."],
+   ans:[0], ex:"Chênh nhiệt < 40°C và độ đảo trục < 0,038mm mới được khởi động."},
+
+  {q:"Nếu hơi mới không đạt chất lượng, có chứa muối, khi khối tổ máy lò hơi - tuabin vận hành ở tải cố định trong thời gian dài có thể sẽ:",
+   opts:["Làm tăng nồng độ HCl trong khói thải.",
+         "Làm giảm năng suất của bình khử khí.",
+         "Sẽ là nguyên nhân làm kẹt van Stop, van điều chỉnh và giảm hiệu suất trong của tuabin."],
+   ans:[2], ex:"Muối bám gây kẹt van Stop/van điều chỉnh và giảm hiệu suất trong."},
+
+  {q:"Khi vận hành, không được để nhiệt độ hơi mới hay hơi chính cao so với quy định của nhà sản xuất trong khi giữ nguyên áp suất hơi mới bởi vì sẽ làm:",
+   opts:["Tính cơ học của kim loại bị giảm đi, tính giòn tăng dẫn đến thân tuabin bị biến dạng, sự bắt nối phần tĩnh và phần động có thể bị lỏng.",
+         "Tăng tiêu hao điện năng cho bơm cấp của lò hơi.",
+         "Tăng độ ẩm của hơi trong các tầng cánh cuối sau tuabin."],
+   ans:[0], ex:"Nhiệt độ quá cao làm giảm tính cơ học, tăng giòn, biến dạng thân tuabin."},
+
+  {q:"Khi vận hành, không được để nhiệt độ hơi mới hay hơi chính thấp so với quy định của nhà sản xuất trong khi giữ nguyên áp suất hơi mới bởi vì sẽ làm:",
+   opts:["Tăng tiêu hao điện năng cho bơm cấp và bơm ngưng của lò hơi.",
+         "Giảm hiệu suất trong của tuabin, làm tăng độ ẩm của hơi trong các tầng cánh cuối sau tuabin, gây rỗ mặt cánh hoặc xuất hiện tượng thủy kích tại các tầng cánh cuối.",
+         "Tăng độ khô của hơi trong các tầng cánh cuối sau tuabin."],
+   ans:[1], ex:"Nhiệt độ thấp → tăng độ ẩm, rỗ cánh, nguy cơ thủy kích cánh cuối."},
+
+  {q:"Để tạo chân không trong bình ngưng ở chế độ khởi động tuabin từ trạng thái lạnh cần thực hiện một trong các công việc chính sau đây:",
+   opts:["Khởi động hệ thống khí nén, khởi động hệ thống dầu bôi trơn tuabin.",
+         "Khởi động hệ thống nước ngưng, điền đầy nước vào bình khử khí.",
+         "Khởi động hệ thống nước tuần hoàn, chạy bơm chân không hoặc ejectơ khởi động, đưa hệ thống hơi chèn vào làm việc."],
+   ans:[2], ex:"Cần nước tuần hoàn + bơm/ejectơ chân không + hơi chèn trục."},
+
+  {q:"Thông thường, các bình gia nhiệt hồi nhiệt nước cấp được đưa vào làm việc hoặc cắt làm việc khi tải điện của tuabin vào khoảng:",
+   opts:[">50% so với định mức.","≥25% so với định mức.","<25% so với định mức."],
+   ans:[1], ex:"Đưa vào/cắt bình gia nhiệt khi tải ≥ 25% định mức."},
+
+  {q:"Việc giữ nguyên tốc độ vòng quay của tuabin tại một vài giá trị cố định nhỏ hơn tốc độ định mức, trong quá trình khởi động từ trạng thái lạnh nhằm mục đích?",
+   opts:["Để chờ lò hơi đáp ứng đủ lưu lượng hơi cho việc khởi động tăng tốc độ tuabin.",
+         "Tiến hành sấy kỹ tuabin để sẵn sàng tăng tốc qua các vòng quay cộng hưởng, và có thời gian để kiểm tra tổng thể các thông số kỹ thuật khác của hệ thống.",
+         "Để chờ chuyển tiếp chế độ đốt cháy từ dầu sang chế độ đốt cháy than trong lò hơi."],
+   ans:[1], ex:"Giữ tốc độ để sấy kỹ và kiểm tra trước khi vượt vòng quay cộng hưởng."},
+
+  {q:"Việc lựa chọn chế độ khởi động tuabin từ trạng thái: Lạnh - Ấm – Nóng – Rất nóng về cơ bản căn cứ vào?",
+   opts:["Nhiệt độ và áp suất hơi mới đầu vào van Stop.",
+         "Nhiệt độ kim loại vỏ tuabin cao áp phía trên.",
+         "Nhiệt độ kim loại phần vỏ xi lanh tuabin hạ áp tại đầu vào bình ngưng."],
+   ans:[1], ex:"Căn cứ nhiệt độ kim loại vỏ tuabin cao áp phía trên."},
+
+  {q:"Chế độ vận hành theo thông số trượt của tổ hợp lò hơi - tuabin - máy phát được hiểu là chế độ mà ở đó:",
+   opts:["Tải thay đổi hoặc đáp ứng theo thông số biến đổi của lò hơi, trong khi các van điều chỉnh của tuabin mở 100%.",
+         "Việc đưa hơi vào trong các tầng điều chỉnh của tuabin theo chế độ tiết lưu của các van điều chỉnh.",
+         "Tải thay đổi theo sự điều tiết bằng ống phun của các cụm tầng điều chỉnh trong tuabin."],
+   ans:[0], ex:"Thông số trượt: tải theo lò hơi, van điều chỉnh mở 100%."},
+
+  {q:"Bộ phận vần trục tuabin có tác dụng quay roto tuabin thường được sử dụng trong trường hợp nào?",
+   opts:["Khi tuabin cần vượt nhanh qua tốc độ cộng hưởng giữa tần số quay và tần số riêng của trục roto trong quá trình khởi động.",
+         "Để quay tuabin để duy trì khả năng bôi trơn của đường dầu trong các ổ đỡ.",
+         "Khi tuabin bắt đầu khởi động từ tốc độ vòng quay 0 vòng/phút và khi dừng tuabin dưới 400 vòng/phút."],
+   ans:[1], ex:"Vần trục để duy trì bôi trơn đường dầu trong ổ đỡ."},
+
+  {q:"Trong quá trình tiết lưu của dòng hơi thì:",
+   opts:["Giá trị entanpi giảm dần.","Giá trị entanpi không đổi.","Giá trị entanpi tăng dần."],
+   ans:[1], ex:"Tiết lưu là quá trình đẳng entanpi (entanpi không đổi)."},
+
+  {q:"Khi tuabin đang vận hành mà bị thủy kích trong phần truyền hơi hoặc trong các phần truyền hơi chính của tuabin và hư hỏng tất cả các tín hiệu đo lường và bảo vệ tuabin thì?",
+   opts:["Phải ngừng tuabin mà không cần phá hoại chân không.",
+         "Đóng van stop để dừng cấp hơi vào tuabin, để tuabin quay bình thường.",
+         "Phải ngừng tuabin có phá hoại chân không."],
+   ans:[2], ex:"Thủy kích + mất đo lường/bảo vệ → ngừng tuabin có phá hoại chân không."},
+
+  {q:"Khi vận hành tuabin, gặp trường hợp sau sẽ phải ngừng tuabin có phá hoại chân không?",
+   opts:["Chất lượng hơi, dầu không đáp ứng được tiêu chuẩn.",
+         "Khi sự cố mất nước tuần hoàn mà không thể khôi phục được nguồn nước tuần hoàn.",
+         "Cảnh báo áp lực thấp của hệ thống hơi chèn."],
+   ans:[1], ex:"Mất nước tuần hoàn không khôi phục được → ngừng có phá hoại chân không."},
+
+  {q:"Thông thường khi vận hành tuabin, gặp trường hợp sau sẽ phải ngừng tuabin mà không cần phá hoại chân không?",
+   opts:["Nhiệt độ hơi thoát khỏi tuabin hạ áp < 60°C.",
+         "Nhiệt độ hơi thoát khỏi tuabin hạ áp nằm trong khoảng từ 60°C đến 120°C.",
+         "Khi nhiệt độ hơi thoát khỏi tuabin hạ áp cao trên 120°C."],
+   ans:[2], ex:"Nhiệt độ hơi thoát hạ áp > 120°C → ngừng không phá hoại chân không."},
+
+  {q:"Độ di trục của tuabin cao, kết hợp với nhiệt độ gối đỡ chặn và nhiệt độ dầu hồi tăng cao thường gây ra bởi nhiều nguyên nhân, nhưng có thể kể ra một vài nguyên nhân ở đây là?",
+   opts:["Thông số hơi thay đổi đột ngột, thay đổi lớn về chân không bình ngưng.",
+         "Xuất hiện thủy kích trong tuabin hoặc các sự cố của van hơi chính vào tuabin.",
+         "Đồng thời cả A và B."],
+   ans:[2], ex:"Cả thông số hơi/chân không thay đổi đột ngột và thủy kích/sự cố van hơi chính."},
+
+  {q:"Sự mất cân bằng động trong hệ tuabin – máy phát là một trong những nguyên nhân gây ra hiện tượng rung động trên các gối đỡ. Để khắc phục triệt để hiện tượng mất cân bằng động này phải:",
+   opts:["Tiến hành cân bằng động hệ tuabin - máy phát.",
+         "Kiểm soát nhiệt độ, áp lực dầu bôi trơn từ các gối đỡ.",
+         "Tăng nhanh tốc độ tuabin để vượt qua sự rung động trên các gối đỡ."],
+   ans:[0], ex:"Khắc phục triệt để bằng cân bằng động hệ tuabin – máy phát."}
+];
+
+/* ====== RENDER ====== */
+const form = document.getElementById('quiz');
+const progressEl = document.getElementById('progress');
+const summaryEl = document.getElementById('summary');
+const LETTERS = ['A','B','C'];
+
+function isMulti(item){ return item.ans.length > 1; }
+
+function render(){
+  form.innerHTML = QUESTIONS.map((item, i) => {
+    const multi = isMulti(item);
+    const inputType = multi ? 'checkbox' : 'radio';
+    return `
+    <div class="q" id="q-${i}">
+      <span class="num ${multi?'multi':''}">Câu ${i+1}</span>
+      <div class="stem">${item.q}</div>
+      ${item.opts.map((o, j) => `
+        <label class="opt" id="opt-${i}-${j}">
+          <input type="${inputType}" name="q${i}" value="${j}" onchange="onSelect(${i})">
+          <span class="label">${LETTERS[j]}.</span>
+          <span class="text">${o}</span>
+        </label>
+      `).join('')}
+      <div class="explain" id="ex-${i}"></div>
+    </div>
+  `}).join('');
+}
+
+function getChecked(i){
+  return Array.from(document.querySelectorAll(`input[name="q${i}"]:checked`)).map(el => Number(el.value));
+}
+
+/* Chấm 1 câu và hiển thị đáp án ngay */
+function gradeOne(i){
+  const item = QUESTIONS[i];
+  const qBox = document.getElementById(`q-${i}`);
+  const ex = document.getElementById(`ex-${i}`);
+  const chosen = getChecked(i);
+
+  // reset style
+  qBox.classList.remove('result-correct','result-wrong','result-partial');
+  item.opts.forEach((_, j) => {
+    const el = document.getElementById(`opt-${i}-${j}`);
+    el.classList.remove('correct','wrong','missed','sel');
+  });
+
+  // tô màu: đáp án đúng luôn xanh; đáp án chọn sai đỏ; đáp án đúng bị bỏ sót cam (chỉ câu multi)
+  item.opts.forEach((_, j) => {
+    const el = document.getElementById(`opt-${i}-${j}`);
+    const isCorrect = item.ans.includes(j);
+    const isChosen = chosen.includes(j);
+    if(isCorrect) el.classList.add('correct');
+    else if(isChosen) el.classList.add('wrong');
+    if(isMulti(item) && isCorrect && !isChosen) el.classList.add('missed');
+  });
+
+  // Nếu chưa chọn gì: chỉ hiện đáp án đúng, chưa kết luận đúng/sai
+  if(chosen.length === 0){
+    ex.className = 'explain show';
+    ex.innerHTML = `<span class="tag">✔ Đáp án đúng: ${item.ans.map(a=>LETTERS[a]).join(', ')}.</span> ${item.ex}`;
+    return {status:'unanswered'};
+  }
+
+  // So khớp
+  const sameLen = chosen.length === item.ans.length;
+  const sameSet = sameLen && item.ans.every(a => chosen.includes(a));
+
+  if(sameSet){
+    qBox.classList.add('result-correct');
+    ex.className = 'explain show';
+    ex.innerHTML = `<span class="tag">✔ Chính xác! Đáp án: ${item.ans.map(a=>LETTERS[a]).join(', ')}.</span> ${item.ex}`;
+    return {status:'correct'};
+  } else if(isMulti(item) && chosen.some(c => item.ans.includes(c))){
+    // đúng một phần
+    qBox.classList.add('result-partial');
+    ex.className = 'explain show';
+    ex.innerHTML = `<span class="tag partial">◐ Đúng một phần. Đáp án đầy đủ: ${item.ans.map(a=>LETTERS[a]).join(', ')}.</span> ${item.ex}`;
+    return {status:'partial'};
+  } else {
+    qBox.classList.add('result-wrong');
+    ex.className = 'explain show';
+    ex.innerHTML = `<span class="tag wrong">✘ Chưa đúng. Đáp án đúng: ${item.ans.map(a=>LETTERS[a]).join(', ')}.</span> ${item.ex}`;
+    return {status:'wrong'};
+  }
+}
+
+/* Khi người dùng chọn/bỏ chọn => chấm ngay câu đó + cập nhật tiến độ */
+function onSelect(i){
+  // đánh dấu selected cho các option được chọn
+  document.querySelectorAll(`#q-${i} .opt`).forEach(el => el.classList.remove('sel'));
+  const chosen = getChecked(i);
+  chosen.forEach(j => document.getElementById(`opt-${i}-${j}`).classList.add('sel'));
+
+  gradeOne(i);
+  updateProgress();
+}
+
+function updateProgress(){
+  let n = 0;
+  for(let i=0;i<QUESTIONS.length;i++){
+    if(getChecked(i).length > 0) n++;
+  }
+  progressEl.textContent = `Đã trả lời: ${n}/${QUESTIONS.length}`;
+}
+
+/* Kiểm tra tổng kết toàn bộ */
+function checkAll(){
+  let correct=0, partial=0, wrong=0, unanswered=0;
+  QUESTIONS.forEach((_, i) => {
+    const r = gradeOne(i);
+    if(r.status==='correct') correct++;
+    else if(r.status==='partial') partial++;
+    else if(r.status==='wrong') wrong++;
+    else unanswered++;
+  });
+
+  const total = QUESTIONS.length;
+  // điểm: đúng = 1, đúng một phần = 0.5
+  const scoreVal = correct + partial*0.5;
+  const pct = Math.round(scoreVal/total*100);
+
+  document.getElementById('score').textContent = `${correct}/${total}`;
+  document.getElementById('detail').textContent =
+    `Đúng ${correct} · Đúng một phần ${partial} · Sai ${wrong} · Chưa trả lời ${unanswered} · Điểm ~${pct}%`;
+
+  let msg = "";
+  if(unanswered > 0) msg = "⚠️ Bạn còn câu chưa trả lời. Hãy xem lại các câu chưa chọn đáp án.";
+  else if(pct >= 90) msg = "🏆 Xuất sắc! Bạn nắm rất vững lý thuyết tuabin.";
+  else if(pct >= 75) msg = "👍 Khá tốt! Hãy xem lại các câu sai để hoàn thiện.";
+  else if(pct >= 50) msg = "📘 Cần ôn thêm. Chú ý các câu về chế độ vận hành và sự cố.";
+  else msg = "📚 Hãy đọc lại tài liệu và làm lại bài để củng cố kiến thức.";
+  document.getElementById('msg').textContent = msg;
+
+  summaryEl.classList.add('show');
+  window.scrollTo({top: document.body.scrollHeight, behavior:'smooth'});
+}
+
+function resetAll(){
+  form.reset();
+  summaryEl.classList.remove('show');
+  QUESTIONS.forEach((_, i) => {
+    document.getElementById(`q-${i}`).classList.remove('result-correct','result-wrong','result-partial');
+    document.getElementById(`ex-${i}`).classList.remove('show');
+    document.getElementById(`ex-${i}`).innerHTML = '';
+    document.querySelectorAll(`#q-${i} .opt`).forEach(el => el.classList.remove('sel','correct','wrong','missed'));
+  });
+  updateProgress();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+render();
+updateProgress();
+</script>
+</body>
+</html>

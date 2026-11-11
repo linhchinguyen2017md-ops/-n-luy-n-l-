@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trắc nghiệm: Phòng mòn tuabin</title>
+<style>
+  :root{--bg:#f4f6f9;--card:#fff;--text:#1f2937;--muted:#6b7280;--primary:#7c3aed;--primary-dark:#6d28d9;--border:#e5e7eb;--correct:#16a34a;--correct-bg:#ecfdf5;--wrong:#dc2626;--wrong-bg:#fef2f2;--partial:#d97706;--partial-bg:#fffbeb;}
+  *{box-sizing:border-box;}
+  body{margin:0;padding:24px 12px;background:var(--bg);color:var(--text);font-family:"Segoe UI",Roboto,Arial,sans-serif;line-height:1.55;}
+  .wrap{max-width:900px;margin:0 auto;}
+  header{background:linear-gradient(135deg,#4c1d95,#7c3aed);color:#fff;padding:24px 28px;border-radius:14px;margin-bottom:20px;box-shadow:0 6px 20px rgba(124,58,237,.25);}
+  header h1{margin:0 0 6px;font-size:1.5rem;}
+  header p{margin:0;opacity:.9;font-size:.95rem;}
+  .toolbar{position:sticky;top:0;z-index:10;background:var(--bg);padding:12px 0;display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+  .toolbar .progress{margin-left:auto;font-size:.9rem;color:var(--muted);}
+  button{font:inherit;cursor:pointer;border:none;border-radius:10px;padding:10px 18px;font-weight:600;transition:.18s;}
+  .btn-primary{background:var(--primary);color:#fff;}
+  .btn-primary:hover{background:var(--primary-dark);}
+  .btn-ghost{background:#fff;color:var(--text);border:1px solid var(--border);}
+  .btn-ghost:hover{background:#f3f4f6;}
+  .section-title{background:#ede9fe;color:#4c1d95;font-weight:700;padding:10px 16px;border-radius:10px;margin:22px 0 12px;font-size:1rem;border-left:5px solid var(--primary);}
+  .q{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,.04);}
+  .q .num{display:inline-block;background:#ede9fe;color:var(--primary-dark);font-weight:700;font-size:.8rem;padding:2px 10px;border-radius:999px;margin-bottom:10px;}
+  .q .num.multi{background:#fef3c7;color:#b45309;}
+  .q .num.multi::after{content:" · nhiều đáp án";}
+  .q .stem{font-weight:600;margin-bottom:12px;}
+  .opt{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--border);border-radius:10px;margin-bottom:8px;cursor:pointer;transition:.15s;background:#fff;}
+  .opt:hover{background:#f9fafb;border-color:#c4b5fd;}
+  .opt input{margin-top:4px;accent-color:var(--primary);cursor:pointer;}
+  .opt .label{font-weight:700;color:var(--primary-dark);min-width:18px;}
+  .opt.sel{border-color:var(--primary);background:#f5f3ff;}
+  .opt.correct{border-color:var(--correct);background:var(--correct-bg);}
+  .opt.wrong{border-color:var(--wrong);background:var(--wrong-bg);}
+  .opt.missed{border-color:var(--partial);background:var(--partial-bg);}
+  .opt.correct .label{color:var(--correct);}
+  .opt.wrong .label{color:var(--wrong);}
+  .opt.missed .label{color:var(--partial);}
+  .explain{display:none;margin-top:10px;padding:12px 14px;border-radius:10px;background:#f8fafc;border-left:4px solid var(--primary);font-size:.93rem;}
+  .explain.show{display:block;}
+  .explain .tag{font-weight:700;color:var(--correct);}
+  .explain .tag.partial{color:var(--partial);}
+  .explain .tag.wrong{color:var(--wrong);}
+  .q.result-correct{border-color:var(--correct);}
+  .q.result-wrong{border-color:var(--wrong);}
+  .q.result-partial{border-color:var(--partial);}
+  .summary{display:none;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px;margin-top:18px;text-align:center;}
+  .summary.show{display:block;}
+  .summary .score{font-size:2.6rem;font-weight:800;color:var(--primary);}
+  .summary .detail{color:var(--muted);margin-top:4px;}
+  .summary .msg{margin-top:12px;font-weight:600;}
+  @media (max-width:520px){header{padding:18px;}header h1{font-size:1.2rem;}.toolbar .progress{width:100%;margin-left:0;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>HỆ THỐNG 3: PHÒNG MÒN TUABIN</h1>
+    <p>26 câu hỏi (Câu 73–98) – Đáp án và giải thích hiện ngay khi bạn chọn.</p>
+  </header>
+  <div class="toolbar">
+    <button class="btn-primary" onclick="checkAll()">Kiểm tra tổng kết</button>
+    <button class="btn-ghost" onclick="resetAll()">Làm lại</button>
+    <span class="progress" id="progress">Đã trả lời: 0/26</span>
+  </div>
+  <form id="quiz"></form>
+  <div class="summary" id="summary">
+    <div class="score" id="score">0/26</div>
+    <div class="detail" id="detail"></div>
+    <div class="msg" id="msg"></div>
+  </div>
+</div>
+<script>
+const QUESTIONS = [
+  {q:"Nhận định nào sau đây là đúng nhất về Chức năng của hệ thống phòng mòn bản thể tuabin?",
+   opts:["Duy trì độ ẩm để tránh ăn mòn tuabin trong quá trình tuabin vận hành.",
+         "Duy trì độ ẩm để tránh ăn mòn tuabin trong quá trình dừng tuabin dài ngày.",
+         "Tránh ăn mòn tuabin trong quá trình tháo để sửa chữa.",
+         "Duy trì độ ẩm bình ngưng để tránh ăn mòn các tầng cánh cuối tuabin khi dừng dài ngày."],
+   ans:[1], ex:"Duy trì độ ẩm thấp để tránh ăn mòn khi dừng tuabin dài ngày."},
+  {q:"Hệ thống phòng mòn tuabin bao gồm?",
+   opts:["Máy sấy cấp khí nóng vào tuabin cao, trung và hạ áp.",
+         "Máy hút ẩm hút không khí ẩm tại tuabin hạ áp và bình ngưng.",
+         "Máy hút ẩm hút không khí ẩm tại bình ngưng.",
+         "Máy sấy cấp khí nóng vào tuabin cao, trung áp và máy hút ẩm hút không khí ẩm từ tuabin hạ áp."],
+   ans:[3], ex:"Gồm máy sấy cấp khí nóng vào tuabin cao/trung áp và máy hút ẩm hút không khí ẩm từ tuabin hạ áp."},
+  {q:"Độ ẩm mà máy hút ẩm có thể đáp ứng khi đưa hệ thống phòng mòn tuabin vào làm việc là?",
+   opts:["<40%","<30%","> 30%","<35%"],ans:[1], ex:"Máy hút ẩm đáp ứng độ ẩm < 30%."},
+  {q:"Lưu lượng gió thiết kế của máy sấy để phòng mòn tuabin là?",
+   opts:["3 m3/p","3,5 m3/p","4,2 m3/p","5,2 m3/p"],ans:[3], ex:"Lưu lượng gió thiết kế: 5,2 m³/phút."},
+  {q:"Nhiệt độ gió ra lớn nhất của máy sấy để phòng mòn tuabin là?",
+   opts:["100°C","120°C","130°C","150°C"],ans:[3], ex:"Nhiệt độ gió ra lớn nhất: 150°C."},
+  {q:"Lưu lượng thiết kế của máy hút ẩm thuộc hệ thống phòng mòn tuabin là?",
+   opts:["4500 m3/h","4000 m3/p","3500 m3/p","3000 m3/p"],ans:[0], ex:"Lưu lượng thiết kế: 4500 m³/h."},
+  {q:"Công suất tách ẩm của máy hút ẩm của hệ thống phòng mòn tuabin là?",
+   opts:["400 kg/ngày","450 kg/ngày","480 kg/ngày","500 kg/ngày"],ans:[1], ex:"Công suất tách ẩm: 450 kg/ngày."},
+  {q:"Môi chất đang được sử dụng trong máy hút ẩm để phòng mòn tuabin là?",
+   opts:["R407C","R32","R22","R410A"],ans:[2], ex:"Môi chất lạnh: R22."},
+  {q:"Bộ gia nhiệt tự động của máy sấy để phòng mòn tuabin vào làm việc khi nhiệt độ gió giảm bao nhiêu độ so với nhiệt độ cài đặt?",
+   opts:["< 2,5°C","< 5°C","< 7,5°C","< 10°C"],ans:[0], ex:"Bộ gia nhiệt làm việc khi nhiệt độ gió giảm < 2,5°C so với cài đặt."},
+  {q:"Nghiêm cấm đưa máy hút ẩm vào làm việc để phòng mòn tuabin khi nhiệt độ không khí bao nhiêu?",
+   opts:["< 5°C","< 7°C","< 10°C","< 15°C"],ans:[0], ex:"Cấm khi nhiệt độ không khí < 5°C."},
+  {q:"Gió nóng từ máy sấy được cấp vào tuabin tại các điểm nào?",
+   opts:["Sau van điều chỉnh hơi chính và sau cụm van tái nhiệt.",
+         "Trước van 1 chiều cửa trích BGN #8 và cửa trích BGN #6.",
+         "Trước van 1 chiều cửa trích BGN #7 và cửa trích BGN #5.",
+         "Cửa người chui tuabin hạ áp A, B."],
+   ans:[1], ex:"Gió nóng cấp trước van 1 chiều cửa trích BGN #8 và BGN #6."},
+  {q:"Máy hút ẩm hệ thống phòng mòn tuabin được đấu nối như thế nào?",
+   opts:["Đầu hút nối với cửa người chui tuabin hạ áp A và đầu đẩy nối với cửa người chui tuabin hạ áp B hoặc ngược lại.",
+         "Đầu hút nối với cửa người chui khoang hơi bình ngưng A và đầu đẩy nối với cửa người chui khoang hơi bình ngưng B hoặc ngược lại.",
+         "Đầu hút nối với cửa người chui khoang nước bình ngưng A và đầu đẩy nối với cửa người chui khoang nước bình ngưng B hoặc ngược lại.",
+         "Đầu hút nối với cửa người chui tuabin hạ áp A phía sân phân phối và đầu đẩy nối với cửa người chui tuabin hạ áp A phía lò hơi hoặc tương tự cho tuabin hạ áp B."],
+   ans:[0], ex:"Đầu hút nối cửa người chui tuabin hạ áp A, đầu đẩy nối cửa người chui tuabin hạ áp B (hoặc ngược lại)."},
+  {q:"Máy hút ẩm hệ thống phòng mòn tuabin hoạt động an toàn trong dải nhiệt độ môi trường?",
+   opts:["từ 5°C đến 40°C","từ 7°C đến 45°C","từ 10°C đến 40°C","từ 15°C đến 50°C"],ans:[0], ex:"Dải nhiệt độ an toàn: 5°C đến 40°C."},
+  {q:"Chu kỳ làm việc của máy sấy trong hệ thống phòng mòn tuabin là?",
+   opts:["Làm việc liên tục","8h làm việc, 8 giờ dừng","4h làm việc, 4 giờ dừng","2h làm việc, 2 giờ dừng"],ans:[3], ex:"Chu kỳ: 2h làm việc, 2h dừng."},
+  {q:"Có mấy chế độ hút ẩm của máy hút ẩm thuộc hệ thống phòng mòn tuabin?",
+   opts:["2","3","4","5"],ans:[2], ex:"Có 4 chế độ hút ẩm."},
+  {q:"Độ ẩm cài đặt phải thấp hơn độ ẩm hiện tại trong không khí bao nhiêu thì máy hút ẩm mới hoạt động?",
+   opts:["2%","3%","4%","5%"],ans:[1], ex:"Độ ẩm cài đặt thấp hơn hiện tại 3% thì máy mới hoạt động."},
+  {q:"Máy hút ẩm sẽ vận hành ở chế độ hút ẩm liên tục trong trường hợp nào?",
+   opts:["Cài đặt trị độ ẩm < 35%","Cài đặt trị độ ẩm < 30%","Cài đặt trị độ ẩm < 25%","Cài đặt trị độ ẩm < 20%"],ans:[1], ex:"Hút ẩm liên tục khi cài đặt < 30%."},
+  {q:"Nếu máy hút ẩm làm việc ở nhiệt độ thấp thì hệ thống chuyển sang chế độ làm việc nào?",
+   opts:["Quạt chạy, máy nén dừng trong chế độ xả tuyết.","Máy nén chạy trong chế độ xả tuyết.","Quạt dừng, máy nén chạy trong chế độ xả tuyết.","Hệ thống sẽ dừng"],ans:[0], ex:"Quạt chạy, máy nén dừng trong chế độ xả tuyết."},
+  {q:"Màn hình của máy hút ẩm hiển thị “E1” là lỗi gì?",
+   opts:["Lỗi sensor ẩm","Lỗi sensor xả tuyết","Bảo vệ điện áp thấp","Bảo vệ điện áp cao"],ans:[0], ex:"E1: lỗi sensor ẩm."},
+  {q:"Màn hình của máy hút ẩm hiển thị “E2” là lỗi gì?",
+   opts:["Lỗi sensor ẩm","Lỗi sensor xả tuyết","Bảo vệ điện áp thấp","Bảo vệ điện áp cao"],ans:[1], ex:"E2: lỗi sensor xả tuyết."},
+  {q:"Màn hình của máy hút ẩm hiển thị “E3” là lỗi gì?",
+   opts:["Lỗi sensor ẩm","Lỗi sensor xả tuyết","Bảo vệ điện áp thấp","Bảo vệ điện áp cao"],ans:[2], ex:"E3: bảo vệ điện áp thấp."},
+  {q:"Màn hình của máy hút ẩm hiển thị “E4” là lỗi gì?",
+   opts:["Lỗi sensor ẩm","Lỗi sensor xả tuyết","Bảo vệ điện áp thấp","Bảo vệ điện áp cao"],ans:[3], ex:"E4: bảo vệ điện áp cao."},
+  {q:"Màn hình của máy hút ẩm hiển thị “E5” là lỗi gì?",
+   opts:["Bảo vệ ngược pha, mất pha","Lỗi sensor ẩm","Lỗi sensor xả tuyết","Bảo vệ điện áp cao"],ans:[0], ex:"E5: bảo vệ ngược pha, mất pha."},
+  {q:"Sự cố máy hút ẩm không hoạt động là do nguyên nhân gì?",
+   opts:["Không có nguồn điện.","CB không bật On hoặc tiếp điểm không tốt.","Cháy cầu chì.","Phương án 1, 2, 3 đều đúng"],ans:[3], ex:"Cả 3 nguyên nhân."},
+  {q:"Sự cố máy hút ẩm ẩm tách ẩm không hiệu quả là do nguyên nhân gì?",
+   opts:["Bụi bám đầy kín lọc.","Hệ thống ga lạnh bị rò rỉ.","Cửa người chui hoặc van mở/khe hở dẫn đến không khí ngoài xâm nhập.","Phương án 1, 2, 3 đều đúng"],ans:[3], ex:"Cả 3 nguyên nhân."},
+  {q:"Sự cố máy hút ẩm ẩm rò nước là do nguyên nhân gì?",
+   opts:["Hệ thống ga lạnh bị rò rỉ.","Máy bị đặt nghiêng.","Vật cản tại đường khí khô thổi ra và đường hút vào.","Phương án 1, 2, 3 đều đúng"],ans:[1], ex:"Rò nước do máy bị đặt nghiêng."}
+];
+const form=document.getElementById('quiz'),progressEl=document.getElementById('progress'),summaryEl=document.getElementById('summary');
+const LETTERS=['A','B','C','D'],TOTAL=QUESTIONS.length;
+const isMulti=item=>item.ans.length>1;
+function render(){
+  form.innerHTML=QUESTIONS.map((item,i)=>{
+    const multi=isMulti(item),type=multi?'checkbox':'radio';
+    return `<div class="q" id="q-${i}">
+      <span class="num ${multi?'multi':''}">Câu ${i+1}</span>
+      <div class="stem">${item.q}</div>
+      ${item.opts.map((o,j)=>`<label class="opt" id="opt-${i}-${j}"><input type="${type}" name="q${i}" value="${j}" onchange="onSelect(${i})"><span class="label">${LETTERS[j]}.</span><span class="text">${o}</span></label>`).join('')}
+      <div class="explain" id="ex-${i}"></div>
+    </div>`;
+  }).join('');
+}
+const getChecked=i=>Array.from(document.querySelectorAll(`input[name="q${i}"]:checked`)).map(el=>Number(el.value));
+function gradeOne(i){
+  const item=QUESTIONS[i],qBox=document.getElementById(`q-${i}`),ex=document.getElementById(`ex-${i}`),chosen=getChecked(i);
+  qBox.classList.remove('result-correct','result-wrong','result-partial');
+  item.opts.forEach((_,j)=>{const el=document.getElementById(`opt-${i}-${j}`);el.classList.remove('correct','wrong','missed','sel');});
+  item.opts.forEach((_,j)=>{
+    const el=document.getElementById(`opt-${i}-${j}`),isC=item.ans.includes(j),isCh=chosen.includes(j);
+    if(isC)el.classList.add('correct');else if(isCh)el.classList.add('wrong');
+    if(isMulti(item)&&isC&&!isCh)el.classList.add('missed');
+  });
+  if(chosen.length===0){ex.className='explain show';ex.innerHTML=`<span class="tag">✔ Đáp án đúng: ${item.ans.map(a=>LETTERS[a]).join(', ')}.</span> ${item.ex}`;return{status:'unanswered'};}
+  const sameSet=chosen.length===item.ans.length&&item.ans.every(a=>chosen.includes(a));
+  if(sameSet){qBox.classList.add('result-correct');ex.className='explain show';ex.innerHTML=`<span class="tag">✔ Chính xác! Đáp án: ${item.ans.map(a=>LETTERS[a]).join(', ')}.</span> ${item.ex}`;return{status:'correct'};}
+  else if(isMulti(item)&&chosen.some(c=>item.ans.includes(c))){qBox.classList.add('result-partial');ex.className='explain show';ex.innerHTML=`<span class="tag partial">◐ Đúng một phần. Đáp án đầy đủ: ${item.ans.map(a=>LETTERS[a]).join(', ')}.</span> ${item.ex}`;return{status:'partial'};}
+  else{qBox.classList.add('result-wrong');ex.className='explain show';ex.innerHTML=`<span class="tag wrong">✘ Chưa đúng. Đáp án đúng: ${item.ans.map(a=>LETTERS[a]).join(', ')}.</span> ${item.ex}`;return{status:'wrong'};}
+}
+function onSelect(i){
+  document.querySelectorAll(`#q-${i} .opt`).forEach(el=>el.classList.remove('sel'));
+  getChecked(i).forEach(j=>document.getElementById(`opt-${i}-${j}`).classList.add('sel'));
+  gradeOne(i);updateProgress();
+}
+function updateProgress(){let n=0;for(let i=0;i<TOTAL;i++){if(getChecked(i).length>0)n++;}progressEl.textContent=`Đã trả lời: ${n}/${TOTAL}`;}
+function checkAll(){
+  let c=0,p=0,w=0,u=0;
+  QUESTIONS.forEach((_,i)=>{const r=gradeOne(i);if(r.status==='correct')c++;else if(r.status==='partial')p++;else if(r.status==='wrong')w++;else u++;});
+  const pct=Math.round((c+p*0.5)/TOTAL*100);
+  document.getElementById('score').textContent=`${c}/${TOTAL}`;
+  document.getElementById('detail').textContent=`Đúng ${c} · Đúng một phần ${p} · Sai ${w} · Chưa trả lời ${u} · Điểm ~${pct}%`;
+  let msg="";if(u>0)msg="⚠️ Bạn còn câu chưa trả lời.";else if(pct>=90)msg="🏆 Xuất sắc!";else if(pct>=75)msg="👍 Khá tốt!";else if(pct>=50)msg="📘 Cần ôn thêm.";else msg="📚 Hãy đọc lại tài liệu và làm lại.";
+  document.getElementById('msg').textContent=msg;summaryEl.classList.add('show');window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'});
+}
+function resetAll(){
+  form.reset();summaryEl.classList.remove('show');
+  QUESTIONS.forEach((_,i)=>{document.getElementById(`q-${i}`).classList.remove('result-correct','result-wrong','result-partial');const ex=document.getElementById(`ex-${i}`);ex.classList.remove('show');ex.innerHTML='';document.querySelectorAll(`#q-${i} .opt`).forEach(el=>el.classList.remove('sel','correct','wrong','missed'));});
+  updateProgress();window.scrollTo({top:0,behavior:'smooth'});
+}
+render();updateProgress();
+</script>
+</body>
+</html>

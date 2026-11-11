@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trắc nghiệm Hệ thống Nước cấp – NĐMD (24 câu)</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f4f8; margin: 0; padding: 20px; color: #1a202c; line-height: 1.6; }
+  .container { max-width: 900px; margin: 0 auto; }
+  header { background: linear-gradient(135deg, #164e63, #0891b2); color: white; padding: 30px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+  header h1 { margin: 0 0 8px; font-size: 1.55rem; }
+  header p { margin: 0; opacity: 0.9; }
+  .mode-hint { background: #fef3c7; border: 1px solid #fcd34d; color: #92400e; padding: 12px 18px; border-radius: 8px; margin-bottom: 16px; font-size: 0.9rem; display: flex; align-items: flex-start; gap: 10px; }
+  .mode-hint strong { color: #78350f; }
+  .progress-info { background: #fff; padding: 12px 20px; border-radius: 8px; margin-bottom: 16px; font-size: 0.9rem; color: #475569; box-shadow: 0 2px 6px rgba(0,0,0,0.05); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+  .toolbar { position: sticky; top: 10px; z-index: 10; display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+  .btn { padding: 12px 22px; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all .15s; }
+  .btn-primary { background: #0891b2; color: #fff; }
+  .btn-primary:hover { background: #0e7490; }
+  .btn-secondary { background: #e2e8f0; color: #334155; }
+  .btn-secondary:hover { background: #cbd5e1; }
+  .score-box { background: #fff; border-radius: 12px; padding: 24px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); display: none; text-align: center; }
+  .score-box.show { display: block; }
+  .score-box .score-number { font-size: 2.5rem; font-weight: 700; color: #0891b2; }
+  .score-box .score-label { color: #64748b; margin-top: 4px; }
+  .q-card { background: #fff; border-radius: 10px; padding: 20px 24px; margin-bottom: 16px; box-shadow: 0 2px 6px rgba(0,0,0,0.06); border-left: 4px solid #06b6d4; transition: border-color .2s; }
+  .q-card.correct { border-left-color: #16a34a; }
+  .q-card.incorrect { border-left-color: #dc2626; }
+  .q-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+  .q-num { background: #cffafe; color: #155e75; font-weight: 700; padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; white-space: nowrap; }
+  .q-diff { font-size: 0.75rem; padding: 3px 10px; border-radius: 12px; font-weight: 600; white-space: nowrap; }
+  .diff-Easy { background: #dcfce7; color: #166534; }
+  .diff-Medium { background: #fef9c3; color: #854d0e; }
+  .diff-Hard { background: #fee2e2; color: #991b1b; }
+  .q-text { font-weight: 600; margin-bottom: 12px; }
+  .options { display: flex; flex-direction: column; gap: 8px; }
+  .option { display: flex; align-items: flex-start; gap: 10px; padding: 10px 14px; border: 1.5px solid #e2e8f0; border-radius: 8px; cursor: pointer; transition: all .15s; background: #fff; }
+  .option:hover { border-color: #67e8f9; background: #f8fafc; }
+  .option input { margin-top: 5px; cursor: pointer; accent-color: #0891b2; }
+  .option.selected { border-color: #06b6d4; background: #ecfeff; }
+  .option.correct-answer { border-color: #16a34a; background: #f0fdf4; }
+  .option.wrong-answer { border-color: #dc2626; background: #fef2f2; }
+  .option-letter { font-weight: 700; color: #0891b2; min-width: 20px; }
+  .option-text { white-space: pre-line; }
+  .feedback { margin-top: 12px; padding: 10px 14px; border-radius: 8px; font-size: 0.9rem; display: none; }
+  .feedback.show { display: block; }
+  .feedback.ok { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+  .feedback.no { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>Trắc nghiệm: Hệ thống Nước cấp – NĐMD</h1>
+    <p>24 câu hỏi trắc nghiệm • Trình độ L1 • Chế độ học tập tương tác</p>
+  </header>
+
+  <div class="mode-hint">
+    <span>💡</span>
+    <div>
+      <strong>Chế độ học:</strong> Kích chọn đáp án để xem kết quả ngay. Bộ câu hỏi này toàn bộ là <strong>MC (chọn 1 đáp án)</strong>.
+    </div>
+  </div>
+
+  <div class="progress-info">
+    <span>Đã hoàn thành: <strong id="answeredCount">0</strong> / <strong id="totalCount">0</strong></span>
+    <span id="statusText">Đang làm bài...</span>
+  </div>
+
+  <div class="toolbar">
+    <button class="btn btn-primary" id="submitBtn">Tổng kết điểm</button>
+    <button class="btn btn-secondary" id="resetBtn">Làm lại từ đầu</button>
+  </div>
+
+  <div class="score-box" id="scoreBox">
+    <div class="score-number" id="scoreNumber">0 / 0</div>
+    <div class="score-label" id="scoreLabel"></div>
+  </div>
+
+  <div id="quizContainer"></div>
+</div>
+
+<script>
+/* 24 câu Nước cấp (239–262) — toàn bộ MC 4 phương án A/B/C/D. */
+const questions = [
+{id:239,diff:'Easy',q:'Nhiệm vụ của hệ thống nước cấp:',opts:['Hệ thống nước cấp nhận nước ngưng được gia nhiệt từ bình khử khí. Các bơm cấp vận chuyển nước cấp đi qua các bình gia nhiệt hạ áp để gia nhiệt cho nước cấp nhằm nâng cao hiệu suất chu trình nhiệt, sau đó được rẽ thành hai đường đưa sang 2 lò; qua cụm các cụm van điều chỉnh, bộ hâm và vào hai bao hơi.','Hệ thống nước cấp nhận nước ngưng được gia nhiệt từ bình khử khí. Các bơm cấp vận chuyển nước cấp đi qua các bình gia nhiệt cao áp để gia nhiệt cho nước cấp nhằm nâng cao hiệu suất chu trình nhiệt, sau đó được rẽ thành hai đường đưa sang 2 lò; qua cụm các cụm van điều chỉnh, bộ hâm và vào hai bao hơi.','Hệ thống nước cấp nhận nước ngưng được gia nhiệt từ bình gia nhiệt hạ áp; Các bơm cấp vận chuyển nước cấp đi qua các bình gia nhiệt cao áp để gia nhiệt cho nước cấp nhằm nâng cao hiệu suất chu trình nhiệt, sau đó được rẽ thành hai đường đưa sang 2 lò; qua cụm các cụm van điều chỉnh, bộ hâm và vào hai bao hơi.','Hệ thống nước cấp nhận nước ngưng được gia nhiệt từ bình khử khí. Các bơm cấp vận chuyển nước cấp đi qua các bình gia nhiệt cao áp để gia nhiệt cho nước cấp nhằm nâng cao hiệu suất chu trình nhiệt, sau đó được đưa sang lần lượt từng lò; qua cụm các cụm van điều chỉnh, bộ hâm và vào hai bao hơi.'],ans:2},
+{id:240,diff:'Easy',q:'Nội dung nào sau đây là đúng đối với hệ thống nước cấp nhà máy Nhiệt điện Mông Dương 1?',opts:['Khi tổ máy làm việc bình thường thì phương thức vận hành là: 1 bơm làm việc, 1 bơm dự phòng liên động. Mỗi bơm sẽ đáp ứng 100% công suất cộng với độ dự phòng.','Khi tổ máy làm việc bình thường thì phương thức vận hành là: 2 bơm làm việc, 1 bơm dự phòng liên động. Mỗi bơm sẽ đáp ứng 75% công suất cộng với độ dự phòng.','Khi tổ máy làm việc bình thường thì phương thức vận hành là: 2 bơm làm việc, 1 bơm dự phòng liên động. Mỗi bơm sẽ đáp ứng 50% công suất cộng với độ dự phòng.','Khi tổ máy làm việc bình thường thì phương thức vận hành là: 2 bơm làm việc, 1 bơm dự phòng liên động. Mỗi bơm sẽ đáp ứng 65% công suất cộng với độ dự phòng.'],ans:3},
+{id:241,diff:'Easy',q:'Nội dung nào sau đây là đúng đối với hệ thống nước cấp nhà máy Nhiệt điện Mông Dương 1?',opts:['Đầu hút bơm tăng áp được đấu vào bể dự trữ nước khử khoáng, đầu đẩy của bơm tăng áp được đấu vào đầu hút của bơm cấp chính. Bơm tăng áp được nối cứng với động cơ, còn bơm cấp chính được dẫn động bằng động cơ thông qua bộ bánh răng tăng tốc và khớp nối thủy lực có khả năng thay đổi tốc độ.','Đầu hút bơm tăng áp được đấu vào đầu ra của BGN hạ áp 4, đầu đẩy của bơm tăng áp được đấu vào đầu hút của bơm cấp chính. Bơm tăng áp được nối cứng với động cơ, còn bơm cấp chính được dẫn động bằng động cơ thông qua bộ bánh răng tăng tốc và khớp nối thủy lực có khả năng thay đổi tốc độ.','Đầu hút bơm tăng áp được đấu vào bể dự trữ nước khử khí, đầu đẩy của bơm tăng áp được đấu vào đầu hút của bơm cấp chính. Bơm cấp được nối cứng với động cơ, còn bơm tăng áp được dẫn động bằng động cơ thông qua bộ bánh răng tăng tốc và khớp nối thủy lực có khả năng thay đổi tốc độ.','Đầu hút bơm tăng áp được đấu vào bể dự trữ nước khử khí, đầu đẩy của bơm tăng áp được đấu vào đầu hút của bơm cấp chính. Bơm tăng áp được nối cứng với động cơ, còn bơm cấp chính được dẫn động bằng động cơ thông qua bộ bánh răng tăng tốc và khớp nối thủy lực có khả năng thay đổi tốc độ.'],ans:4},
+{id:242,diff:'Easy',q:'Nội dung nào sau đây là đúng đối với hệ thống nước cấp nhà máy Nhiệt điện Mông Dương 1?',opts:['Tại tầng cánh trung gian của mỗi bơm cấp có trích một đường lấy nước cho phun giảm ôn bypass HP và bộ tái nhiệt của mỗi lò hơi.','Tại tầng cánh trung gian của mỗi bơm cấp có trích một đường lấy nước cho phun giảm ôn bypass LP và bộ tái nhiệt của mỗi lò hơi.','Tại tầng cánh trung gian của mỗi bơm cấp có trích một đường lấy nước cho phun giảm ôn bypass HP và bộ quá nhiệt của mỗi lò hơi.','Tại tầng cánh đầu tiên của mỗi bơm cấp có trích một đường lấy nước cho phun giảm ôn bypass HP và bộ tái nhiệt của mỗi lò hơi.'],ans:1},
+{id:243,diff:'Easy',q:'Nội dung nào sau đây là đúng đối với hệ thống nước cấp nhà máy Nhiệt điện Mông Dương 1?',opts:['Bình khử khí dùng để loại bỏ khí ôxi và các khí không ngưng khác trong nước cấp. Phương pháp khử khí là dùng khí để gia nhiệt trực tiếp cho nước cấp, nhờ đó nước cấp được gia nhiệt tới nhiệt độ bão hoà tương ứng với áp suất vận hành trong bình khử khí.','Bình khử khí dùng để loại bỏ khí ôxi và các khí không ngưng khác trong nước cấp. Phương pháp khử khí là dùng hơi để gia nhiệt trực tiếp cho nước cấp, nhờ đó nước cấp được gia nhiệt tới nhiệt độ bão hoà tương ứng với áp suất vận hành trong bình khử khí.','Bình khử khí dùng để loại bỏ khí oxi và các khí không ngưng khác trong nước cấp. Phương pháp khử khí là dùng hơi để gia nhiệt gián tiếp cho nước cấp, nhờ đó nước cấp được gia nhiệt tới nhiệt độ bão hoà tương ứng với áp suất vận hành trong bình khử khí.','Bình khử khí dùng để loại bỏ khí ôxi và các khí không ngưng khác trong nước cấp. Phương pháp khử khí là dùng hơi cấp vào bể chứa nước cấp để gia nhiệt trực tiếp cho nước cấp, nhờ đó nước cấp được gia nhiệt tới nhiệt độ tương ứng với áp suất vận hành trong bình khử khí.'],ans:2},
+{id:244,diff:'Easy',q:'Bơm tăng áp bơm cấp là bơm?',opts:['Bơm tăng áp là bơm ly tâm 1 tầng cánh, thân kiểu nằm ngang, tầng cánh đơn, một đầu hút. Bơm được nối cứng với động cơ; bơm được chèn tại đầu dẫn động và đầu không dẫn động bởi các bộ chèn cơ khí.','Bơm tăng áp là bơm ly tâm 1 tầng cánh, thân kiểu nằm ngang, tầng cánh kép, một đầu hút. Bơm được nối cứng với động cơ; bơm được chèn tại đầu dẫn động và đầu không dẫn động bởi các bộ chèn cơ khí.','Bơm tăng áp là bơm ly tâm 1 tầng cánh, thân kiểu nằm dọc, tầng cánh đơn, một đầu hút. Bơm được nối cứng với động cơ; bơm được chèn tại đầu dẫn động và đầu không dẫn động bởi các tết chèn.','Bơm tăng áp là trục vít tâm 1 tầng cánh, thân kiểu nằm ngang, tầng cánh kép, một đầu hút. Bơm được nối cứng với động cơ; bơm được chèn tại đầu dẫn động và đầu không dẫn động bởi các bộ chèn cơ khí.'],ans:1},
+{id:245,diff:'Medium',q:'Bơm nước cấp chính là bơm:',opts:['Bơm nước cấp chính là bơm ly tâm 5 tầng cánh. Bơm được dẫn động bằng động cơ thông qua khớp nối thủy lực, có thể thay đổi được tốc độ. Bơm được chèn tại đầu dẫn động và không dẫn động bằng tết chèn chịu áp lực, nhiệt độ cao.','Bơm nước cấp chính là bơm ly tâm 4 tầng cánh. Bơm được dẫn động bằng động cơ thông qua khớp nối cứng, có thể thay đổi được tốc độ. Bơm được chèn tại đầu dẫn động và không dẫn động bằng tết chèn chịu áp lực, nhiệt độ cao.','Bơm nước cấp chính là bơm ly tâm 4 tầng cánh. Bơm được dẫn động bằng động cơ thông qua khớp nối thủy lực, có thể thay đổi được tốc độ. Bơm được chèn tại đầu dẫn động và không dẫn động bằng bộ chèn cơ khí.','Bơm nước cấp chính là trục vít có 4 tầng cánh. Bơm được dẫn động bằng động cơ thông qua khớp nối thủy lực, có thể thay đổi được tốc độ. Bơm được chèn tại đầu dẫn động và không dẫn động bằng bộ chèn cơ khí.'],ans:3},
+{id:246,diff:'Easy',q:'Tốc độ thiết kế của bơm tăng áp bơm cấp của Nhà máy nhiệt điện Mông Dương:',opts:['1480 v/p','1490 v/p','1500 v/p','1510 v/p'],ans:2},
+{id:247,diff:'Easy',q:'Công suất định mức / cột áp thiết kế của bơm tăng áp bơm cấp Nhà máy nhiệt điện Mông Dương:',opts:['1240 m³/h / 88 mH₂O','1250 m³/h / 89 mH₂O','1260 m³/h / 90 mH₂O','1270 m³/h / 91 mH₂O'],ans:2},
+{id:248,diff:'Medium',q:'Tốc độ thiết kế của bơm cấp của Nhà máy nhiệt điện Mông Dương:',opts:['5020 v/p','5080 v/p','5040 v/p','5060 v/p'],ans:4},
+{id:249,diff:'Easy',q:'Công suất định mức / cột áp thiết kế của bơm cấp Nhà máy nhiệt điện Mông Dương:',opts:['1240 m³/h / 2315 mH₂O','1260 m³/h / 2320 mH₂O','1250 m³/h / 2315 mH₂O','1260 m³/h / 2315 mH₂O'],ans:3},
+{id:250,diff:'Easy',q:'Lưu lượng tối thiểu của bơm cấp Nhà máy nhiệt điện Mông Dương:',opts:['365 m³/h','375 m³/h','385 m³/h','395 m³/h'],ans:2},
+{id:251,diff:'Medium',q:'Dòng điện định mức của tổ hợp bơm cấp Nhà máy nhiệt điện Mông Dương:',opts:['731,2 A','745,2 A','761,2 A','711,2 A'],ans:1},
+{id:252,diff:'Medium',q:'Công suất động cơ / số vòng quay bơm điền đầy và tái tuần hoàn khử khí Nhà máy nhiệt điện Mông Dương:',opts:['40 kW / 1470 v/ph','30 kW / 1670 v/ph','40 kW / 1570 v/ph','30 kW / 1470 v/ph'],ans:4},
+{id:253,diff:'Easy',q:'Lưu lượng / cột áp bơm điền đầy và tái tuần hoàn khử khí Nhà máy nhiệt điện Mông Dương:',opts:['100 m³/h / 50 mH₂O','110 m³/h / 80 mH₂O','110 m³/h / 50 mH₂O','150 m³/h / 50 mH₂O'],ans:1},
+{id:254,diff:'Easy',q:'Công suất thiết kế Bình khử khí Nhà máy nhiệt điện Mông Dương:',opts:['1835 tấn/h','1735 tấn/h','1635 tấn/h','1935 tấn/h'],ans:1},
+{id:255,diff:'Medium',q:'Thể tích bình chứa nước cấp Bình khử khí Nhà máy nhiệt điện Mông Dương:',opts:['163 m³','173 m³','183 m³','193 m³'],ans:2},
+{id:256,diff:'Medium',q:'Điều kiện khởi động bơm cấp nào sau đây là đúng?',opts:['Chênh lệch nhiệt độ phía trên/dưới của vỏ bơm phía dẫn động và không dẫn động < 40°C.','Chênh lệch nhiệt độ phía trên/dưới của vỏ bơm phía dẫn động và không dẫn động < 70°C.','Chênh lệch nhiệt độ phía trên/dưới của vỏ bơm phía dẫn động và không dẫn động < 60°C.','Chênh lệch nhiệt độ phía trên/dưới của vỏ bơm phía dẫn động và không dẫn động < 50°C.'],ans:1},
+{id:257,diff:'Medium',q:'Điều kiện khởi động bơm cấp nào sau đây là đúng?',opts:['Chênh lệch nhiệt độ phía dưới của vỏ bơm phía dẫn động và nhiệt độ của bể nước cấp < 70°C.','Chênh lệch nhiệt độ phía dưới của vỏ bơm phía dẫn động và nhiệt độ của bể nước cấp < 60°C.','Chênh lệch nhiệt độ phía dưới của vỏ bơm phía dẫn động và nhiệt độ của bể nước cấp < 50°C.','Chênh lệch nhiệt độ phía dưới của vỏ bơm phía dẫn động và nhiệt độ của bể nước cấp < 40°C.'],ans:4},
+{id:258,diff:'Hard',q:'Giá trị cảnh báo nhiệt độ gối trục của bất kỳ điểm nào của phía dẫn động hoặc không dẫn động của bơm tăng áp bơm cấp:',opts:['> 75°C','> 85°C','> 95°C','> 105°C'],ans:2},
+{id:259,diff:'Hard',q:'Giá trị cảnh báo nhiệt độ gối trục của bất kỳ điểm nào của phía dẫn động hoặc không dẫn động của bơm cấp:',opts:['> 105°C','> 95°C','> 85°C','> 75°C'],ans:3},
+{id:260,diff:'Hard',q:'Giá trị bảo vệ nhiệt độ gối trục của bất kỳ điểm nào của phía dẫn động hoặc không dẫn động của bơm tăng áp:',opts:['> 95°C sau 5s','> 95°C sau 3s','> 105°C sau 3s','> 105°C sau 5s'],ans:2},
+{id:261,diff:'Hard',q:'Điều nào sau đây là không đúng đối với liên động giữa bơm cấp và van tái tuần hoàn?',opts:['Van tái tuần hoàn sẽ tự động mở để đảm bảo lưu lượng tối thiểu qua bơm.','Van tái tuần hoàn bơm cấp sẽ tự động đóng khi lưu lượng nước cấp đủ lớn.','Van tái tuần hoàn bơm cấp sẽ tự động mở khi bơm cấp để ở chế độ MAN.','Van tái tuần hoàn bơm cấp sẽ tự động mở khi bơm cấp để ở chế độ dự phòng liên động.'],ans:3},
+{id:262,diff:'Hard',q:'Nội dung nào sau đây là không đúng đối với hệ thống nước cấp nhà máy Nhiệt điện Mông Dương 1?',opts:['Bơm đang chạy và lưu lượng đầu hút LL (BFP < min flow) => sau 20 giây bơm trip.','Bơm đang chạy và lưu lượng đầu hút LL (BFP > runout flow) => sau 5 giây bơm trip.','Nhiệt độ của 1 trong 3 cuộn dây động cơ > 135°C => sau 3 giây bơm trip.','Áp lực dầu bôi trơn của bơm cấp < 0.5 bar => sau 30 giây bơm trip.'],ans:4}
+];
+
+const letters = ['A','B','C','D'];
+const container = document.getElementById('quizContainer');
+const submitBtn = document.getElementById('submitBtn');
+const resetBtn = document.getElementById('resetBtn');
+const scoreBox = document.getElementById('scoreBox');
+const scoreNumber = document.getElementById('scoreNumber');
+const scoreLabel = document.getElementById('scoreLabel');
+const answeredCount = document.getElementById('answeredCount');
+const statusText = document.getElementById('statusText');
+
+let submitted = false;
+const userAnswers = {};
+const lockedQuestions = new Set();
+
+document.getElementById('totalCount').textContent = questions.length;
+scoreNumber.textContent = '0 / ' + questions.length;
+
+/* ==================== RENDER ==================== */
+function renderQuiz() {
+  container.innerHTML = '';
+  questions.forEach((q, idx) => {
+    const card = document.createElement('div');
+    card.className = 'q-card';
+    card.id = 'q-' + q.id;
+    let optionsHtml = '';
+    q.opts.forEach((opt, i) => {
+      optionsHtml += `
+        <label class="option" data-qid="${q.id}" data-opt="${i+1}">
+          <input type="radio" name="q${q.id}" value="${i+1}">
+          <span class="option-letter">${letters[i]}.</span>
+          <span class="option-text">${opt}</span>
+        </label>`;
+    });
+    card.innerHTML = `
+      <div class="q-header">
+        <span class="q-num">Câu ${idx+1}</span>
+        <span class="q-diff diff-${q.diff}">${q.diff}</span>
+      </div>
+      <div class="q-text">${q.q}</div>
+      <div class="options">${optionsHtml}</div>
+      <div class="feedback" id="fb-${q.id}"></div>`;
+    container.appendChild(card);
+  });
+  attachHandlers();
+}
+
+/* ==================== HANDLERS ==================== */
+function attachHandlers() {
+  container.querySelectorAll('input[type="radio"]').forEach(input => {
+    input.addEventListener('change', e => {
+      const qid = parseInt(e.target.name.replace('q',''));
+      if (submitted || lockedQuestions.has(qid)) return;
+      userAnswers[qid] = parseInt(e.target.value);
+      lockAndReveal(qid);
+      updateProgress();
+    });
+  });
+}
+
+/* ==================== LOCK & REVEAL ==================== */
+function lockAndReveal(qid) {
+  const q = questions.find(x => x.id === qid);
+  const card = document.getElementById('q-' + qid);
+  const fb = document.getElementById('fb-' + qid);
+  lockedQuestions.add(qid);
+  card.querySelectorAll('input').forEach(inp => inp.disabled = true);
+  card.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+
+  const userAns = userAnswers[qid];
+  const isCorrect = userAns === q.ans;
+
+  card.querySelectorAll('.option').forEach(o => {
+    const v = parseInt(o.dataset.opt);
+    if (v === q.ans) o.classList.add('correct-answer');
+    if (v === userAns && v !== q.ans) o.classList.add('wrong-answer');
+  });
+
+  if (isCorrect) {
+    card.classList.add('correct');
+    fb.className = 'feedback show ok';
+    fb.textContent = `✓ Chính xác! Đáp án đúng là ${letters[q.ans-1]}.`;
+  } else {
+    card.classList.add('incorrect');
+    fb.className = 'feedback show no';
+    fb.textContent = `✗ Sai. Bạn chọn ${letters[userAns-1]}, đáp án đúng là ${letters[q.ans-1]}.`;
+  }
+}
+
+/* ==================== PROGRESS ==================== */
+function updateProgress() {
+  answeredCount.textContent = lockedQuestions.size;
+  if (!submitted) {
+    statusText.textContent = lockedQuestions.size === questions.length
+      ? '🎉 Đã hoàn thành tất cả câu hỏi!'
+      : `Còn ${questions.length - lockedQuestions.size} câu chưa làm`;
+  }
+}
+
+/* ==================== SUBMIT ==================== */
+function submitQuiz() {
+  if (submitted) return;
+  submitted = true;
+  let correctCount = 0;
+  questions.forEach(q => {
+    if (lockedQuestions.has(q.id) && userAnswers[q.id] === q.ans) correctCount++;
+  });
+  const pct = Math.round((correctCount / questions.length) * 100);
+  let grade = '';
+  if (pct >= 90) grade = 'Xuất sắc! 🎉';
+  else if (pct >= 75) grade = 'Tốt! 👍';
+  else if (pct >= 50) grade = 'Trung bình — cần ôn thêm.';
+  else grade = 'Cần ôn luyện thêm.';
+  scoreBox.classList.add('show');
+  scoreNumber.textContent = `${correctCount} / ${questions.length}`;
+  scoreLabel.textContent = `Đúng ${pct}% — ${grade} (đã làm ${lockedQuestions.size}/${questions.length} câu)`;
+  statusText.textContent = 'Đã tổng kết';
+  scoreBox.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+/* ==================== RESET ==================== */
+function resetQuiz() {
+  if (!confirm('Bạn có chắc muốn làm lại từ đầu? Tất cả câu trả lời sẽ bị xóa.')) return;
+  submitted = false;
+  Object.keys(userAnswers).forEach(k => delete userAnswers[k]);
+  lockedQuestions.clear();
+  scoreBox.classList.remove('show');
+  renderQuiz();
+  answeredCount.textContent = '0';
+  statusText.textContent = 'Đang làm bài...';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+submitBtn.addEventListener('click', submitQuiz);
+resetBtn.addEventListener('click', resetQuiz);
+renderQuiz();
+</script>
+</body>
+</html>

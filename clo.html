@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trắc nghiệm: Hệ thống Clo – Nước tuần hoàn</title>
+<style>
+  :root{--bg:#f4f6f9;--card:#fff;--text:#1f2937;--muted:#6b7280;--primary:#dc2626;--primary-dark:#b91c1c;--border:#e5e7eb;--correct:#16a34a;--correct-bg:#ecfdf5;--wrong:#dc2626;--wrong-bg:#fef2f2;--partial:#d97706;--partial-bg:#fffbeb;}
+  *{box-sizing:border-box;}
+  body{margin:0;padding:24px 12px;background:var(--bg);color:var(--text);font-family:"Segoe UI",Roboto,Arial,sans-serif;line-height:1.55;}
+  .wrap{max-width:900px;margin:0 auto;}
+  header{background:linear-gradient(135deg,#7f1d1d,#dc2626);color:#fff;padding:24px 28px;border-radius:14px;margin-bottom:20px;box-shadow:0 6px 20px rgba(220,38,38,.25);}
+  header h1{margin:0 0 6px;font-size:1.5rem;}
+  header p{margin:0;opacity:.9;font-size:.95rem;}
+  .toolbar{position:sticky;top:0;z-index:10;background:var(--bg);padding:12px 0;display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+  .toolbar .progress{margin-left:auto;font-size:.9rem;color:var(--muted);}
+  button{font:inherit;cursor:pointer;border:none;border-radius:10px;padding:10px 18px;font-weight:600;transition:.18s;}
+  .btn-primary{background:var(--primary);color:#fff;}
+  .btn-primary:hover{background:var(--primary-dark);}
+  .btn-ghost{background:#fff;color:var(--text);border:1px solid var(--border);}
+  .btn-ghost:hover{background:#f3f4f6;}
+  .section-title{background:#fee2e2;color:#7f1d1d;font-weight:700;padding:10px 16px;border-radius:10px;margin:22px 0 12px;font-size:1rem;border-left:5px solid var(--primary);}
+  .q{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,.04);}
+  .q .num{display:inline-block;background:#fee2e2;color:var(--primary-dark);font-weight:700;font-size:.8rem;padding:2px 10px;border-radius:999px;margin-bottom:10px;}
+  .q .num.multi{background:#fef3c7;color:#b45309;}
+  .q .num.multi::after{content:" · nhiều đáp án";}
+  .q .stem{font-weight:600;margin-bottom:12px;}
+  .opt{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--border);border-radius:10px;margin-bottom:8px;cursor:pointer;transition:.15s;background:#fff;}
+  .opt:hover{background:#f9fafb;border-color:#fca5a5;}
+  .opt input{margin-top:4px;accent-color:var(--primary);cursor:pointer;}
+  .opt .label{font-weight:700;color:var(--primary-dark);min-width:18px;}
+  .opt.sel{border-color:var(--primary);background:#fef2f2;}
+  .opt.correct{border-color:var(--correct);background:var(--correct-bg);}
+  .opt.wrong{border-color:var(--wrong);background:var(--wrong-bg);}
+  .opt.missed{border-color:var(--partial);background:var(--partial-bg);}
+  .opt.correct .label{color:var(--correct);}
+  .opt.wrong .label{color:var(--wrong);}
+  .opt.missed .label{color:var(--partial);}
+  .explain{display:none;margin-top:10px;padding:12px 14px;border-radius:10px;background:#f8fafc;border-left:4px solid var(--primary);font-size:.93rem;white-space:pre-line;}
+  .explain.show{display:block;}
+  .explain .tag{font-weight:700;color:var(--correct);}
+  .explain .tag.partial{color:var(--partial);}
+  .explain .tag.wrong{color:var(--wrong);}
+  .q.result-correct{border-color:var(--correct);}
+  .q.result-wrong{border-color:var(--wrong);}
+  .q.result-partial{border-color:var(--partial);}
+  .summary{display:none;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px;margin-top:18px;text-align:center;}
+  .summary.show{display:block;}
+  .summary .score{font-size:2.6rem;font-weight:800;color:var(--primary);}
+  .summary .detail{color:var(--muted);margin-top:4px;}
+  .summary .msg{margin-top:12px;font-weight:600;}
+  @media (max-width:520px){header{padding:18px;}header h1{font-size:1.2rem;}.toolbar .progress{width:100%;margin-left:0;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>HỆ THỐNG 5: CLO – NƯỚC TUẦN HOÀN</h1>
+    <p>26 câu hỏi (Câu 124–149) – Đáp án và giải thích hiện ngay khi bạn chọn.</p>
+  </header>
+  <div class="toolbar">
+    <button class="btn-primary" onclick="checkAll()">Kiểm tra tổng kết</button>
+    <button class="btn-ghost" onclick="resetAll()">Làm lại</button>
+    <span class="progress" id="progress">Đã trả lời: 0/26</span>
+  </div>
+  <form id="quiz"></form>
+  <div class="summary" id="summary">
+    <div class="score" id="score">0/26</div>
+    <div class="detail" id="detail"></div>
+    <div class="msg" id="msg"></div>
+  </div>
+</div>
+<script>
+const QUESTIONS = [
+  {q:"Nhiệm vụ của hệ thống Clo:",
+   opts:["Để duy trì độ pH của nước biển; để ức chế sự phát triển của tảo và sự tăng trưởng của sinh vật biển trong hệ thống làm mát nhằm đảm bảo sự làm việc an toàn tin cậy và nâng cao tuổi thọ cho hệ thống và các thiết bị thuộc hệ thống nước tuần hoàn, bình ngưng.",
+         "Để ức chế sự phát triển của tảo và sự tăng trưởng của sinh vật biển trong hệ thống làm mát nhằm đảm bảo sự làm việc an toàn tin cậy và nâng cao tuổi thọ cho hệ thống và các thiết bị thuộc hệ thống nước tuần hoàn, bình ngưng.",
+         "Để làm sạch nước biển; để ức chế sự phát triển của tảo và sự tăng trưởng của sinh vật biển trong hệ thống làm mát nhằm đảm bảo sự làm việc an toàn tin cậy và nâng cao tuổi thọ cho hệ thống và các thiết bị thuộc hệ thống nước tuần hoàn, bình ngưng.",
+         "Để duy trì độ mặn của nước biển; để ức chế sự phát triển của tảo và sự tăng trưởng của sinh vật biển trong hệ thống làm mát nhằm đảm bảo sự làm việc an toàn tin cậy và nâng cao tuổi thọ cho hệ thống và các thiết bị thuộc hệ thống nước tuần hoàn, bình ngưng."],
+   ans:[1], ex:"Nhiệm vụ chính: ức chế sự phát triển của tảo và sinh vật biển trong hệ thống làm mát, đảm bảo an toàn, tin cậy và nâng cao tuổi thọ thiết bị."},
+
+  {q:"Thứ tự nào sau đây là đúng theo chiều môi chất Clo:",
+   opts:["Bình Clo → Bộ lọc khí → Bộ hóa hơi → Van điều chỉnh áp suất → Bộ điều chỉnh chân không → Bộ định lượng Clo.",
+         "Bình Clo → Bộ hóa hơi → Bộ lọc khí → Van điều chỉnh áp suất → Bộ điều chỉnh chân không → Bộ định lượng Clo.",
+         "Bình Clo → Bộ hóa hơi → Bộ lọc khí → Bộ điều chỉnh chân không → Van điều chỉnh áp suất → Bộ định lượng Clo.",
+         "Bình Clo → Bộ định lượng Clo → Bộ lọc khí → Van điều chỉnh áp suất → Bộ điều chỉnh chân không → Bộ hóa hơi."],
+   ans:[1], ex:"Chiều môi chất Clo: Bình Clo → Bộ hóa hơi → Bộ lọc khí → Van điều chỉnh áp suất → Bộ điều chỉnh chân không → Bộ định lượng Clo."},
+
+  {q:"Thứ tự nào sau đây là đúng theo chiều môi chất là nước biển:",
+   opts:["Nước biển → Bộ lọc tự làm sạch → Bộ bơm tăng áp → Ejector → Kênh đầu hút bơm tuần hoàn.",
+         "Nước biển → Bộ lọc tự làm sạch → Bộ bơm tăng áp → Ejector → Kênh đầu đẩy bơm tuần hoàn.",
+         "Nước biển → Ejector → Bộ bơm tăng áp → Bộ lọc tự làm sạch → Kênh đầu hút bơm tuần hoàn.",
+         "Nước biển → Bộ lọc tự làm sạch → Ejector → Bộ bơm tăng áp → Kênh đầu hút bơm tuần hoàn."],
+   ans:[0], ex:"Chiều nước biển: Nước biển → Bộ lọc tự làm sạch → Bộ bơm tăng áp → Ejector → Kênh đầu hút bơm tuần hoàn."},
+
+  {q:"Nhà máy NĐMD có bao nhiêu nhánh Clo?",
+   opts:["3","4","5","6"],
+   ans:[2], ex:"Nhà máy NĐMD có 5 nhánh Clo."},
+
+  {q:"Lưu lượng thiết kế của bơm tăng áp Clo:",
+   opts:["75m³/h","85m³/h","95m³/h","65m³/h"],
+   ans:[0], ex:"Lưu lượng thiết kế bơm tăng áp Clo: 75 m³/h."},
+
+  {q:"Lưu lượng thiết kế của bơm tuần hoàn NaOH nhà máy NĐMD:",
+   opts:["40m³/h","50m³/h","60m³/h","70m³/h"],
+   ans:[1], ex:"Lưu lượng thiết kế bơm tuần hoàn NaOH: 50 m³/h."},
+
+  {q:"Lưu lượng thiết kế của bơm cấp NaOH nhà máy NĐMD:",
+   opts:["7m³/h","8m³/h","9m³/h","10m³/h"],
+   ans:[2], ex:"Lưu lượng thiết kế bơm cấp NaOH: 9 m³/h."},
+
+  {q:"Lưu lượng thiết kế của quạt hút khí Clo nhà máy NĐMD:",
+   opts:["12000m³/h","13000m³/h","14000m³/h","15000m³/h"],
+   ans:[0], ex:"Lưu lượng thiết kế quạt hút khí Clo: 12000 m³/h."},
+
+  {q:"Lưu lượng thiết kế của bộ hóa hơi Clo nhà máy NĐMD:",
+   opts:["180 kg/h","200 kg/h","220 kg/h","250 kg/h"],
+   ans:[1], ex:"Lưu lượng thiết kế bộ hóa hơi Clo: 200 kg/h."},
+
+  {q:"Lưu lượng thiết kế của bộ định lượng Clo nhà máy NĐMD:",
+   opts:["180 kg/h","200 kg/h","220 kg/h","250 kg/h"],
+   ans:[1], ex:"Lưu lượng thiết kế bộ định lượng Clo: 200 kg/h."},
+
+  {q:"Lưu lượng thiết kế của bộ điều chỉnh chân không Clo nhà máy NĐMD:",
+   opts:["180 kg/h","200 kg/h","220 kg/h","250 kg/h"],
+   ans:[1], ex:"Lưu lượng thiết kế bộ điều chỉnh chân không Clo: 200 kg/h."},
+
+  {q:"Lưu lượng thiết kế của nước biển qua Ejector Clo nhà máy NĐMD:",
+   opts:["75m³/h","85m³/h","95m³/h","65m³/h"],
+   ans:[0], ex:"Lưu lượng nước biển qua Ejector: 75 m³/h."},
+
+  {q:"Giá trị cảnh báo phân tích clo dư Cao tại tủ điều khiển:",
+   opts:["0,1 ppm","0,3 ppm","0,5 ppm","0,7 ppm"],
+   ans:[2], ex:"Cảnh báo clo dư Cao tại tủ điều khiển: 0,5 ppm."},
+
+  {q:"Giá trị cảnh báo phân tích clo dư Cao Cao tại tủ điều khiển:",
+   opts:["0,1 ppm","0,3 ppm","0,5 ppm","0,7 ppm"],
+   ans:[3], ex:"Cảnh báo clo dư Cao Cao tại tủ điều khiển: 0,7 ppm."},
+
+  {q:"Giá trị cảnh báo áp suất cao màng an toàn bình giảm áp:",
+   opts:["274 psig","374 psig","384 psig","364 psig"],
+   ans:[1], ex:"Cảnh báo áp suất cao màng an toàn bình giảm áp: 374 psig."},
+
+  {q:"Giá trị cảnh báo áp suất màng an toàn sau bộ hóa hơi:",
+   opts:["300 psig","301 psig","302 psig","303 psig"],
+   ans:[0], ex:"Cảnh báo áp suất màng an toàn sau bộ hóa hơi: 300 psig."},
+
+  {q:"Nội dung nào sau đây là đúng đối với HT Clo tuần hoàn NĐMD:",
+   opts:["Liên động chạy quạt hút và bơm tuần hoàn NaOH khi có cảnh báo mức khí clo trong không khí cao (0,5 ppm).",
+         "Liên động chạy quạt hút và bơm tuần hoàn NaOH khi có cảnh báo mức clo trong không khí cao cao (1,5 ppm).",
+         "Liên động chạy quạt hút và bơm tuần hoàn NaOH khi có cảnh báo áp lực đĩa an toàn sau bộ hóa hơi cao (400 psig).",
+         "Cả 3 đều sai."],
+   ans:[0], ex:"Liên động chạy quạt hút và bơm tuần hoàn NaOH khi cảnh báo mức khí clo trong không khí cao (0,5 ppm)."},
+
+  {q:"Nguyên nhân sự cố bộ hóa hơi Clo không gia nhiệt được?",
+   opts:["Cài đặt nhiệt độ thấp mà nhân viên vận hành không chú ý. Khí không nóng do nguồn điện chưa đóng. Điện đấu nối không tiếp xúc. Cuộn dây gia nhiệt bị đứt. Chưa cấp nước vào bộ hóa hơi.",
+         "Cài đặt nhiệt độ thấp mà nhân viên vận hành không chú ý. Khí không nóng do nguồn điện chưa đóng. Điện đấu nối không tiếp xúc. Cuộn dây gia nhiệt bị đứt.",
+         "Cài đặt nhiệt độ thấp mà nhân viên vận hành không chú ý. Khí không nóng do nguồn điện chưa đóng. Mới chuyển đổi bộ hóa hơi. Cuộn dây gia nhiệt bị đứt.",
+         "Cài đặt nhiệt độ thấp mà nhân viên vận hành không chú ý. Khí không nóng do nguồn điện chưa đóng. Điện đấu nối không tiếp xúc. Chưa vận hành bơm tăng áp Clo. Chưa cấp nước vào bộ hóa hơi."],
+   ans:[0], ex:"Bao gồm: cài đặt nhiệt độ thấp; nguồn điện chưa đóng; điện đấu nối không tiếp xúc; cuộn dây gia nhiệt bị đứt; chưa cấp nước vào bộ hóa hơi."},
+
+  {q:"Liên động đóng van điều chỉnh áp suất bằng điện khi của hệ thống Clo tuần hoàn:",
+   opts:["Cảnh báo nhiệt độ bộ hóa hơi clo thấp 60°C; Cảnh báo mức nước bộ hóa hơi thấp 80cm.",
+         "Cảnh báo nhiệt độ bộ hóa hơi clo thấp 80°C; Cảnh báo mức nước bộ hóa hơi thấp 80cm.",
+         "Cảnh báo nhiệt độ bộ hóa hơi clo thấp 60°C; Cảnh báo mức nước bộ hóa hơi thấp 60cm.",
+         "Cảnh báo nhiệt độ bộ hóa hơi clo thấp 60°C; Cảnh báo mức nước bộ hóa hơi thấp 90cm."],
+   ans:[0], ex:"Đóng van điều chỉnh áp suất bằng điện khi nhiệt độ bộ hóa hơi clo thấp 60°C và mức nước bộ hóa hơi thấp 80cm."},
+
+  {q:"Liên động ngắt bộ hóa hơi clo:",
+   opts:["Cảnh báo nhiệt độ bộ hóa hơi cao 70°C;","Cảnh báo nhiệt độ bộ hóa hơi cao 80°C;","Cảnh báo nhiệt độ bộ hóa hơi cao 90°C;","Cảnh báo nhiệt độ bộ hóa hơi cao 100°C;"],
+   ans:[1], ex:"Ngắt bộ hóa hơi khi nhiệt độ bộ hóa hơi cao 80°C."},
+
+  {q:"Liên động ngắt bộ hóa hơi clo:",
+   opts:["Cảnh báo mức nước bộ hóa hơi thấp 70cm;","Cảnh báo mức nước bộ hóa hơi thấp 80cm;","Cảnh báo mức nước bộ hóa hơi thấp 90cm;","Cảnh báo mức nước bộ hóa hơi thấp 100cm;"],
+   ans:[1], ex:"Ngắt bộ hóa hơi khi mức nước bộ hóa hơi thấp 80cm."},
+
+  {q:"Liên động chạy quạt hút và bơm tuần hoàn NaOH khi:",
+   opts:["Cảnh báo mức khí clo trong không khí cao (0,25 ppm)","Cảnh báo mức khí clo trong không khí cao (0,5 ppm)","Cảnh báo mức khí clo trong không khí cao (0,75 ppm)","Cảnh báo mức khí clo trong không khí cao (1 ppm)"],
+   ans:[1], ex:"Liên động khi mức khí clo trong không khí cao 0,5 ppm."},
+
+  {q:"Liên động chạy quạt hút và bơm tuần hoàn NaOH khi:",
+   opts:["Cảnh báo mức clo trong không khí cao cao (2,5 ppm);","Cảnh báo mức clo trong không khí cao cao (2 ppm);","Cảnh báo mức clo trong không khí cao cao (1,5 ppm);","Cảnh báo mức clo trong không khí cao cao (1 ppm);"],
+   ans:[3], ex:"Liên động khi mức clo trong không khí cao cao 1 ppm."},
+
+  {q:"Liên động chạy quạt hút và bơm tuần hoàn NaOH khi:",
+   opts:["Cảnh báo áp lực đĩa an toàn sau bộ hóa hơi cao (300 psig).","Cảnh báo áp lực đĩa an toàn sau bộ hóa hơi cao (325 psig).","Cảnh báo áp lực đĩa an toàn sau bộ hóa hơi cao (350 psig).","Cảnh báo áp lực đĩa an toàn sau bộ hóa hơi cao (375 psig)."],
+   ans:[0], ex:"Liên động khi áp lực đĩa an toàn sau bộ hóa hơi cao 300 psig."},
+
+  {q:"Liên động đóng van điều chỉnh áp suất bằng điện khi:",
+   opts:["Cảnh báo nhiệt độ bộ hóa hơi clo thấp < 50°C","Cảnh báo nhiệt độ bộ hóa hơi clo thấp < 60°C","Cảnh báo nhiệt độ bộ hóa hơi clo thấp < 70°C","Cảnh báo nhiệt độ bộ hóa hơi clo thấp < 80°C"],
+   ans:[1], ex:"Đóng van điều chỉnh áp suất bằng điện khi nhiệt độ bộ hóa hơi clo thấp < 60°C."},
+
+  {q:"Liên động đóng van điều chỉnh áp suất bằng điện khi:",
+   opts:["Cảnh báo mức nước bộ hóa hơi thấp 100cm;","Cảnh báo mức nước bộ hóa hơi thấp 90cm;","Cảnh báo mức nước bộ hóa hơi thấp 80cm;","Cảnh báo mức nước bộ hóa hơi thấp 70cm;"],
+   ans:[2], ex:"Đóng van điều chỉnh áp suất bằng điện khi mức nước bộ hóa hơi thấp 80cm."}
+];
+const form=document.getElementById('quiz'),progressEl=document.getElementById('progress'),summaryEl=document.getElementById('summary');
+const LETTERS=['A','B','C','D'],TOTAL=QUESTIONS.length;
+const isMulti=item=>item.ans.length>1;
+function render(){
+  form.innerHTML=QUESTIONS.map((item,i)=>{
+    const multi=isMulti(item),type=multi?'checkbox':'radio';
+    return `<div class="q" id="q-${i}">
+      <span class="num ${multi?'multi':''}">Câu ${i+1}</span>
+      <div class="stem">${item.q}</div>
+      ${item.opts.map((o,j)=>`<label class="opt" id="opt-${i}-${j}"><input type="${type}" name="q${i}" value="${j}" onchange="onSelect(${i})"><span class="label">${LETTERS[j]}.</span><span class="text">${o}</span></label>`).join('')}
+      <div class="explain" id="ex-${i}"></div>
+    </div>`;
+  }).join('');
+}
+const getChecked=i=>Array.from(document.querySelectorAll(`input[name="q${i}"]:checked`)).map(el=>Number(el.value));
+function gradeOne(i){
+  const item=QUESTIONS[i],qBox=document.getElementById(`q-${i}`),ex=document.getElementById(`ex-${i}`),chosen=getChecked(i);
+  qBox.classList.remove('result-correct','result-wrong','result-partial');
+  item.opts.forEach((_,j)=>{const el=document.getElementById(`opt-${i}-${j}`);el.classList.remove('correct','wrong','missed','sel');});
+  item.opts.forEach((_,j)=>{
+    const el=document.getElementById(`opt-${i}-${j}`),isC=item.ans.includes(j),isCh=chosen.includes(j);
+    if(isC)el.classList.add('correct');else if(isCh)el.classList.add('wrong');
+    if(isMulti(item)&&isC&&!isCh)el.classList.add('missed');
+  });
+  if(chosen.length===0){ex.className='explain show';ex.innerHTML=`<span class="tag">✔ Đáp án đúng: ${item.ans.map(a=>LETTERS[a]).join(', ')}.</span> ${item.ex}`;return{status:'unanswered'};}
+  const sameSet=chosen.length===item.ans.length&&item.ans.every(a=>chosen.includes(a));
+  if(sameSet){qBox.classList.add('result-correct');ex.className='explain show';ex.innerHTML=`<span class="tag">✔ Chính xác! Đáp án: ${item.ans.map(a=>LETTERS[a]).join(', ')}.</span> ${item.ex}`;return{status:'correct'};}
+  else if(isMulti(item)&&chosen.some(c=>item.ans.includes(c))){qBox.classList.add('result-partial');ex.className='explain show';ex.innerHTML=`<span class="tag partial">◐ Đúng một phần. Đáp án đầy đủ: ${item.ans.map(a=>LETTERS[a]).join(', ')}.</span> ${item.ex}`;return{status:'partial'};}
+  else{qBox.classList.add('result-wrong');ex.className='explain show';ex.innerHTML=`<span class="tag wrong">✘ Chưa đúng. Đáp án đúng: ${item.ans.map(a=>LETTERS[a]).join(', ')}.</span> ${item.ex}`;return{status:'wrong'};}
+}
+function onSelect(i){
+  document.querySelectorAll(`#q-${i} .opt`).forEach(el=>el.classList.remove('sel'));
+  getChecked(i).forEach(j=>document.getElementById(`opt-${i}-${j}`).classList.add('sel'));
+  gradeOne(i);updateProgress();
+}
+function updateProgress(){let n=0;for(let i=0;i<TOTAL;i++){if(getChecked(i).length>0)n++;}progressEl.textContent=`Đã trả lời: ${n}/${TOTAL}`;}
+function checkAll(){
+  let c=0,p=0,w=0,u=0;
+  QUESTIONS.forEach((_,i)=>{const r=gradeOne(i);if(r.status==='correct')c++;else if(r.status==='partial')p++;else if(r.status==='wrong')w++;else u++;});
+  const pct=Math.round((c+p*0.5)/TOTAL*100);
+  document.getElementById('score').textContent=`${c}/${TOTAL}`;
+  document.getElementById('detail').textContent=`Đúng ${c} · Đúng một phần ${p} · Sai ${w} · Chưa trả lời ${u} · Điểm ~${pct}%`;
+  let msg="";if(u>0)msg="⚠️ Bạn còn câu chưa trả lời.";else if(pct>=90)msg="🏆 Xuất sắc!";else if(pct>=75)msg="👍 Khá tốt!";else if(pct>=50)msg="📘 Cần ôn thêm.";else msg="📚 Hãy đọc lại tài liệu và làm lại.";
+  document.getElementById('msg').textContent=msg;summaryEl.classList.add('show');window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'});
+}
+function resetAll(){
+  form.reset();summaryEl.classList.remove('show');
+  QUESTIONS.forEach((_,i)=>{document.getElementById(`q-${i}`).classList.remove('result-correct','result-wrong','result-partial');const ex=document.getElementById(`ex-${i}`);ex.classList.remove('show');ex.innerHTML='';document.querySelectorAll(`#q-${i} .opt`).forEach(el=>el.classList.remove('sel','correct','wrong','missed'));});
+  updateProgress();window.scrollTo({top:0,behavior:'smooth'});
+}
+render();updateProgress();
+</script>
+</body>
+</html>

@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trắc nghiệm Dầu EH – Dầu thủy lực tuabin (22 câu)</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f4f8; margin: 0; padding: 20px; color: #1a202c; line-height: 1.6; }
+  .container { max-width: 900px; margin: 0 auto; }
+  header { background: linear-gradient(135deg, #831843, #db2777); color: white; padding: 30px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+  header h1 { margin: 0 0 8px; font-size: 1.55rem; }
+  header p { margin: 0; opacity: 0.9; }
+  .mode-hint { background: #fef3c7; border: 1px solid #fcd34d; color: #92400e; padding: 12px 18px; border-radius: 8px; margin-bottom: 16px; font-size: 0.9rem; display: flex; align-items: flex-start; gap: 10px; }
+  .mode-hint strong { color: #78350f; }
+  .progress-info { background: #fff; padding: 12px 20px; border-radius: 8px; margin-bottom: 16px; font-size: 0.9rem; color: #475569; box-shadow: 0 2px 6px rgba(0,0,0,0.05); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+  .toolbar { position: sticky; top: 10px; z-index: 10; display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+  .btn { padding: 12px 22px; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all .15s; }
+  .btn-primary { background: #db2777; color: #fff; }
+  .btn-primary:hover { background: #be185d; }
+  .btn-secondary { background: #e2e8f0; color: #334155; }
+  .btn-secondary:hover { background: #cbd5e1; }
+  .score-box { background: #fff; border-radius: 12px; padding: 24px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); display: none; text-align: center; }
+  .score-box.show { display: block; }
+  .score-box .score-number { font-size: 2.5rem; font-weight: 700; color: #db2777; }
+  .score-box .score-label { color: #64748b; margin-top: 4px; }
+  .q-card { background: #fff; border-radius: 10px; padding: 20px 24px; margin-bottom: 16px; box-shadow: 0 2px 6px rgba(0,0,0,0.06); border-left: 4px solid #ec4899; transition: border-color .2s; }
+  .q-card.correct { border-left-color: #16a34a; }
+  .q-card.incorrect { border-left-color: #dc2626; }
+  .q-card.partial { border-left-color: #f59e0b; }
+  .q-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+  .q-num { background: #fce7f3; color: #9d174d; font-weight: 700; padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; white-space: nowrap; }
+  .q-num.multi { background: #fef3c7; color: #92400e; }
+  .q-diff { font-size: 0.75rem; padding: 3px 10px; border-radius: 12px; font-weight: 600; white-space: nowrap; }
+  .diff-Easy { background: #dcfce7; color: #166534; }
+  .diff-Medium { background: #fef9c3; color: #854d0e; }
+  .diff-Hard { background: #fee2e2; color: #991b1b; }
+  .q-text { font-weight: 600; margin-bottom: 12px; }
+  .options { display: flex; flex-direction: column; gap: 8px; }
+  .option { display: flex; align-items: flex-start; gap: 10px; padding: 10px 14px; border: 1.5px solid #e2e8f0; border-radius: 8px; cursor: pointer; transition: all .15s; background: #fff; }
+  .option:hover { border-color: #f9a8d4; background: #f8fafc; }
+  .option input { margin-top: 5px; cursor: pointer; accent-color: #db2777; }
+  .option.selected { border-color: #ec4899; background: #fdf2f8; }
+  .option.correct-answer { border-color: #16a34a; background: #f0fdf4; }
+  .option.wrong-answer { border-color: #dc2626; background: #fef2f2; }
+  .option.missed-answer { border-color: #16a34a; background: #f0fdf4; border-style: dashed; }
+  .option-letter { font-weight: 700; color: #db2777; min-width: 20px; }
+  .option-text { white-space: pre-line; }
+  .check-btn { margin-top: 12px; padding: 9px 20px; border: none; border-radius: 6px; background: #f59e0b; color: #fff; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all .15s; }
+  .check-btn:hover:not(:disabled) { background: #d97706; }
+  .check-btn:disabled { background: #cbd5e1; cursor: not-allowed; }
+  .check-btn.hidden { display: none; }
+  .feedback { margin-top: 12px; padding: 10px 14px; border-radius: 8px; font-size: 0.9rem; display: none; }
+  .feedback.show { display: block; }
+  .feedback.ok { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+  .feedback.no { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+  .feedback.partial { background: #fef3c7; color: #854d0e; border: 1px solid #fcd34d; }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>Trắc nghiệm: Dầu EH – Dầu thủy lực tuabin</h1>
+    <p>22 câu hỏi trắc nghiệm • Trình độ L1 • Chế độ học tập tương tác</p>
+  </header>
+
+  <div class="mode-hint">
+    <span>💡</span>
+    <div>
+      <strong>Chế độ học:</strong> Kích chọn đáp án để xem kết quả ngay. Riêng các câu <strong>MMC (chọn nhiều đáp án)</strong> — đánh dấu <strong>• chọn nhiều</strong> — yêu cầu chọn <strong>đúng chính xác</strong> tập đáp án đúng (không thừa, không thiếu), rồi bấm <strong>"Kiểm tra đáp án"</strong>.
+    </div>
+  </div>
+
+  <div class="progress-info">
+    <span>Đã hoàn thành: <strong id="answeredCount">0</strong> / <strong id="totalCount">0</strong></span>
+    <span id="statusText">Đang làm bài...</span>
+  </div>
+
+  <div class="toolbar">
+    <button class="btn btn-primary" id="submitBtn">Tổng kết điểm</button>
+    <button class="btn btn-secondary" id="resetBtn">Làm lại từ đầu</button>
+  </div>
+
+  <div class="score-box" id="scoreBox">
+    <div class="score-number" id="scoreNumber">0 / 0</div>
+    <div class="score-label" id="scoreLabel"></div>
+  </div>
+
+  <div id="quizContainer"></div>
+</div>
+
+<script>
+/* 22 câu Dầu EH (197–218) — đầy đủ 4 phương án A/B/C/D.
+   - ans       → câu MC chọn 1 đáp án (1..4)
+   - mmcAns    → câu MMC chọn nhiều, phải chọn khớp chính xác tập này
+*/
+const questions = [
+{id:197,diff:'Easy',q:'Thể tích bể dầu thủy lực:',opts:['1,514 m³','1,525 m³','1,6 m³','1,414 m³'],ans:1},
+{id:198,diff:'Easy',q:'Thông số áp lực / công suất bơm dầu thủy lực nhà máy NĐMD:',opts:['165 bar / 35 kW','165 bar / 30 kW','168 bar / 30 kW','168 bar / 35 kW'],ans:2},
+{id:199,diff:'Easy',q:'Thông số kỹ thuật bơm tái tuần hoàn làm mát dầu thủy lực nhà máy NĐMD:',opts:['Kiểu pittong\nDòng điện: 18 A\nCông suất: 7.5 kW','Kiểu pittong\nDòng điện: 16.9 A\nCông suất: 8 kW','Kiểu pittong\nDòng điện: 15.9 A\nCông suất: 7.5 kW','Kiểu trục vít\nDòng điện: 15.9 A\nCông suất: 7.5 kW'],ans:3},
+{id:200,diff:'Easy',q:'Thông số bơm vận chuyển tái sinh dầu thủy lực nhà máy NĐMD:',opts:['Kiểu trục vít\nDòng điện: 3 A\nCông suất: 0.9 kW','Kiểu pittong\nDòng điện: 4 A\nCông suất: 0.5 kW','Kiểu trục vít\nDòng điện: 2.5 A\nCông suất: 7.5 kW','Kiểu pittong\nDòng điện: 2.1 A\nCông suất: 0.75 kW'],ans:4},
+{id:201,diff:'Easy',q:'Thông số kỹ thuật bình bù áp lực hệ thống dầu thủy lực nhà máy NĐMD:',opts:['Số bình: 04 bình\nThể tích: 80 lít','Số bình: 04 bình\nThể tích: 90 lít','Số bình: 05 bình\nThể tích: 90 lít','Số bình: 04 bình\nThể tích: 85 lít'],ans:1},
+{id:202,diff:'Hard',q:'Nội dung nào sau đây là đúng về chức năng hệ thống dầu thủy lực nhà máy NĐMD?',opts:['Hệ thống dầu điều chỉnh có nhiệm vụ cung cấp dầu có áp suất cao cho việc đóng, mở các van Điều chỉnh hơi vào tuabin cao áp "CV", van Điều chỉnh hơi vào tuabin trung áp "IV" để điều khiển sự vận hành của Tuabin và cung cấp dầu cho đóng mở các van Stop chính "RSV", van Stop tái nhiệt "MSV", và van xả khí "BVV" để dừng khẩn cấp các thiết bị trong trường hợp bảo vệ Tríp tuabin.','Hệ thống dầu điều chỉnh có nhiệm vụ cung cấp dầu có áp suất cao cho việc đóng, mở các van Điều chỉnh hơi vào tuabin cao áp "CV", van Điều chỉnh hơi vào tuabin trung áp "IV" để điều khiển sự vận hành của Tuabin và cung cấp dầu cho đóng mở các van Stop chính "MSV", van Stop tái nhiệt "RSV", và van xả khí "BVV" để dừng khẩn cấp các thiết bị trong trường hợp bảo vệ Tríp tuabin.','Hệ thống dầu điều chỉnh có nhiệm vụ cung cấp dầu có áp suất cao cho việc đóng, mở các van Điều chỉnh hơi vào tuabin cao áp, trung áp "CV", van Điều chỉnh hơi vào tuabin hạ áp "IV" để điều khiển sự vận hành của Tuabin và cung cấp dầu cho đóng mở các van Stop chính "MSV", van Stop tái nhiệt "RSV", và van xả khí "BVV" để dừng khẩn cấp các thiết bị trong trường hợp bảo vệ Tríp tuabin.','Hệ thống dầu điều chỉnh có nhiệm vụ cung cấp hơi có áp suất cao cho việc đóng, mở các van Điều chỉnh hơi vào tuabin cao áp "CV", van Điều chỉnh hơi vào tuabin trung áp "IV" để điều khiển sự vận hành của Tuabin và cung cấp dầu cho đóng mở các van Stop chính "MSV", van Stop tái nhiệt "RSV", và van xả khí "BDV" để dừng khẩn cấp các thiết bị trong trường hợp bảo vệ Tríp tuabin.'],ans:2},
+{id:203,diff:'Hard',q:'Nội dung nào là đúng với liên động bơm làm mát dầu thủy lực của nhà máy NĐMD?',opts:['Bơm làm mát dầu sẽ liên động chạy bơm khi nhiệt độ dầu ở bể dầu trên 59°C và ngừng bơm khi nhiệt độ bể dầu dưới 43°C.','Bơm làm mát dầu sẽ liên động chạy bơm khi nhiệt độ dầu ở bể dầu trên 49°C và ngừng bơm khi nhiệt độ bể dầu dưới 41°C.','Bơm làm mát dầu sẽ liên động chạy bơm khi nhiệt độ dầu ở bể dầu trên 49°C và ngừng bơm khi nhiệt độ bể dầu dưới 43°C.','Bơm làm mát dầu sẽ liên động chạy bơm khi nhiệt độ dầu ở bể dầu trên 59°C và ngừng bơm khi nhiệt độ bể dầu dưới 53°C.'],ans:3},
+{id:204,diff:'Easy',q:'Giá trị nhiệt độ dầu cấm khởi động hệ thống dầu thủy lực nhà máy NĐMD là bao nhiêu?',opts:['20°C','19°C','21°C','18°C'],ans:4},
+{id:205,diff:'Easy',q:'Giá trị tác động của van an toàn đầu đẩy bơm dầu thủy lực tác động là bao nhiêu?',opts:['198 bar','199 bar','197 bar','196 bar'],ans:1},
+{id:206,diff:'Easy',q:'Giá trị cảnh báo mức bể dầu thủy lực tuabin cao là bao nhiêu?',opts:['700 mm','703 mm','706 mm','709 mm'],ans:2},
+{id:207,diff:'Easy',q:'Giải nhiệt độ làm việc tốt nhất cho dầu thủy lực của nhà máy NĐMD là bao nhiêu?',opts:['từ 35 đến 45°C','từ 32 đến 43°C','từ 35 đến 43°C','từ 30 đến 40°C'],ans:3},
+{id:208,diff:'Easy',q:'Giá trị tác động của van an toàn hệ thống làm mát dầu thủy lực:',opts:['4.7 bar','4.5 bar','4.9 bar','4.8 bar'],ans:4},
+{id:209,diff:'Medium',q:'Chức năng của cụm bơm tái sinh và tuần hoàn dầu:',opts:['Cấp và điền dầu vào bể dầu từ các thùng chứa dầu.\nXả dầu trong trường hợp thay dầu trong bể.\nTái sinh dầu trong quá trình làm việc của toàn hệ thống.\nLấy mẫu dầu thủy lực.','Cấp dầu từ hệ thống dầu bôi trơn.\nXả dầu trong trường hợp thay dầu trong bể.\nTái sinh dầu trong quá trình làm việc của toàn hệ thống.\nLấy mẫu dầu thủy lực.','Cấp và điền dầu vào bể dầu từ các thùng chứa dầu.\nXả dầu tới bể dầu bẩn trong trường hợp thay dầu trong bể.\nTái sinh dầu trong quá trình làm việc của toàn hệ thống.\nLấy mẫu dầu thủy lực.','Cấp và điền dầu vào bể dầu từ các thùng chứa dầu.\nXả dầu trong trường hợp thay dầu trong bể.\nTái sinh dầu trong quá trình làm việc của toàn hệ thống.\nLàm mát dầu khi nhiệt độ lên cao.'],ans:1},
+{id:210,diff:'Medium',q:'Nội dung nào là đúng với liên động hệ thống dầu thủy lực của nhà máy NĐMD?',opts:['Bơm dầu dự phòng sẽ liên động tự động vào làm việc khi áp lực đầu đẩy bơm dầu đang làm việc giảm xuống thấp hơn 150 bar.','Bơm dầu dự phòng sẽ liên động tự động vào làm việc khi áp lực đầu đẩy bơm dầu đang làm việc giảm xuống thấp hơn 130 bar.','Bơm dầu dự phòng sẽ liên động tự động vào làm việc khi áp lực đầu đẩy bơm dầu đang làm việc giảm xuống thấp hơn 145 bar.','Bơm dầu dự phòng sẽ liên động tự động vào làm việc khi áp lực đầu đẩy bơm dầu đang làm việc giảm xuống thấp hơn 135 bar.'],ans:2},
+{id:211,diff:'Easy',q:'Giá trị cảnh báo mức bể dầu thủy lực thấp:',opts:['517 mm','508 mm','507 mm','537 mm'],ans:3},
+{id:212,diff:'Medium',q:'Điều kiện khởi động hệ thống dầu thủy lực:',opts:['Mức bình thường lớn hơn 600 lít; nhỏ hơn 1275 lít;\nNhiệt độ dầu trong bể: ≥ 18.5°C, ≤ 65,6°C.','Mức bình thường lớn hơn 900 lít; nhỏ hơn 1275 lít;\nNhiệt độ dầu trong bể: ≥ 20°C, ≤ 70°C.','Mức bình thường lớn hơn 500 lít; nhỏ hơn 1275 lít;\nNhiệt độ dầu trong bể: ≥ 15°C, ≤ 65,6°C.','Mức bình thường lớn hơn 900 lít; nhỏ hơn 1275 lít;\nNhiệt độ dầu trong bể: ≥ 18°C, ≤ 65,6°C.'],ans:4},
+{id:213,diff:'Easy',q:'Giá trị cảnh báo mức bể dầu thủy lực Thấp Thấp của nhà máy NĐMD:',opts:['≤ 510 Lít (282 mm)','≤ 520 Lít (282 mm)','≤ 530 Lít (282 mm)','≤ 540 Lít (282 mm)'],ans:1},
+{id:214,diff:'Easy',q:'Giá trị bảo vệ tuabin khi mức dầu thủy lực thấp là bao nhiêu?',opts:['383 mm','282 mm','182 mm','252 mm'],ans:2},
+
+/* Câu 215 – MMC: đáp án A, C (1, 3) */
+{id:215,diff:'Easy',mmc:true,mmcAns:[1,3],q:'Nguyên nhân sự cố tổn thất dầu thủy lực (chọn tất cả đáp án đúng):',opts:['Rò rỉ tại các van xả đóng không kín.','Nước lẫn dầu tại bộ làm mát dầu.','Rò rỉ đường ống cung cấp dầu, mặt bích, khớp nối.','Tắc phin lọc dầu.']},
+
+/* Câu 216 – MMC: đáp án A, B, C (1, 2, 3) */
+{id:216,diff:'Medium',mmc:true,mmcAns:[1,2,3],q:'Nguyên nhân sự cố chất lượng dầu thủy lực kém (chọn tất cả đáp án đúng):',opts:['Dầu được sử dụng để vận hành lâu ngày.','Phin lọc dầu kém chất lượng do sử dụng lâu ngày.','Dầu lẫn nước do hư hỏng bộ làm mát.','Lỗi bơm dầu vận chuyển và tái sinh dầu.']},
+
+/* Câu 217 – MMC: đáp án A, B (1, 2) */
+{id:217,diff:'Easy',mmc:true,mmcAns:[1,2],q:'Các nguyên nhân dẫn đến sự cố áp lực dầu thủy lực tuabin giảm (chọn tất cả đáp án đúng):',opts:['Bơm dầu thủy lực lỗi.','Van 1 chiều bị kẹt.','Van MSV, CV đóng mở nhiều.','Chênh áp phin lọc cụm tái sinh dầu cao.']},
+
+/* Câu 218 – MMC: đáp án A, B (1, 2) */
+{id:218,diff:'Medium',mmc:true,mmcAns:[1,2],q:'Các nguyên nhân dẫn đến sự cố áp lực dầu thủy lực tuabin giảm (chọn tất cả đáp án đúng):',opts:['Bơm dầu thủy lực lỗi.','Van 1 chiều bị kẹt.','Van MSV, CV đóng mở nhiều.','Chênh áp phin lọc cụm tái sinh dầu cao.']}
+];
+
+const letters = ['A','B','C','D'];
+const container = document.getElementById('quizContainer');
+const submitBtn = document.getElementById('submitBtn');
+const resetBtn = document.getElementById('resetBtn');
+const scoreBox = document.getElementById('scoreBox');
+const scoreNumber = document.getElementById('scoreNumber');
+const scoreLabel = document.getElementById('scoreLabel');
+const answeredCount = document.getElementById('answeredCount');
+const statusText = document.getElementById('statusText');
+
+let submitted = false;
+const userAnswers = {};
+const lockedQuestions = new Set();
+
+document.getElementById('totalCount').textContent = questions.length;
+scoreNumber.textContent = '0 / ' + questions.length;
+
+/* ==================== RENDER ==================== */
+function renderQuiz() {
+  container.innerHTML = '';
+  questions.forEach((q, idx) => {
+    const card = document.createElement('div');
+    card.className = 'q-card';
+    card.id = 'q-' + q.id;
+    const isMulti = q.mmc;
+    let optionsHtml = '';
+    q.opts.forEach((opt, i) => {
+      const inputType = isMulti ? 'checkbox' : 'radio';
+      optionsHtml += `
+        <label class="option" data-qid="${q.id}" data-opt="${i+1}">
+          <input type="${inputType}" name="q${q.id}" value="${i+1}">
+          <span class="option-letter">${letters[i]}.</span>
+          <span class="option-text">${opt}</span>
+        </label>`;
+    });
+    const checkBtnHtml = isMulti
+      ? `<button class="check-btn" data-qid="${q.id}" disabled>Kiểm tra đáp án</button>`
+      : '';
+    card.innerHTML = `
+      <div class="q-header">
+        <span class="q-num ${isMulti ? 'multi' : ''}">Câu ${idx+1}${isMulti ? ' • chọn nhiều' : ''}</span>
+        <span class="q-diff diff-${q.diff}">${q.diff}</span>
+      </div>
+      <div class="q-text">${q.q}</div>
+      <div class="options">${optionsHtml}</div>
+      ${checkBtnHtml}
+      <div class="feedback" id="fb-${q.id}"></div>`;
+    container.appendChild(card);
+  });
+  attachHandlers();
+}
+
+/* ==================== HANDLERS ==================== */
+function attachHandlers() {
+  container.querySelectorAll('input[type="radio"]').forEach(input => {
+    input.addEventListener('change', e => {
+      const qid = parseInt(e.target.name.replace('q',''));
+      if (submitted || lockedQuestions.has(qid)) return;
+      userAnswers[qid] = parseInt(e.target.value);
+      lockAndReveal(qid);
+      updateProgress();
+    });
+  });
+  container.querySelectorAll('input[type="checkbox"]').forEach(input => {
+    input.addEventListener('change', e => {
+      const qid = parseInt(e.target.name.replace('q',''));
+      if (submitted || lockedQuestions.has(qid)) return;
+      if (!userAnswers[qid]) userAnswers[qid] = [];
+      const val = parseInt(e.target.value);
+      const arr = userAnswers[qid];
+      const idx = arr.indexOf(val);
+      if (idx >= 0) arr.splice(idx, 1); else arr.push(val);
+      const card = document.getElementById('q-' + qid);
+      e.target.closest('.option').classList.toggle('selected', arr.includes(val));
+      const btn = card.querySelector('.check-btn');
+      if (btn) btn.disabled = arr.length === 0;
+    });
+  });
+  container.querySelectorAll('.check-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const qid = parseInt(btn.dataset.qid);
+      if (submitted || lockedQuestions.has(qid)) return;
+      const arr = userAnswers[qid] || [];
+      if (arr.length === 0) return;
+      lockAndReveal(qid);
+      updateProgress();
+    });
+  });
+}
+
+/* ==================== CHECK MMC ==================== */
+function checkMmcAnswer(arr, q) {
+  if (!arr || arr.length !== q.mmcAns.length) return false;
+  const a = [...arr].sort((x,y) => x-y);
+  const b = [...q.mmcAns].sort((x,y) => x-y);
+  return a.every((v,i) => v === b[i]);
+}
+
+/* ==================== LOCK & REVEAL ==================== */
+function lockAndReveal(qid) {
+  const q = questions.find(x => x.id === qid);
+  const card = document.getElementById('q-' + qid);
+  const fb = document.getElementById('fb-' + qid);
+  lockedQuestions.add(qid);
+  card.querySelectorAll('input').forEach(inp => inp.disabled = true);
+  card.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+  const userAns = userAnswers[qid];
+  let isCorrect = false;
+
+  if (q.mmc) {
+    isCorrect = checkMmcAnswer(userAns, q);
+    card.querySelectorAll('.option').forEach(o => {
+      const v = parseInt(o.dataset.opt);
+      const isRight = q.mmcAns.includes(v);
+      const wasChosen = (userAns || []).includes(v);
+      if (isRight && wasChosen) o.classList.add('correct-answer');
+      else if (isRight && !wasChosen) o.classList.add('missed-answer');
+      else if (!isRight && wasChosen) o.classList.add('wrong-answer');
+    });
+    const btn = card.querySelector('.check-btn');
+    if (btn) btn.classList.add('hidden');
+  } else {
+    isCorrect = userAns === q.ans;
+    card.querySelectorAll('.option').forEach(o => {
+      const v = parseInt(o.dataset.opt);
+      if (v === q.ans) o.classList.add('correct-answer');
+      if (v === userAns && v !== q.ans) o.classList.add('wrong-answer');
+    });
+  }
+
+  if (isCorrect) {
+    card.classList.add('correct');
+    fb.className = 'feedback show ok';
+    if (q.mmc) fb.textContent = `✓ Chính xác! Đáp án đúng: ${q.mmcAns.map(a => letters[a-1]).join(', ')}.`;
+    else fb.textContent = `✓ Chính xác! Đáp án đúng là ${letters[q.ans-1]}.`;
+  } else {
+    if (q.mmc) {
+      card.classList.add('partial');
+      const chosen = (userAns || []).map(a => letters[a-1]).join(', ') || '(chưa chọn)';
+      const missing = q.mmcAns.filter(a => !(userAns || []).includes(a));
+      const extra = (userAns || []).filter(a => !q.mmcAns.includes(a));
+      let detail = `Đáp án đúng: ${q.mmcAns.map(a => letters[a-1]).join(', ')}. Bạn đã chọn: ${chosen}.`;
+      if (missing.length) detail += ` Thiếu: ${missing.map(a => letters[a-1]).join(', ')}.`;
+      if (extra.length) detail += ` Sai: ${extra.map(a => letters[a-1]).join(', ')}.`;
+      fb.className = 'feedback show partial';
+      fb.textContent = '✗ Chưa đúng. ' + detail;
+    } else {
+      card.classList.add('incorrect');
+      fb.className = 'feedback show no';
+      fb.textContent = `✗ Sai. Bạn chọn ${letters[userAns-1]}, đáp án đúng là ${letters[q.ans-1]}.`;
+    }
+  }
+}
+
+/* ==================== PROGRESS ==================== */
+function updateProgress() {
+  answeredCount.textContent = lockedQuestions.size;
+  if (!submitted) {
+    statusText.textContent = lockedQuestions.size === questions.length
+      ? '🎉 Đã hoàn thành tất cả câu hỏi!'
+      : `Còn ${questions.length - lockedQuestions.size} câu chưa làm`;
+  }
+}
+
+/* ==================== SUBMIT ==================== */
+function submitQuiz() {
+  if (submitted) return;
+  submitted = true;
+  let correctCount = 0;
+  questions.forEach(q => {
+    let isCorrect = false;
+    if (lockedQuestions.has(q.id)) {
+      if (q.mmc) isCorrect = checkMmcAnswer(userAnswers[q.id] || [], q);
+      else isCorrect = userAnswers[q.id] === q.ans;
+    }
+    if (isCorrect) correctCount++;
+  });
+  const pct = Math.round((correctCount / questions.length) * 100);
+  let grade = '';
+  if (pct >= 90) grade = 'Xuất sắc! 🎉';
+  else if (pct >= 75) grade = 'Tốt! 👍';
+  else if (pct >= 50) grade = 'Trung bình — cần ôn thêm.';
+  else grade = 'Cần ôn luyện thêm.';
+  scoreBox.classList.add('show');
+  scoreNumber.textContent = `${correctCount} / ${questions.length}`;
+  scoreLabel.textContent = `Đúng ${pct}% — ${grade} (đã làm ${lockedQuestions.size}/${questions.length} câu)`;
+  statusText.textContent = 'Đã tổng kết';
+  scoreBox.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+/* ==================== RESET ==================== */
+function resetQuiz() {
+  if (!confirm('Bạn có chắc muốn làm lại từ đầu? Tất cả câu trả lời sẽ bị xóa.')) return;
+  submitted = false;
+  Object.keys(userAnswers).forEach(k => delete userAnswers[k]);
+  lockedQuestions.clear();
+  scoreBox.classList.remove('show');
+  renderQuiz();
+  answeredCount.textContent = '0';
+  statusText.textContent = 'Đang làm bài...';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+submitBtn.addEventListener('click', submitQuiz);
+resetBtn.addEventListener('click', resetQuiz);
+renderQuiz();
+</script>
+</body>
+</html>

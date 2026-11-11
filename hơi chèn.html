@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trắc nghiệm: Hơi chèn – Tổng quan hệ thống</title>
+<style>
+  :root{--bg:#f4f6f9;--card:#fff;--text:#1f2937;--muted:#6b7280;--primary:#059669;--primary-dark:#047857;--border:#e5e7eb;--correct:#16a34a;--correct-bg:#ecfdf5;--wrong:#dc2626;--wrong-bg:#fef2f2;--partial:#d97706;--partial-bg:#fffbeb;}
+  *{box-sizing:border-box;}
+  body{margin:0;padding:24px 12px;background:var(--bg);color:var(--text);font-family:"Segoe UI",Roboto,Arial,sans-serif;line-height:1.55;}
+  .wrap{max-width:900px;margin:0 auto;}
+  header{background:linear-gradient(135deg,#065f46,#059669);color:#fff;padding:24px 28px;border-radius:14px;margin-bottom:20px;box-shadow:0 6px 20px rgba(5,150,105,.25);}
+  header h1{margin:0 0 6px;font-size:1.5rem;}
+  header p{margin:0;opacity:.9;font-size:.95rem;}
+  .toolbar{position:sticky;top:0;z-index:10;background:var(--bg);padding:12px 0;display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+  .toolbar .progress{margin-left:auto;font-size:.9rem;color:var(--muted);}
+  button{font:inherit;cursor:pointer;border:none;border-radius:10px;padding:10px 18px;font-weight:600;transition:.18s;}
+  .btn-primary{background:var(--primary);color:#fff;}
+  .btn-primary:hover{background:var(--primary-dark);}
+  .btn-ghost{background:#fff;color:var(--text);border:1px solid var(--border);}
+  .btn-ghost:hover{background:#f3f4f6;}
+  .section-title{background:#d1fae5;color:#065f46;font-weight:700;padding:10px 16px;border-radius:10px;margin:22px 0 12px;font-size:1rem;border-left:5px solid var(--primary);}
+  .q{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,.04);}
+  .q .num{display:inline-block;background:#d1fae5;color:var(--primary-dark);font-weight:700;font-size:.8rem;padding:2px 10px;border-radius:999px;margin-bottom:10px;}
+  .q .num.multi{background:#fef3c7;color:#b45309;}
+  .q .num.multi::after{content:" · nhiều đáp án";}
+  .q .stem{font-weight:600;margin-bottom:12px;}
+  .opt{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--border);border-radius:10px;margin-bottom:8px;cursor:pointer;transition:.15s;background:#fff;}
+  .opt:hover{background:#f9fafb;border-color:#6ee7b7;}
+  .opt input{margin-top:4px;accent-color:var(--primary);cursor:pointer;}
+  .opt .label{font-weight:700;color:var(--primary-dark);min-width:18px;}
+  .opt.sel{border-color:var(--primary);background:#ecfdf5;}
+  .opt.correct{border-color:var(--correct);background:var(--correct-bg);}
+  .opt.wrong{border-color:var(--wrong);background:var(--wrong-bg);}
+  .opt.missed{border-color:var(--partial);background:var(--partial-bg);}
+  .opt.correct .label{color:var(--correct);}
+  .opt.wrong .label{color:var(--wrong);}
+  .opt.missed .label{color:var(--partial);}
+  .explain{display:none;margin-top:10px;padding:12px 14px;border-radius:10px;background:#f8fafc;border-left:4px solid var(--primary);font-size:.93rem;}
+  .explain.show{display:block;}
+  .explain .tag{font-weight:700;color:var(--correct);}
+  .explain .tag.partial{color:var(--partial);}
+  .explain .tag.wrong{color:var(--wrong);}
+  .q.result-correct{border-color:var(--correct);}
+  .q.result-wrong{border-color:var(--wrong);}
+  .q.result-partial{border-color:var(--partial);}
+  .summary{display:none;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px;margin-top:18px;text-align:center;}
+  .summary.show{display:block;}
+  .summary .score{font-size:2.6rem;font-weight:800;color:var(--primary);}
+  .summary .detail{color:var(--muted);margin-top:4px;}
+  .summary .msg{margin-top:12px;font-weight:600;}
+  @media (max-width:520px){header{padding:18px;}header h1{font-size:1.2rem;}.toolbar .progress{width:100%;margin-left:0;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>HỆ THỐNG 2: HƠI CHÈN</h1>
+    <p>22 câu hỏi (Câu 51–72) – Đáp án và giải thích hiện ngay khi bạn chọn.</p>
+  </header>
+  <div class="toolbar">
+    <button class="btn-primary" onclick="checkAll()">Kiểm tra tổng kết</button>
+    <button class="btn-ghost" onclick="resetAll()">Làm lại</button>
+    <span class="progress" id="progress">Đã trả lời: 0/22</span>
+  </div>
+  <form id="quiz"></form>
+  <div class="summary" id="summary">
+    <div class="score" id="score">0/22</div>
+    <div class="detail" id="detail"></div>
+    <div class="msg" id="msg"></div>
+  </div>
+</div>
+<script>
+const QUESTIONS = [
+  {q:"Nhiệm vụ của hệ thống hơi chèn trục tuabin:",
+   opts:["Ngăn hơi rò từ bên trong Tuabin ra ngoài ở phần tuabin cao áp và trung áp đồng thời ngăn không cho không khí từ ngoài lọt vào bên trong Tuabin hạ áp.",
+         "Ngăn hơi rò từ bên trong Tuabin ra ngoài ở phần tuabin cao áp đồng thời ngăn không cho không khí từ ngoài lọt vào bên trong Tuabin hạ áp.",
+         "Ngăn hơi rò từ bên trong Tuabin ra ngoài ở phần tuabin cao áp và trung áp đồng thời ngăn không cho không khí từ ngoài lọt vào bên trong Tuabin hạ áp và máy phát.",
+         "Ngăn hơi rò từ bên trong Tuabin ra ngoài ở phần tuabin cao áp đồng thời ngăn không cho không khí từ ngoài lọt vào bên trong Tuabin trung áp và hạ áp."],
+   ans:[0], ex:"Nhiệm vụ: ngăn hơi rò ở phần cao áp và trung áp; ngăn không khí lọt vào phần hạ áp."},
+  {q:"Mô tả nào sau đây là đúng về Bình ngưng hơi chèn:",
+   opts:["Bình ngưng hơi chèn thiết kế kiểu trụ đứng, trao đổi nhiệt kiểu bề mặt. Hỗn hợp hơi - không khí sau khi chèn trục được rút về bình ngưng hơi chèn thông qua quạt rút hơi chèn. Tại bình ngưng hơi chèn hơi chèn sẽ được nước ngưng làm mát và ngưng lại thành nước ngưng đọng rồi xả về bình ngưng.",
+         "Bình ngưng hơi chèn thiết kế kiểu nằm ngang, trao đổi nhiệt kiểu bề mặt. Hỗn hợp hơi - không khí sau khi chèn trục được rút về bình ngưng hơi chèn thông qua quạt rút hơi chèn. Tại bình ngưng hơi chèn hơi chèn sẽ được nước ngưng làm mát và ngưng lại thành nước ngưng đọng rồi xả về bình ngưng.",
+         "Bình ngưng hơi chèn thiết kế kiểu trụ đứng, trao đổi nhiệt kiểu bề mặt. Hỗn hợp hơi - không khí sau khi chèn trục được rút về bình ngưng hơi chèn thông qua quạt rút hơi chèn. Tại bình ngưng hơi chèn hơi chèn sẽ được nước ngưng làm mát và ngưng lại thành nước ngưng đọng rồi xả về bình startup flash tank.",
+         "Bình ngưng hơi chèn thiết kế kiểu nằm ngang, trao đổi nhiệt kiểu bề mặt. Hỗn hợp hơi - không khí sau khi chèn trục được rút về bình ngưng hơi chèn thông qua quạt rút hơi chèn. Tại bình ngưng hơi chèn hơi chèn sẽ được nước ngưng làm mát và ngưng lại thành nước ngưng đọng rồi xả về bình startup flash tank."],
+   ans:[1], ex:"Bình ngưng hơi chèn: kiểu nằm ngang, trao đổi nhiệt bề mặt, nước ngưng đọng xả về bình ngưng."},
+  {q:"Nhiệt độ nước ngưng vào bình ngưng hơi chèn theo thiết kế ở tải định mức:",
+   opts:["40.7°C","41.7°C","42.7°C","43.7°C"],ans:[2], ex:"Theo thiết kế ở tải định mức: 42,7°C."},
+  {q:"Nhiệt độ nước ngưng vào bình ngưng hơi chèn theo sơ đồ cân bằng nhiệt ở tải định mức:",
+   opts:["40 °C","40.4 °C","39 °C","39.5 °C"],ans:[3], ex:"Theo sơ đồ cân bằng nhiệt: 39,5°C."},
+  {q:"Nhiệt độ nước ngưng ra bình ngưng hơi chèn theo sơ đồ cân bằng nhiệt ở tải định mức:",
+   opts:["40 °C","45.4 °C","39 °C","40.4 °C"],ans:[3], ex:"Nhiệt độ nước ngưng ra theo sơ đồ cân bằng nhiệt: 40,4°C."},
+  {q:"Nhiệt độ khi đầu ra quạt hút bình ngưng hơi chèn theo thiết kế ở tải định mức:",
+   opts:["65.6°C","67.6°C","66°C","66.6°C"],ans:[0], ex:"Theo thiết kế: 65,6°C."},
+  {q:"Năng suất trao đổi nhiệt bình ngưng hơi chèn theo thiết kế ở tải định mức:",
+   opts:["52.14m³/h","52m³/h","53.14m³/h","51m³/h"],ans:[0], ex:"Theo thiết kế: 52,14 m³/h."},
+  {q:"Giá trị tác động van an toàn ống góp hơi chèn:",
+   opts:["1,75bar","1,65bar","1,7bar","2,7bar"],ans:[2], ex:"Van an toàn ống góp hơi chèn tác động ở 1,7 bar."},
+  {q:"Giá trị cảnh báo áp lực hơi chèn thấp:",
+   opts:["<0.136 bar","<0.137 Bar","<0.135 bar","<0.138 bar"],ans:[1], ex:"Cảnh báo khi áp lực hơi chèn < 0,137 bar."},
+  {q:"Giá trị cảnh báo áp lực hơi chèn cao:",
+   opts:[">0.41 bar",">0.45bar",">0.42 bar",">0.5bar"],ans:[0], ex:"Cảnh báo khi áp lực hơi chèn > 0,41 bar."},
+  {q:"Trong quá trình vận hành bình thường các chức danh Máy trưởng, Máy phó phải luôn kiểm tra đảm bảo thông số hơi chèn:",
+   opts:["Duy trì từ 0.1 – 0.34bar, nhiệt độ hơi chèn phần cao, trung áp 300°C, phần hạ áp 250°C, không có rò rỉ hơi ở hệ thống hơi chèn.",
+         "Duy trì từ 0.21 – 0.34bar, nhiệt độ hơi chèn phần cao, trung áp 300°C, phần hạ áp 150°C, không có rò rỉ hơi ở hệ thống hơi chèn.",
+         "Duy trì từ 0.21 – 0.45bar, nhiệt độ hơi chèn phần cao, trung áp 400°C, phần hạ áp 250°C, không có rò rỉ hơi ở hệ thống hơi chèn.",
+         "Duy trì từ 0.21 – 0.34bar, nhiệt độ hơi chèn phần cao, trung áp 320°C, phần hạ áp 200°C, không có rò rỉ hơi ở hệ thống hơi chèn."],
+   ans:[1], ex:"Duy trì 0,21–0,34 bar; nhiệt độ hơi chèn cao/trung áp 300°C, hạ áp 150°C."},
+  {q:"Biện pháp sau đây nhằm xử lý sự cố áp lực hơi chèn giảm:",
+   opts:["Chuyển van điều chỉnh cấp hơi chèn từ hệ thống hơi tự dùng tới về chế độ bằng tay, điều chỉnh áp lực hơi chèn trở về bình thường, làm các biện pháp an toàn yêu cầu C&I kiểm tra xử lý lỗi van; Chuyển van xả quá áp ống góp hơi chèn về chế độ bằng tay, điều chỉnh đóng van xả quá áp lại, yêu cầu C&I khắc phục.",
+         "Tăng tải tổ máy để Tuabin tự chèn trục.",
+         "Tăng áp lực hơi tự dùng.",
+         "Cả 3 phương án trên"],
+   ans:[0], ex:"Chuyển van điều chỉnh và van xả quá áp về chế độ bằng tay, yêu cầu C&I xử lý."},
+  {q:"Nguyên nhân nào dẫn đến áp lực hơi chèn cao:",
+   opts:["Van cấp hơi chèn từ hơi tự dùng tự động mở ra trong khi áp lực hơi chèn đang bình thường.",
+         "Rò rỉ hơi từ tuabin cao, trung áp lớn mà van cấp hơi chèn từ hệ thống hơi tự dùng lỗi, không tự động điều chỉnh được.",
+         "Lỗi không tự động mở van xả quá áp lực hơi chèn khi áp lực hơi chèn cao hơn giá trị cài đặt tự động mở van.",
+         "Cả 3 phương án trên"],
+   ans:[3], ex:"Cả 3 nguyên nhân đều có thể dẫn đến áp lực hơi chèn cao."},
+  {q:"Biện pháp an toàn trong vận hành hệ thống là sai:",
+   opts:["Trong quá trình bảo dưỡng thiết bị của hệ thống nhân viên vận hành bắt buộc phải thực hiện theo các yêu cầu của “Các quy định an toàn cho vận hành các thiết bị trong Nhà máy Nhiệt điện” và các tài liệu hiện hành.",
+         "Các vị trí vận hành hệ thống bệ máy, sàn thao tác và vỏ thiết bị phải sạch sẽ và trong trạng thái tốt. Ánh sáng nơi làm việc phải đảm bảo.",
+         "Các thiết bị của hệ thống phải được cách nhiệt ở lớp vỏ và đường ống. Độ dày của lớp cách nhiệt phải đảm bảo để nhiệt độ bề mặt bên ngoài của nó không vượt quá 55oC.",
+         "Hệ thống hơi chèn Tuabin phải được vận hành phù hợp với các quy định an toàn, đảm bảo không có sự sai khác nào giữa thiết kế vận hành với sơ đồ P&ID."],
+   ans:[2], ex:"Theo dữ liệu gốc, phát biểu sai là C."},
+  {q:"Các nguyên tắc chung khi vận hành hệ thống hơi chèn đối với chức danh Máy phó nào sau đây là sai:",
+   opts:["Chức danh Máy phó phải thường xuyên đi kiểm tra thiết bị nắm chắc mọi diễn biến tình hình của thiết bị.",
+         "Kiểm tra áp lực hơi chèn. Thường xuyên vệ sinh thiết bị sạch sẽ.",
+         "Tăng cường phát hiện các khiếm khuyết của thiết bị báo Trưởng kíp để ghi vào sổ giao ca hàng ngày.",
+         "Cuối ca phải báo cáo tình hình thiết bị, phương thức vận hành sửa chữa cho chức danh Trưởng kíp."],
+   ans:[3], ex:"Theo dữ liệu gốc, phát biểu sai là D."},
+  {q:"Nguyên nhân nào sau đây gây mất áp lực hơi chèn nào là đúng:",
+   opts:["Khả năng tự chèn của tuabin kém.",
+         "Van xả quá áp lực hơi chèn đang ở trạng thái mở mà không đóng được.",
+         "Van cấp hơi chèn từ hệ thống hơi tự dùng lỗi, không tự động điều chỉnh được.",
+         "Cả 3 phương án trên"],
+   ans:[3], ex:"Cả 3 nguyên nhân đều có thể gây mất áp lực hơi chèn."},
+  {q:"Trình tự ngừng hệ thống hơi chèn như sau là đúng:",
+   opts:["1. Chuyển chế độ quạt hút hơi chèn số 2 về “Man”; 2. Chỉ được ngừng hệ thống hơi chèn khi chân không bình ngưng về 0bar; 3. Đóng các van điện, van tay cấp hơi chèn, kiểm tra áp lực chèn về 0bar; 4. Đóng các van phân phối hơi chèn; 5. Dừng quạt rút hơi chèn; 6. Mở tất cả các đường xả đọng của hệ thống hơi chèn.",
+         "1. Chỉ được ngừng hệ thống hơi chèn khi chân không bình ngưng về 0bar; 2. Chuyển chế độ quạt hút hơi chèn số 2 về “Man”; 3. Đóng các van điện, van tay cấp hơi chèn, kiểm tra áp lực chèn về 0bar; 4. Đóng các van phân phối hơi chèn; 5. Dừng quạt rút hơi chèn; 6. Mở tất cả các đường xả đọng của hệ thống hơi chèn.",
+         "1. Đóng các van điện, van tay cấp hơi chèn, kiểm tra áp lực chèn về 0bar; 2. Chỉ được ngừng hệ thống hơi chèn khi chân không bình ngưng về 0bar; 3. Chuyển chế độ quạt hút hơi chèn số 2 về “Man”; 4. Đóng các van phân phối hơi chèn; 5. Dừng quạt rút hơi chèn; 6. Mở tất cả các đường xả đọng của hệ thống hơi chèn.",
+         "1. Chuyển chế độ quạt hút hơi chèn số 2 về “Man”; 2. Đóng các van phân phối hơi chèn; 3. Đóng các van điện, van tay cấp hơi chèn, kiểm tra áp lực chèn về 0bar; 4. Chỉ được ngừng hệ thống hơi chèn khi chân không bình ngưng về 0bar; 5. Dừng quạt rút hơi chèn; 6. Mở tất cả các đường xả đọng của hệ thống hơi chèn."],
+   ans:[0], ex:"Trình tự đúng: chuyển quạt về Man → chờ chân không về 0 → đóng van cấp → đóng van phân phối → dừng quạt → mở xả đọng."},
+  {q:"Kiểm tra trước khi khởi động hệ thống hơi chèn sau đây là sai:",
+   opts:["Bơm nước tuần hoàn đã được khởi động và hệ thống tuần hoàn bình ngưng đã được đưa vào làm việc.",
+         "Hệ thống nước ngưng làm việc bình thường, lưu lượng nước qua bình ngưng hơi chèn ≥ 360t/h.",
+         "Bộ vần trục tuabin đã đưa vào làm việc, tất cả các van xả đọng tuabin ở trạng thái mở.",
+         "Ống góp hơi tự dùng đã được đưa vào làm việc, áp lực, nhiệt độ là bình thường."],
+   ans:[1], ex:"Theo dữ liệu gốc, phát biểu sai là B."},
+  {q:"Áp lực hơi chèn trong quá trình vận hành được điều chỉnh ở bao nhiêu Bar:",
+   opts:["0.26bar","0.27bar","0.28bar","0.25bar"],ans:[2], ex:"Áp lực hơi chèn vận hành: 0,28 bar."},
+  {q:"Nhiệt độ hơi chèn tuabin cao, trung áp trong quá trình vận hành bình thường bao nhiêu là đúng:",
+   opts:["cao áp/ hạ áp: 300/150ºC","cao áp/ hạ áp: 330/160ºC","cao áp/ hạ áp: 310/150ºC","cao áp/ hạ áp: 280/155ºC"],
+   ans:[0], ex:"Nhiệt độ hơi chèn cao áp/hạ áp: 300/150°C."},
+  {q:"Hơi cấp cho hệ thống hơi chèn được lấy từ 3 nguồn chính gồm:",
+   opts:["Từ ống góp hơi tự dùng.",
+         "Nguồn tự chèn lấy hơi rò từ tuabin cao áp – trung áp.",
+         "Nguồn rút hơi rò từ ty van MSV, CV, BDV, BVV.",
+         "Cả 3 phương án trên"],
+   ans:[3], ex:"3 nguồn: ống góp hơi tự dùng, tự chèn từ tuabin CA–TA, rút hơi rò từ ty van."},
+  {q:"Hệ thống hơi chèn bao gồm các thiết bị chính sau đây:",
+   opts:["Quạt hút hơi chèn, Bình ngưng hơi chèn, ống góp hơi chèn, hộp nước xả đọng của bình ngưng hơi chèn.",
+         "Quạt hút hơi chèn, Bình ngưng hơi chèn, bơm dầu bôi trơn, ống góp hơi chèn, hộp nước xả đọng của bình ngưng hơi chèn.",
+         "Quạt hút hơi chèn, bơm chân không hộp nước, bình ngưng hơi chèn, ống góp hơi chèn, hộp nước xả đọng của bình ngưng hơi chèn.",
+         "Quạt hút hơi chèn, Bình ngưng hơi chèn, bơm dầu chèn, ống góp hơi chèn, hộp nước xả đọng của bình ngưng hơi chèn."],
+   ans:[0], ex:"Thiết bị chính: quạt hút hơi chèn, bình ngưng hơi chèn, ống góp hơi chèn, hộp nước xả đọng."}
+];
+const form=document.getElementById('quiz'),progressEl=document.getElementById('progress'),summaryEl=document.getElementById('summary');
+const LETTERS=['A','B','C','D'],TOTAL=QUESTIONS.length;
+const isMulti=item=>item.ans.length>1;
+function render(){
+  form.innerHTML=QUESTIONS.map((item,i)=>{
+    const multi=isMulti(item),type=multi?'checkbox':'radio';
+    return `<div class="q" id="q-${i}">
+      <span class="num ${multi?'multi':''}">Câu ${i+1}</span>
+      <div class="stem">${item.q}</div>
+      ${item.opts.map((o,j)=>`<label class="opt" id="opt-${i}-${j}"><input type="${type}" name="q${i}" value="${j}" onchange="onSelect(${i})"><span class="label">${LETTERS[j]}.</span><span class="text">${o}</span></label>`).join('')}
+      <div class="explain" id="ex-${i}"></div>
+    </div>`;
+  }).join('');
+}
+const getChecked=i=>Array.from(document.querySelectorAll(`input[name="q${i}"]:checked`)).map(el=>Number(el.value));
+function gradeOne(i){
+  const item=QUESTIONS[i],qBox=document.getElementById(`q-${i}`),ex=document.getElementById(`ex-${i}`),chosen=getChecked(i);
+  qBox.classList.remove('result-correct','result-wrong','result-partial');
+  item.opts.forEach((_,j)=>{const el=document.getElementById(`opt-${i}-${j}`);el.classList.remove('correct','wrong','missed','sel');});
+  item.opts.forEach((_,j)=>{
+    const el=document.getElementById(`opt-${i}-${j}`),isC=item.ans.includes(j),isCh=chosen.includes(j);
+    if(isC)el.classList.add('correct');else if(isCh)el.classList.add('wrong');
+    if(isMulti(item)&&isC&&!isCh)el.classList.add('missed');
+  });
+  if(chosen.length===0){ex.className='explain show';ex.innerHTML=`<span class="tag">✔ Đáp án đúng: ${item.ans.map(a=>LETTERS[a]).join(', ')}.</span> ${item.ex}`;return{status:'unanswered'};}
+  const sameSet=chosen.length===item.ans.length&&item.ans.every(a=>chosen.includes(a));
+  if(sameSet){qBox.classList.add('result-correct');ex.className='explain show';ex.innerHTML=`<span class="tag">✔ Chính xác! Đáp án: ${item.ans.map(a=>LETTERS[a]).join(', ')}.</span> ${item.ex}`;return{status:'correct'};}
+  else if(isMulti(item)&&chosen.some(c=>item.ans.includes(c))){qBox.classList.add('result-partial');ex.className='explain show';ex.innerHTML=`<span class="tag partial">◐ Đúng một phần. Đáp án đầy đủ: ${item.ans.map(a=>LETTERS[a]).join(', ')}.</span> ${item.ex}`;return{status:'partial'};}
+  else{qBox.classList.add('result-wrong');ex.className='explain show';ex.innerHTML=`<span class="tag wrong">✘ Chưa đúng. Đáp án đúng: ${item.ans.map(a=>LETTERS[a]).join(', ')}.</span> ${item.ex}`;return{status:'wrong'};}
+}
+function onSelect(i){
+  document.querySelectorAll(`#q-${i} .opt`).forEach(el=>el.classList.remove('sel'));
+  getChecked(i).forEach(j=>document.getElementById(`opt-${i}-${j}`).classList.add('sel'));
+  gradeOne(i);updateProgress();
+}
+function updateProgress(){let n=0;for(let i=0;i<TOTAL;i++){if(getChecked(i).length>0)n++;}progressEl.textContent=`Đã trả lời: ${n}/${TOTAL}`;}
+function checkAll(){
+  let c=0,p=0,w=0,u=0;
+  QUESTIONS.forEach((_,i)=>{const r=gradeOne(i);if(r.status==='correct')c++;else if(r.status==='partial')p++;else if(r.status==='wrong')w++;else u++;});
+  const pct=Math.round((c+p*0.5)/TOTAL*100);
+  document.getElementById('score').textContent=`${c}/${TOTAL}`;
+  document.getElementById('detail').textContent=`Đúng ${c} · Đúng một phần ${p} · Sai ${w} · Chưa trả lời ${u} · Điểm ~${pct}%`;
+  let msg="";if(u>0)msg="⚠️ Bạn còn câu chưa trả lời.";else if(pct>=90)msg="🏆 Xuất sắc!";else if(pct>=75)msg="👍 Khá tốt!";else if(pct>=50)msg="📘 Cần ôn thêm.";else msg="📚 Hãy đọc lại tài liệu và làm lại.";
+  document.getElementById('msg').textContent=msg;summaryEl.classList.add('show');window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'});
+}
+function resetAll(){
+  form.reset();summaryEl.classList.remove('show');
+  QUESTIONS.forEach((_,i)=>{document.getElementById(`q-${i}`).classList.remove('result-correct','result-wrong','result-partial');const ex=document.getElementById(`ex-${i}`);ex.classList.remove('show');ex.innerHTML='';document.querySelectorAll(`#q-${i} .opt`).forEach(el=>el.classList.remove('sel','correct','wrong','missed'));});
+  updateProgress();window.scrollTo({top:0,behavior:'smooth'});
+}
+render();updateProgress();
+</script>
+</body>
+</html>

@@ -3,20 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Hệ Thống Đào Tạo Vận Hành - NĐMD</title>
+    <title>Hệ Thống Ôn Tập Kỹ Thuật An Toàn & Vận Hành</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap');
         
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { font-family: 'Montserrat', sans-serif; background: radial-gradient(circle at center, #1e3c72 0%, #0f1a2c 100%); min-height: 100vh; color: #fff; overflow-x: hidden; perspective: 1200px; }
 
-        /* ================= CÁC MÀN HÌNH CHUNG ================= */
-        .screen { display: none; min-height: 100vh; animation: fadeIn 0.4s ease; }
-        .screen.active { display: flex; flex-direction: column; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        /* ================= 1. MÀN HÌNH TRANG CHỦ GỐC ================= */
+        #homeScreen { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px 15px 115px; }
 
-        /* ================= 1. TRANG CHỦ ================= */
-        #homeScreen { justify-content: center; align-items: center; padding: 20px 15px 115px; }
         .scene-3d { position: relative; width: 100%; height: 280px; display: flex; justify-content: center; align-items: flex-end; margin-bottom: 12px; }
         .boiler { position: relative; width: 150px; height: 200px; background: linear-gradient(135deg, #444 0%, #999 50%, #222 100%); border-radius: 15px 15px 5px 5px; box-shadow: inset -15px 0 20px rgba(0,0,0,0.6), inset 15px 0 20px rgba(255,255,255,0.2), 20px 25px 35px rgba(0,0,0,0.7); transform: rotateY(-20deg) rotateX(5deg); z-index: 2; animation: floatBoiler 4s ease-in-out infinite; }
         .boiler-top { position: absolute; top: -25px; left: 0; width: 150px; height: 35px; background: linear-gradient(90deg, #333 0%, #888 50%, #333 100%); border-radius: 50% / 100% 100% 0 0; box-shadow: 0 -5px 10px rgba(0,0,0,0.5); }
@@ -24,34 +20,70 @@
         .gauge::after { content: ''; position: absolute; top: 17px; left: 17px; width: 3px; height: 16px; background: #e74c3c; transform-origin: bottom center; animation: gaugeNeedle 1.5s ease-in-out infinite alternate; box-shadow: 0 0 5px #e74c3c; }
         .pipe { position: absolute; top: 90px; right: -25px; width: 25px; height: 70px; background: linear-gradient(90deg, #555, #888); border-radius: 0 8px 8px 0; box-shadow: 8px 0 15px rgba(0,0,0,0.5); }
         .steam { position: absolute; top: -50px; right: -20px; width: 40px; height: 40px; background: rgba(255, 255, 255, 0.7); border-radius: 50%; filter: blur(10px); animation: steamRise 2.5s ease-out infinite; }
-        .engineer { font-size: 115px; position: relative; z-index: 3; margin-left: -40px; filter: drop-shadow(10px 20px 15px rgba(0,0,0,0.8)); animation: floatEngineer 3.5s ease-in-out infinite alternate; transform: rotateY(15deg); }
-        
-        .menu-container { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); padding: 35px 40px; border-radius: 25px; border: 1px solid rgba(255, 255, 255, 0.15); box-shadow: 0 30px 60px rgba(0,0,0,0.6); text-align: center; width: 100%; max-width: 700px; transform: translateZ(40px); }
-        h1 { font-size: 23px; font-weight: 900; margin-bottom: 26px; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 4px 10px rgba(0,0,0,0.8); }
-        
+        .engineer { font-size: 115px; position: relative; z-index: 3; margin-left: -40px; filter: drop-shadow(10px 20px 15px rgba(0,0,0,0.8)); animation: floatEngineer 3.5s ease-in-out infinite alternate; transform: rotateY(15deg); user-select: none; }
+
+        .menu-container { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); padding: 35px 40px; border-radius: 25px; border: 1px solid rgba(255, 255, 255, 0.15); box-shadow: 0 30px 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.2); text-align: center; width: 100%; max-width: 700px; transform: translateZ(40px); animation: fadeIn 0.9s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        h1 { color: #fff; font-size: 23px; font-weight: 900; margin-bottom: 26px; text-transform: uppercase; letter-spacing: 2.5px; text-shadow: 0 4px 10px rgba(0,0,0,0.8), 0 0 20px rgba(255,255,255,0.2); }
+
         .button-group { display: flex; gap: 18px; justify-content: center; flex-wrap: wrap; }
-        .btn { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 18px 28px; border-radius: 15px; font-family: inherit; font-size: 15px; font-weight: 800; color: white; border: none; cursor: pointer; transition: 0.2s; box-shadow: 0 10px 0 rgba(0,0,0,0.4); text-transform: uppercase; flex: 1 1 250px; }
-        .btn:active { transform: translateY(8px); box-shadow: 0 2px 0 rgba(0,0,0,0.4); }
-        .btn-exam { background: linear-gradient(135deg, #e74c3c, #c0392b); border-bottom: 4px solid #922b21; flex: 1 1 100%; font-size: 18px;}
+        .btn { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 18px 28px; text-decoration: none; border-radius: 15px; font-family: 'Montserrat', sans-serif; font-size: 15px; font-weight: 800; color: white; border: none; cursor: pointer; transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 10px 0 rgba(0,0,0,0.4), 0 20px 25px rgba(0,0,0,0.3); position: relative; top: 0; text-transform: uppercase; letter-spacing: 1px; flex: 1 1 200px; }
+        .btn:active { top: 8px; box-shadow: 0 2px 0 rgba(0,0,0,0.4), 0 5px 15px rgba(0,0,0,0.3); }
+        .btn:hover { filter: brightness(1.15); transform: scale(1.03); }
+
+        .btn-exam-main { background: linear-gradient(135deg, #e74c3c, #c0392b); border-bottom: 4px solid #922b21; flex: 1 1 100%; font-size: 18px; }
+        .btn-exam { background: linear-gradient(135deg, #2ecc71, #27ae60); border-bottom: 4px solid #1e8449; }
         .btn-theory { background: linear-gradient(135deg, #3498db, #2980b9); border-bottom: 4px solid #1a5276; }
-        .btn-machine-folder { background: linear-gradient(135deg, #f39c12, #d35400); border-bottom: 4px solid #a04000; }
+        .btn-machine-folder { background: linear-gradient(135deg, #f39c12, #d35400); border-bottom: 4px solid #a04000; flex: 1 1 100%; font-size: 17px; }
+        .folder-count-badge { background: rgba(0, 0, 0, 0.35); padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 800; border: 1px solid rgba(255, 255, 255, 0.3); }
 
-        /* ================= 2. FOLDER BÊN MÁY ================= */
-        #machineFolderScreen { padding: 15px 14px 125px; max-width: 980px; margin: 0 auto; width: 100%; }
-        .folder-header-card { background: rgba(15, 26, 44, 0.92); backdrop-filter: blur(15px); border: 1px solid rgba(241, 196, 15, 0.35); border-radius: 20px; padding: 15px 16px; position: sticky; top: 10px; z-index: 25; margin-bottom: 18px; display: flex; justify-content: space-between; align-items: center;}
-        .btn-back { background: linear-gradient(135deg, #f1c40f, #e67e22); color: #0f1a2c; padding: 10px 16px; border-radius: 10px; font-weight: 900; border: none; cursor: pointer; box-shadow: 0 4px 0 #9c640c; }
-        .btn-back:active { transform: translateY(3px); box-shadow: 0 1px 0 #9c640c; }
+        /* ================= 2. MÀN HÌNH FOLDER BÊN MÁY ================= */
+        #machineFolderScreen { display: none; min-height: 100vh; padding: 15px 14px 125px; max-width: 980px; margin: 0 auto; animation: fadeIn 0.35s ease; }
+        .folder-header-card { background: rgba(15, 26, 44, 0.92); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid rgba(241, 196, 15, 0.35); border-radius: 20px; padding: 15px 16px; position: sticky; top: 10px; z-index: 25; box-shadow: 0 15px 35px rgba(0,0,0,0.55); margin-bottom: 18px; }
+        .folder-top-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+        .btn-back-main { display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #f1c40f, #e67e22); color: #0f1a2c; border: none; padding: 11px 16px; border-radius: 12px; font-family: inherit; font-size: 13px; font-weight: 900; cursor: pointer; box-shadow: 0 4px 0 #9c640c; text-transform: uppercase; flex-shrink: 0; }
+        .btn-back-main:active { transform: translateY(3px); box-shadow: 0 1px 0 #9c640c; }
+        .folder-heading { text-align: right; min-width: 0; }
+        .folder-heading h2 { font-size: 16px; font-weight: 900; color: #f1c40f; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .folder-heading span { font-size: 11px; color: #cbd5e1; font-weight: 600; }
+
+        .search-input-wrap { margin-bottom: 10px; }
+        .search-input-wrap input { width: 100%; padding: 12px 15px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.22); background: rgba(255, 255, 255, 0.08); color: #fff; font-family: inherit; font-size: 13.5px; font-weight: 600; outline: none; }
+        .search-input-wrap input::placeholder { color: rgba(255, 255, 255, 0.55); }
+        .search-input-wrap input:focus { border-color: #f1c40f; background: rgba(255, 255, 255, 0.14); }
+
+        .filter-tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
+        .filter-tabs::-webkit-scrollbar { display: none; }
+        .tab-chip { flex-shrink: 0; padding: 7px 13px; border-radius: 10px; font-family: inherit; font-size: 11.5px; font-weight: 800; background: rgba(255, 255, 255, 0.09); color: #e2e8f0; border: 1px solid rgba(255, 255, 255, 0.15); cursor: pointer; transition: all 0.2s; }
+        .tab-chip.active { background: #f1c40f; color: #0f1a2c; border-color: #f1c40f; }
+
         .machine-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
-        .machine-card { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.16); border-radius: 16px; padding: 15px; display: flex; align-items: center; gap: 14px; cursor: pointer; color: #fff; text-align: left; transition: 0.2s; }
-        .machine-card:hover { border-color: #f1c40f; background: rgba(255,255,255,0.14); transform: translateY(-3px);}
-        .machine-card-icon { width: 50px; height: 50px; border-radius: 12px; background: rgba(241,196,15,0.2); display: flex; align-items: center; justify-content: center; font-size: 24px; }
-        
-        /* ================= 3. HỌC TỪNG BÀI (IFRAME) ================= */
-        #studyScreen { position: fixed; inset: 0; background: #fff; z-index: 50; }
-        .study-topbar { background: #0b1322; padding: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .machine-card { background: rgba(255, 255, 255, 0.07); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.16); border-radius: 16px; padding: 15px 16px; display: flex; align-items: center; gap: 14px; cursor: pointer; transition: all 0.2s ease; text-align: left; color: #fff; width: 100%; box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
+        .machine-card:hover { background: rgba(255, 255, 255, 0.14); border-color: #f1c40f; transform: translateY(-2px); }
+        .machine-card:active { transform: scale(0.97); }
+        .machine-card-icon { width: 52px; height: 52px; border-radius: 14px; background: linear-gradient(135deg, rgba(241, 196, 15, 0.22), rgba(230, 126, 34, 0.22)); border: 1px solid rgba(241, 196, 15, 0.45); display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+        .machine-card-num { font-size: 9px; font-weight: 800; color: #f1c40f; margin-top: 2px; }
+        .machine-card-body { flex: 1; min-width: 0; }
+        .machine-group-badge { display: inline-block; font-size: 9.5px; font-weight: 800; color: #f1c40f; background: rgba(0, 0, 0, 0.38); padding: 2px 8px; border-radius: 6px; margin-bottom: 4px; text-transform: uppercase; }
+        .machine-card-title { font-size: 14px; font-weight: 800; color: #fff; margin-bottom: 3px; line-height: 1.3; }
+        .machine-card-file { font-size: 11px; color: #94a3b8; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .machine-card-go { font-size: 16px; color: #f1c40f; font-weight: 900; flex-shrink: 0; }
 
-        /* ================= 4. MÀN HÌNH THI SÁT HẠCH TỔNG HỢP (MA TRẬN & INSTANT FEEDBACK) ================= */
-        #examScreen { max-width: 900px; margin: 0 auto; width: 100%; padding: 15px 10px 100px; background: #f4f6f9; min-height: 100vh;}
+        /* ================= 3. MÀN HÌNH LÀM BÀI ĐƠN (IFRAME CŨ) ================= */
+        #studyScreen { display: none; position: fixed; inset: 0; z-index: 60; background: #0f1a2c; flex-direction: column; }
+        .study-topbar { background: #0b1322; border-bottom: 2px solid rgba(241, 196, 15, 0.45); padding: 9px 12px; display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-shrink: 0; }
+        .study-nav-btns { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+        .btn-top-action { display: inline-flex; align-items: center; gap: 5px; padding: 9px 12px; border-radius: 10px; font-family: inherit; font-size: 11.5px; font-weight: 800; border: none; cursor: pointer; text-transform: uppercase; color: #fff; }
+        .btn-top-action:active { transform: scale(0.95); }
+        .btn-go-home { background: linear-gradient(135deg, #2ecc71, #27ae60); box-shadow: 0 3px 0 #1e8449; }
+        .btn-go-folder { background: linear-gradient(135deg, #f39c12, #d35400); box-shadow: 0 3px 0 #a04000; }
+        .study-lesson-title { flex: 1; text-align: center; font-size: 13px; font-weight: 800; color: #f1c40f; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 4px; }
+        .btn-refresh-lesson { background: rgba(255, 255, 255, 0.12); color: #fff; border: 1px solid rgba(255, 255, 255, 0.25); width: 36px; height: 36px; border-radius: 10px; font-size: 15px; cursor: pointer; flex-shrink: 0; }
+        .study-frame-container { flex: 1; width: 100%; height: 100%; background: #fff; position: relative; }
+        #studyIframe { width: 100%; height: 100%; border: none; }
+
+        /* ================= 4. MÀN HÌNH THI SÁT HẠCH TỔNG HỢP MỚI ================= */
+        #examScreen { display: none; background: #f4f6f9; min-height: 100vh; flex-direction: column; overflow-y: auto;}
+        .exam-container { max-width: 900px; margin: 0 auto; width: 100%; padding: 15px 10px 100px; }
         .exam-header { background: linear-gradient(135deg, #0f1a2c, #1e3c72); padding: 15px 20px; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 10px; z-index: 30; box-shadow: 0 10px 20px rgba(0,0,0,0.3); border: 1px solid #3b82f6; }
         .timer-box { font-size: 24px; font-weight: 900; font-family: monospace; background: #000; padding: 6px 15px; border-radius: 8px; color: #00ff00; letter-spacing: 2px; border: 2px solid #333;}
         .timer-box.warning { color: #ff0000; border-color: #ff0000; animation: blink 1s infinite; }
@@ -87,14 +119,15 @@
         .explain .tag.partial { color: #d97706; }
         .explain .tag.wrong { color: #dc2626; }
 
-        .btn-check-mmc { background: #f59e0b; color: #fff; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 700; cursor: pointer; margin-top: 5px; transition: 0.2s; box-shadow: 0 4px 0 #b45309;}
+        .btn-check-mmc { background: #f59e0b; color: #fff; border: none; padding: 10px 20px; border-radius: 8px; font-family: inherit; font-weight: 700; cursor: pointer; margin-top: 5px; transition: 0.2s; box-shadow: 0 4px 0 #b45309;}
         .btn-check-mmc:active { transform: translateY(4px); box-shadow: 0 0 0 #b45309;}
         .btn-check-mmc:disabled { background: #cbd5e1; box-shadow: 0 4px 0 #94a3b8; cursor: not-allowed; transform: none;}
 
-        .btn-submit-exam { width: 100%; background: #27ae60; padding: 20px; font-size: 20px; box-shadow: 0 8px 0 #1e8449; margin-top: 20px; text-transform: uppercase; letter-spacing: 1px;}
+        .btn-submit-exam { width: 100%; background: #27ae60; color: white; border: none; border-radius: 12px; padding: 20px; font-size: 20px; font-weight: 900; box-shadow: 0 8px 0 #1e8449; margin-top: 20px; text-transform: uppercase; cursor: pointer; transition: 0.2s;}
+        .btn-submit-exam:active { transform: translateY(8px); box-shadow: 0 0 0 #1e8449;}
 
-        /* ================= 5. BÁO CÁO KẾT QUẢ ================= */
-        #reportScreen { justify-content: center; align-items: center; padding: 20px; }
+        /* ================= 5. MÀN HÌNH KẾT QUẢ SÁT HẠCH ================= */
+        #reportScreen { display: none; min-height: 100vh; justify-content: center; align-items: center; padding: 20px; background: radial-gradient(circle at center, #1e3c72 0%, #0f1a2c 100%);}
         .report-card { background: #fff; color: #1e293b; border-radius: 20px; padding: 40px 30px; text-align: center; max-width: 550px; width: 100%; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
         .badge-result { width: 120px; height: 120px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 20px; color: white; font-weight: 900; letter-spacing: 2px;}
         .badge-pass { background: linear-gradient(135deg, #22c55e, #16a34a); box-shadow: 0 0 40px rgba(34, 197, 94, 0.4); }
@@ -106,16 +139,36 @@
         .stat-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 15px; }
         .stat-val { font-size: 24px; font-weight: 800; color: #3b82f6; margin-top: 5px;}
 
+        /* ================= ANH KỸ SƯ ================= */
+        .engineer-companion { position: fixed; bottom: 12px; right: 12px; z-index: 95; display: flex; align-items: flex-end; gap: 8px; pointer-events: none; }
+        .engineer-bubble { pointer-events: auto; background: rgba(15, 26, 44, 0.96); border: 2px solid #f1c40f; border-radius: 18px 18px 4px 18px; padding: 11px 14px; max-width: 245px; box-shadow: 0 12px 28px rgba(0,0,0,0.7); position: relative; animation: fadeIn 0.25s ease; }
+        .bubble-close-btn { position: absolute; top: -9px; left: -9px; width: 22px; height: 22px; border-radius: 50%; background: #e74c3c; color: #fff; border: 2px solid #0f1a2c; font-size: 11px; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .bubble-title { font-size: 10px; font-weight: 900; color: #f1c40f; text-transform: uppercase; margin-bottom: 4px; }
+        .bubble-text { font-size: 11.5px; line-height: 1.4; color: #f8fafc; font-weight: 600; }
+        .engineer-btn { pointer-events: auto; width: 62px; height: 62px; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #2980b9, #0f1a2c); border: 3px solid #f1c40f; box-shadow: 0 8px 20px rgba(0,0,0,0.6), 0 0 12px rgba(241, 196, 15, 0.45); display: flex; align-items: center; justify-content: center; font-size: 36px; cursor: pointer; animation: floatAvatar 3s ease-in-out infinite alternate; position: relative; user-select: none; flex-shrink: 0; }
+        .engineer-btn:active { transform: scale(0.9); }
+        .engineer-tag { position: absolute; bottom: -4px; background: #2ecc71; color: #0f1a2c; font-size: 9px; font-weight: 900; padding: 2px 6px; border-radius: 10px; text-transform: uppercase; border: 1px solid #0f1a2c; }
+
         @keyframes floatBoiler { 0%, 100% { transform: rotateY(-20deg) rotateX(5deg) translateY(0); } 50% { transform: rotateY(-20deg) rotateX(5deg) translateY(-10px); } }
         @keyframes floatEngineer { 0% { transform: rotateY(15deg) translateY(0); } 100% { transform: rotateY(15deg) translateY(-18px); } }
+        @keyframes floatAvatar { 0% { transform: translateY(0); } 100% { transform: translateY(-6px); } }
         @keyframes gaugeNeedle { 0% { transform: rotate(-40deg); } 100% { transform: rotate(40deg); } }
         @keyframes steamRise { 0% { transform: translateY(0) scale(1); opacity: 0.8; } 100% { transform: translateY(-80px) scale(2.5); opacity: 0; } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(18px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
         @keyframes blink { 50% { opacity: 0.3; } }
-        
+
         @media (max-width: 768px) {
-            .scene-3d { height: 215px; transform: scale(0.82); }
-            .button-group { flex-direction: column; }
-            .btn { width: 100%; flex: none; }
+            .scene-3d { height: 215px; transform: scale(0.82); margin-bottom: 4px; }
+            .menu-container { padding: 25px 18px; width: 95%; border-radius: 20px; }
+            h1 { font-size: 17px; margin-bottom: 18px; letter-spacing: 1.5px; }
+            .button-group { flex-direction: column; gap: 14px; }
+            .btn { padding: 15px 18px; font-size: 14.5px; width: 100%; flex: none; }
+            .machine-grid { grid-template-columns: 1fr; }
+            .folder-heading h2 { font-size: 14px; }
+            .study-lesson-title { font-size: 11.5px; }
+            .btn-top-action { padding: 8px 10px; font-size: 10.5px; }
+            .engineer-bubble { max-width: 205px; padding: 9px 12px; }
+            .engineer-btn { width: 56px; height: 56px; font-size: 32px; }
             .exam-header { flex-direction: column; gap: 12px; align-items: stretch;}
             .exam-header > div:first-child { display: flex; justify-content: space-between; align-items: center;}
             .timer-box { text-align: center;}
@@ -125,63 +178,95 @@
 </head>
 <body>
 
-    <!-- 1. TRANG CHỦ -->
-    <div id="homeScreen" class="screen active">
+    <!-- ================= 1. TRANG CHỦ ================= -->
+    <div id="homeScreen" style="display: flex;">
         <div class="scene-3d">
-            <div class="boiler"><div class="boiler-top"></div><div class="gauge"></div><div class="pipe"></div><div class="steam"></div></div>
+            <div class="boiler"><div class="boiler-top"></div><div class="gauge"></div><div class="pipe"></div><div class="steam"></div><div class="steam" style="animation-delay: 1.2s; right: -10px;"></div></div>
             <div class="engineer">👷‍♂️</div>
         </div>
+
         <div class="menu-container">
-            <h1>Hệ Thống Đào Tạo NĐMD</h1>
+            <h1>Hệ Thống Ôn Tập An Toàn & Vận Hành</h1>
             <div class="button-group">
-                <button onclick="startExamMode()" class="btn btn-exam">🏆 THI SÁT HẠCH TỔNG HỢP (60 CÂU)</button>
-                <button onclick="switchScreen('machineFolderScreen')" class="btn btn-machine-folder">📂 Ôn Luyện 16 Hệ Thống Tuabin</button>
-                <button onclick="alert('Module An Toàn đang được cập nhật!')" class="btn btn-theory">📚 Lý Thuyết An Toàn</button>
+                <button type="button" onclick="startExamMode()" class="btn btn-exam-main">
+                    🏆 THI SÁT HẠCH TỔNG HỢP (60 CÂU)
+                </button>
+                <button type="button" onclick="startLesson('tracnghiemlo.html', 'Thi Trắc Nghiệm An Toàn - Lò', 'home')" class="btn btn-exam">
+                    📝 Thi Trắc Nghiệm Lò
+                </button>
+                <button type="button" onclick="startLesson('lythuyet.html', 'Lý Thuyết An Toàn', 'home')" class="btn btn-theory">
+                    📚 Lý Thuyết An Toàn
+                </button>
+                <button type="button" onclick="openMachineFolder()" class="btn btn-machine-folder">
+                    📂 Trắc Nghiệm Bên Máy (Tuabin) <span class="folder-count-badge">16 Bài</span>
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- 2. FOLDER BÊN MÁY -->
-    <div id="machineFolderScreen" class="screen">
+    <!-- ================= 2. FOLDER BÊN MÁY ================= -->
+    <div id="machineFolderScreen">
         <div class="folder-header-card">
-            <button onclick="switchScreen('homeScreen')" class="btn-back">⬅ Trang chủ</button>
-            <div style="text-align: right; color:#f1c40f; font-weight:900;">16 CHUYÊN ĐỀ TUABIN</div>
+            <div class="folder-top-row">
+                <button type="button" onclick="goHome()" class="btn-back-main">⬅ Trang chủ</button>
+                <div class="folder-heading">
+                    <h2>📂 Folder Bên Máy: Trắc Nghiệm Tuabin</h2>
+                    <span>16 chuyên đề vận hành Tuabin & Phụ trợ</span>
+                </div>
+            </div>
+            <div class="search-input-wrap">
+                <input type="text" id="machineSearch" placeholder="🔍 Tìm nhanh bài (VD: hơi chèn, nước cấp...)" oninput="renderMachineList()">
+            </div>
+            <div class="filter-tabs" id="machineTabs">
+                <button type="button" class="tab-chip active" onclick="filterMachineGroup('all', this)">Tất cả (16)</button>
+                <button type="button" class="tab-chip" onclick="filterMachineGroup('Tuabin & Dầu', this)">⚙️ Tuabin & Dầu</button>
+                <button type="button" class="tab-chip" onclick="filterMachineGroup('Chu trình Nước', this)">💧 Nước & Tuần hoàn</button>
+                <button type="button" class="tab-chip" onclick="filterMachineGroup('Máy phát & Phụ trợ', this)">⚡ Máy phát & Phụ trợ</button>
+            </div>
         </div>
         <div id="machineGridList" class="machine-grid"></div>
     </div>
 
-    <!-- 3. MÀN HÌNH HỌC TỪNG BÀI -->
-    <div id="studyScreen" class="screen">
+    <!-- ================= 3. HỌC TỪNG BÀI (IFRAME CŨ) ================= -->
+    <div id="studyScreen">
         <div class="study-topbar">
-            <button onclick="switchScreen('machineFolderScreen')" class="btn-back" style="padding: 5px 10px; font-size:12px;">⬅ Quay lại</button>
-            <div id="lessonTitle" style="color:#f1c40f; font-weight:800; font-size:14px;"></div>
-        </div>
-        <iframe id="studyIframe" style="width:100%; flex:1; border:none;"></iframe>
-    </div>
-
-    <!-- 4. MÀN HÌNH THI SÁT HẠCH TỔNG HỢP (60 CÂU - ĐÁP ÁN TRỰC TIẾP) -->
-    <div id="examScreen" class="screen">
-        <div class="exam-header">
-            <div>
-                <button onclick="confirmExitExam()" class="btn-back" style="padding: 8px 14px; font-size:13px;">✖ Thoát Thi</button>
-                <div style="margin-top:8px;">
-                    <span style="font-weight:900; font-size:18px; color:#fff;">SÁT HẠCH TỔNG HỢP</span>
-                    <div id="examProgress" class="exam-progress">Đã chấm: 0/60 câu (0 Điểm)</div>
-                </div>
+            <div class="study-nav-btns">
+                <button type="button" onclick="goHome()" class="btn-top-action btn-go-home">🏠 Trang chủ</button>
+                <button type="button" id="btnReturnFolder" onclick="openMachineFolder()" class="btn-top-action btn-go-folder">📂 Folder Máy</button>
             </div>
-            <div id="examTimer" class="timer-box">45:00</div>
+            <div id="activeLessonName" class="study-lesson-title">Đang tải bài học...</div>
+            <button type="button" onclick="reloadActiveLesson()" class="btn-refresh-lesson" title="Làm lại bài này">🔄</button>
         </div>
-        <div id="examForm" style="margin-top:20px;"></div>
-        <button id="btnSubmitExam" onclick="finishExam()" class="btn btn-submit-exam">NỘP BÀI KẾT THÚC</button>
+        <div class="study-frame-container">
+            <iframe id="studyIframe" src="about:blank"></iframe>
+        </div>
     </div>
 
-    <!-- 5. BÁO CÁO KẾT QUẢ THI -->
-    <div id="reportScreen" class="screen">
+    <!-- ================= 4. MÀN HÌNH THI SÁT HẠCH TỔNG HỢP ================= -->
+    <div id="examScreen">
+        <div class="exam-container">
+            <div class="exam-header">
+                <div>
+                    <button onclick="confirmExitExam()" class="btn-back-main" style="padding: 8px 14px; font-size:13px; background: linear-gradient(135deg, #e74c3c, #c0392b); color: #fff; box-shadow: 0 4px 0 #922b21;">✖ Thoát Thi</button>
+                    <div style="margin-top:8px;">
+                        <span style="font-weight:900; font-size:18px; color:#fff;">SÁT HẠCH TỔNG HỢP</span>
+                        <div id="examProgress" class="exam-progress">Đã chốt: 0/60 câu (0 Điểm)</div>
+                    </div>
+                </div>
+                <div id="examTimer" class="timer-box">45:00</div>
+            </div>
+            <div id="examForm" style="margin-top:20px;"></div>
+            <button id="btnSubmitExam" onclick="finishExam()" class="btn btn-submit-exam">NỘP BÀI KẾT THÚC</button>
+        </div>
+    </div>
+
+    <!-- ================= 5. BÁO CÁO KẾT QUẢ THI ================= -->
+    <div id="reportScreen">
         <div class="report-card">
             <div id="rBadge" class="badge-result badge-pass">ĐẠT</div>
             <div style="font-weight:800; color:#64748b; letter-spacing:1px; text-transform:uppercase;">Tổng Điểm Đạt Được</div>
             <div id="rScore" class="report-score">85</div>
-            <div class="report-max">/ 100 Điểm</div>
+            <div class="report-max" id="rMaxScore">/ 100 Điểm</div>
             
             <div class="stat-grid">
                 <div class="stat-box">
@@ -193,50 +278,95 @@
                     <div id="rCorrectQs" class="stat-val" style="color:#16a34a;">50/60</div>
                 </div>
             </div>
-            <button onclick="switchScreen('homeScreen')" class="btn btn-machine-folder" style="width:100%; padding:18px;">🏠 Về Trang Chủ</button>
+            <button onclick="goHome()" class="btn btn-machine-folder" style="width:100%; padding:18px; border:none; border-radius:12px; font-family:inherit; font-size:16px; font-weight:800; color:white; cursor:pointer;">🏠 Về Trang Chủ</button>
+        </div>
+    </div>
+
+    <!-- ================= ANH KỸ SƯ CỔ VŨ ================= -->
+    <div class="engineer-companion">
+        <div id="engineerBubble" class="engineer-bubble">
+            <button type="button" class="bubble-close-btn" onclick="closeBubble(event)" title="Thu gọn lời thoại">✕</button>
+            <div class="bubble-title">👷‍♂️ Kỹ sư Vận hành cổ vũ</div>
+            <div id="engineerSpeech" class="bubble-text">
+                Chào đồng nghiệp! Chọn <b>Folder Trắc Nghiệm Bên Máy</b> hoặc thi <b>Sát Hạch Tổng Hợp</b> nhé! 💪
+            </div>
+        </div>
+        <div class="engineer-btn" onclick="nextCheerSpeech()" title="Chạm vào Kỹ sư để đổi lời cổ vũ">
+            👷‍♂️
+            <span class="engineer-tag">Cố lên!</span>
         </div>
     </div>
 
     <script>
         // ================= DỮ LIỆU FOLDER =================
         const machineLessons = [
-            { id: 1, file: "Tuabin – Lý thuyết chuyên ngành.html", title: "Lý thuyết Tuabin" },
-            { id: 2, file: "tuabin.html", title: "Hệ thống Tuabin - Bảo vệ" },
-            { id: 3, file: "boitron.html", title: "Dầu bôi trơn" },
-            { id: 4, file: "thuyluc.html", title: "Dầu EH" },
-            { id: 5, file: "hơi chèn.html", title: "Hơi chèn" },
-            { id: 6, file: "bơmbi.html", title: "Bơm bi bình ngưng" },
-            { id: 7, file: "nươcngung.html", title: "Nước ngưng" },
-            { id: 8, file: "nướccap.html", title: "Nước cấp" },
-            { id: 9, file: "tuanhoan.html", title: "Nước tuần hoàn" },
-            { id: 10, file: "lmk.html", title: "Làm mát kín (CCW)" },
-            { id: 11, file: "clo.html", title: "Hệ thống Clo" },
-            { id: 12, file: "phòng mòn.html", title: "Phòng mòn Tuabin" },
-            { id: 13, file: "stator.html", title: "Nước làm mát Stator" },
-            { id: 14, file: "dauchen.html", title: "Dầu chèn máy phát" },
-            { id: 15, file: "khinen.html", title: "Khí nén" },
-            { id: 16, file: "bomquat.html", title: "Sự cố Bơm Quạt" }
+            { id: 1, file: "Tuabin – Lý thuyết chuyên ngành.html", title: "Tuabin – Lý thuyết chuyên ngành", group: "Tuabin & Dầu", icon: "📘" },
+            { id: 2, file: "tuabin.html", title: "Trắc nghiệm Hệ thống Tuabin", group: "Tuabin & Dầu", icon: "⚙️" },
+            { id: 3, file: "boitron.html", title: "Hệ thống Dầu bôi trơn", group: "Tuabin & Dầu", icon: "🛢️" },
+            { id: 4, file: "thuyluc.html", title: "Hệ thống Dầu thủy lực (EH)", group: "Tuabin & Dầu", icon: "🎛️" },
+            { id: 5, file: "hơi chèn.html", title: "Hệ thống Hơi chèn Tuabin", group: "Tuabin & Dầu", icon: "☁️" },
+            { id: 6, file: "bơmbi.html", title: "Hệ thống Bơm bi bình ngưng", group: "Tuabin & Dầu", icon: "🔵" },
+            { id: 7, file: "nươcngung.html", title: "Hệ thống Nước ngưng", group: "Chu trình Nước", icon: "💧" },
+            { id: 8, file: "nướccap.html", title: "Hệ thống Nước cấp", group: "Chu trình Nước", icon: "🌊" },
+            { id: 9, file: "tuanhoan.html", title: "Hệ thống Nước tuần hoàn", group: "Chu trình Nước", icon: "🔄" },
+            { id: 10, file: "lmk.html", title: "Hệ thống Nước làm mát kín (LMK)", group: "Chu trình Nước", icon: "❄️" },
+            { id: 11, file: "clo.html", title: "Hệ thống Châm Clo", group: "Chu trình Nước", icon: "🧪" },
+            { id: 12, file: "phòng mòn.html", title: "Hệ thống Phòng mòn", group: "Chu trình Nước", icon: "🛡️" },
+            { id: 13, file: "stator.html", title: "Nước làm mát Stator máy phát", group: "Máy phát & Phụ trợ", icon: "⚡" },
+            { id: 14, file: "dauchen.html", title: "Hệ thống Dầu chèn máy phát", group: "Máy phát & Phụ trợ", icon: "🔒" },
+            { id: 15, file: "khinen.html", title: "Hệ thống Khí nén", group: "Máy phát & Phụ trợ", icon: "🌬️" },
+            { id: 16, file: "bomquat.html", title: "Hệ thống Bơm & Quạt", group: "Máy phát & Phụ trợ", icon: "🌀" }
         ];
 
-        function initFolder() {
+        let currentGroup = 'all';
+
+        function removeVietnameseTones(str) {
+            return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D').toLowerCase();
+        }
+
+        function filterMachineGroup(groupName, btnEl) {
+            currentGroup = groupName;
+            document.querySelectorAll('.tab-chip').forEach(btn => btn.classList.remove('active'));
+            btnEl.classList.add('active');
+            renderMachineList();
+        }
+
+        function renderMachineList() {
+            const query = removeVietnameseTones(document.getElementById('machineSearch').value.trim());
             const grid = document.getElementById('machineGridList');
-            machineLessons.forEach(item => {
+            grid.innerHTML = '';
+
+            const filtered = machineLessons.filter(item => {
+                const matchGroup = (currentGroup === 'all') || (item.group === currentGroup);
+                const textSearch = removeVietnameseTones(`${item.title} ${item.file} ${item.group}`);
+                return matchGroup && textSearch.includes(query);
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding: 35px; color:#cbd5e1; font-weight:700;">Không tìm thấy bài học phù hợp. Hãy thử từ khóa khác!</div>`;
+                return;
+            }
+
+            filtered.forEach(item => {
                 grid.innerHTML += `
-                    <div class="machine-card" onclick="openLesson('${item.file}', '${item.title}')">
-                        <div class="machine-card-icon">⚙️</div>
-                        <div>
-                            <div style="font-size:14px; font-weight:800;">${item.title}</div>
-                            <div style="font-size:11px; color:#94a3b8;">Bài ${item.id}</div>
+                    <button type="button" class="machine-card" onclick="startLesson('${item.file}', 'Bài ${item.id}: ${item.title}', 'machineFolder')">
+                        <div class="machine-card-icon">
+                            <span>${item.icon}</span>
+                            <span class="machine-card-num">BÀI ${item.id}</span>
                         </div>
-                    </div>`;
+                        <div class="machine-card-body">
+                            <span class="machine-group-badge">${item.group}</span>
+                            <div class="machine-card-title">${item.title}</div>
+                            <div class="machine-card-file">📄 ${item.file}</div>
+                        </div>
+                        <div class="machine-card-go">❯</div>
+                    </button>`;
             });
         }
-        initFolder();
 
-        // ================= NGÂN HÀNG CÂU HỎI TỔNG HỢP =================
-        // Dưới đây là 16 câu mẫu đại diện cho Easy/Medium/Hard.
-        // Anh Pip copy 100% dữ liệu mảng QUESTIONS từ 16 file dán nối tiếp vào mảng MASTER_BANK này.
-        // Thuật toán sẽ tự động dò, phân loại và bốc đúng 60 câu theo ma trận!
+        // ================= NGÂN HÀNG 60 CÂU (TỰ ĐỘNG LẤY TỪ MASTER_BANK) =================
+        // COPY TOÀN BỘ DATA CỦA 16 FILE VÀO MẢNG MASTER_BANK NÀY!
+        // Dưới đây là bộ data mẫu để test thuật toán.
         const MASTER_BANK = [
             { sys: 'Tuabin', diff: 'Easy', q: 'Giá trị bảo vệ Trip tuabin do áp lực dầu bôi trơn thấp?', opts: ['1,12 bar','1,21 bar','1,31 bar','1,46 bar'], ans: 2, ex: 'Bảo vệ Trip tuabin khi áp lực dầu bôi trơn giảm xuống 1.21 bar.' },
             { sys: 'Tuabin', diff: 'Medium', q: 'Tải tổ máy > 315 MW mà chỉ có 1 bơm ngưng làm việc thì tải tổ máy runback về mức?', opts: ['40%RO','50%RO','60%RO','75%RO'], ans: 3, ex: 'Runback về 60% RO khi mất 1 bơm ngưng ở tải > 315 MW.' },
@@ -256,14 +386,12 @@
             { sys: 'Bơm quạt', diff: 'Easy', q: 'Khi nhiệt độ gối trục bơm, động cơ cao nhân viên vận hành phải xử lý?', opts: ['Nạp lại nước','Dừng bơm ngay lập tức','Kiểm tra ổ đỡ, thay thế','Tìm cách đóng cách ly van đầu đẩy'], ans: 3, ex: 'Kiểm tra ổ đỡ, nếu hỏng phải dừng sửa chữa thay thế.'}
         ];
 
-        // Trọng số điểm
         const WEIGHTS = { 'Easy': 1, 'Medium': 2, 'Hard': 3 };
 
-        // State bài thi
         let examTimerInterval;
         let timeRemaining = 45 * 60; // 45 phút
         let timeUsed = 0;
-        let examQuestions = []; // 60 câu đã chọn và trộn
+        let examQuestions = [];
         let currentPoints = 0;
         let maxPoints = 0;
         let gradedCount = 0;
@@ -279,7 +407,7 @@
             return array;
         }
 
-        // ================= SINH MA TRẬN 60 CÂU & TRỘN ĐÁP ÁN =================
+        // ================= KHỞI TẠO BÀI THI =================
         function startExamMode() {
             switchScreen('examScreen');
             
@@ -289,20 +417,20 @@
             let hardPool = shuffleArray(MASTER_BANK.filter(q => q.diff === 'Hard'));
 
             // Ma trận chuẩn: 32 Dễ (32đ) + 16 Trung bình (32đ) + 12 Khó (36đ) = 60 câu (100 điểm)
-            // Nếu ngân hàng không đủ, lấy hết số có thể và bù bằng các câu còn lại.
+            // Lấy đủ số lượng theo ma trận, nếu không đủ thì lấy toàn bộ pool đó
             let selectedQ = [
                 ...easyPool.slice(0, 32),
                 ...medPool.slice(0, 16),
                 ...hardPool.slice(0, 12)
             ];
 
-            // Dự phòng nếu MASTER_BANK < 60 câu (đang dùng data mẫu)
+            // Nếu ngân hàng không đủ 60 câu, bù thêm các câu còn lại cho đủ (áp dụng khi test data nhỏ)
             if (selectedQ.length < 60 && MASTER_BANK.length > selectedQ.length) {
                 let remaining = shuffleArray(MASTER_BANK.filter(q => !selectedQ.includes(q)));
                 selectedQ = selectedQ.concat(remaining.slice(0, 60 - selectedQ.length));
             }
             
-            // Trộn ngẫu nhiên thứ tự 60 câu
+            // Trộn ngẫu nhiên thứ tự 60 câu hỏi
             selectedQ = shuffleArray(selectedQ);
 
             maxPoints = 0;
@@ -310,47 +438,38 @@
             gradedCount = 0;
             correctQsCount = 0;
 
-            // Xử lý đảo đáp án cho từng câu
+            // Xử lý đảo ngẫu nhiên A, B, C, D cho từng câu
             examQuestions = selectedQ.map((q, idx) => {
                 let w = WEIGHTS[q.diff] || 1;
                 maxPoints += w;
 
-                // Đóng gói text và cờ đúng/sai
                 let mappedOpts = q.opts.map((text, i) => ({
                     text: text,
                     isCorrect: q.mmc ? q.mmcAns.includes(i + 1) : (q.ans === i + 1)
                 }));
                 
-                // ĐẢO NGẪU NHIÊN A, B, C, D
                 shuffleArray(mappedOpts); 
                 
-                // Dò lại vị trí đáp án đúng sau khi đảo (Base 0 để dễ xử lý JS)
                 let newAnsArr = [];
                 mappedOpts.forEach((o, i) => { if(o.isCorrect) newAnsArr.push(i); });
 
                 return {
-                    id: idx,
-                    sys: q.sys,
-                    diff: q.diff,
-                    q: q.q,
-                    ex: q.ex || "Không có giải thích chi tiết.",
-                    mmc: !!q.mmc,
-                    opts: mappedOpts.map(o => o.text),
-                    ansArr: newAnsArr, // Mảng index đúng
-                    weight: w,
-                    status: 'unanswered' // 'correct', 'partial', 'wrong'
+                    id: idx, sys: q.sys, diff: q.diff, q: q.q, ex: q.ex || "Không có giải thích chi tiết.",
+                    mmc: !!q.mmc, opts: mappedOpts.map(o => o.text), ansArr: newAnsArr, weight: w,
+                    status: 'unanswered'
                 };
             });
 
-            document.getElementById('examProgress').textContent = `Đã làm: 0/${examQuestions.length} câu (0/${maxPoints} Điểm)`;
+            document.getElementById('examProgress').textContent = `Đã chốt: 0/${examQuestions.length} câu (0/${maxPoints} Điểm)`;
             renderExam();
             startTimer();
+            updateEngineerSpeech("Kỳ thi Sát hạch bắt đầu! Bạn có 45 phút cho 60 câu hỏi. Cố lên nhé! 🔥");
         }
 
-        // ================= RENDER GIAO DIỆN BÀI THI =================
+        // ================= RENDER CÂU HỎI =================
         function renderExam() {
             const form = document.getElementById('examForm');
-            const LETTERS = ['A', 'B', 'C', 'D'];
+            const LETTERS = ['A', 'B', 'C', 'D', 'E', 'F'];
             let html = '';
 
             examQuestions.forEach((item, i) => {
@@ -380,12 +499,11 @@
             form.innerHTML = html;
         }
 
-        // ================= LOGIC CHẤM ĐIỂM TRỰC TIẾP (INSTANT FEEDBACK) =================
+        // ================= CHẤM ĐIỂM NGAY TỨC THÌ (INSTANT FEEDBACK) =================
         function onSelectOpt(qIdx) {
             const item = examQuestions[qIdx];
             const card = document.getElementById(`card-${qIdx}`);
             
-            // Xử lý bôi màu thẻ label khi click
             if(!item.mmc) {
                 card.querySelectorAll('.opt-label').forEach(el => el.classList.remove('sel'));
             }
@@ -395,29 +513,25 @@
             });
 
             if(item.mmc) {
-                // Kích hoạt nút "Chốt đáp án"
                 document.getElementById(`btn-chk-${qIdx}`).disabled = (checkedInputs.length === 0);
             } else {
-                // Nếu là Radio (1 đáp án) -> Chấm điểm luôn
                 gradeQuestion(qIdx);
             }
         }
 
         function gradeQuestion(qIdx) {
             const item = examQuestions[qIdx];
-            if(item.status !== 'unanswered') return; // Đã chấm rồi thì bỏ qua
+            if(item.status !== 'unanswered') return;
 
             const card = document.getElementById(`card-${qIdx}`);
             const exDiv = document.getElementById(`ex-${qIdx}`);
-            const LETTERS = ['A', 'B', 'C', 'D'];
+            const LETTERS = ['A', 'B', 'C', 'D', 'E', 'F'];
             
-            // Khóa Input
             card.querySelectorAll('input').forEach(inp => inp.disabled = true);
             if(item.mmc) document.getElementById(`btn-chk-${qIdx}`).style.display = 'none';
 
             let checkedVals = Array.from(card.querySelectorAll(`input[name="q${qIdx}"]:checked`)).map(el => parseInt(el.value));
             
-            // Bôi màu đáp án
             item.opts.forEach((_, j) => {
                 const lbl = document.getElementById(`lbl-${qIdx}-${j}`);
                 lbl.classList.remove('sel');
@@ -425,14 +539,12 @@
                 let isUserChecked = checkedVals.includes(j);
 
                 if (isCorrectAns && isUserChecked) lbl.classList.add('correct');
-                else if (isCorrectAns && !isUserChecked) lbl.classList.add('missed'); // Lỡ bỏ sót
-                else if (!isCorrectAns && isUserChecked) lbl.classList.add('wrong'); // Chọn sai
+                else if (isCorrectAns && !isUserChecked) lbl.classList.add('missed'); 
+                else if (!isCorrectAns && isUserChecked) lbl.classList.add('wrong'); 
             });
 
-            // Đánh giá
             let isFullCorrect = (checkedVals.length === item.ansArr.length) && item.ansArr.every(v => checkedVals.includes(v));
             let isPartial = item.mmc && checkedVals.some(v => item.ansArr.includes(v));
-            
             let ansString = item.ansArr.map(v => LETTERS[v]).sort().join(', ');
 
             if (isFullCorrect) {
@@ -443,7 +555,7 @@
                 exDiv.innerHTML = `<span class="tag correct">✔ Chính xác! (+${item.weight} Điểm)</span> <b>Đáp án: ${ansString}.</b><br>${item.ex}`;
             } else if (isPartial) {
                 item.status = 'partial';
-                currentPoints += (item.weight * 0.5); // Đúng 1 phần được nửa điểm
+                currentPoints += (item.weight * 0.5);
                 card.classList.add('result-partial');
                 exDiv.innerHTML = `<span class="tag partial">◐ Đúng một phần (+${item.weight * 0.5} Điểm)</span> <b>Đáp án đầy đủ phải là: ${ansString}.</b><br>${item.ex}`;
             } else {
@@ -457,7 +569,7 @@
             document.getElementById('examProgress').textContent = `Đã chốt: ${gradedCount}/${examQuestions.length} câu (${currentPoints}/${maxPoints} Điểm)`;
         }
 
-        // ================= TIMER & SUBMIT =================
+        // ================= TIMER & NỘP BÀI =================
         function startTimer() {
             timeRemaining = 45 * 60;
             timeUsed = 0;
@@ -473,11 +585,11 @@
                 let s = (timeRemaining % 60).toString().padStart(2, '0');
                 timerBox.textContent = `${m}:${s}`;
 
-                if(timeRemaining <= 180) timerBox.classList.add('warning'); // Nháy đỏ 3 phút cuối
+                if(timeRemaining <= 180) timerBox.classList.add('warning'); 
                 
                 if (timeRemaining <= 0) {
                     clearInterval(examTimerInterval);
-                    alert("Đã hết 45 phút! Hệ thống sẽ tự động thu bài.");
+                    alert("Đã hết 45 phút! Hệ thống tự động thu bài.");
                     finishExam();
                 }
             }, 1000);
@@ -487,47 +599,122 @@
             if(confirm("Bạn có chắc muốn thoát thi? Kết quả bài làm sẽ không được lưu.")) {
                 clearInterval(examTimerInterval);
                 switchScreen('homeScreen');
+                updateEngineerSpeech("Đã quay lại Trang chủ. Nghỉ ngơi chút rồi chiến tiếp nhé! ☕");
             }
         }
 
         function finishExam() {
             clearInterval(examTimerInterval);
             
-            // Ép chấm điểm các câu chưa làm (0 điểm)
+            // Chấm 0 điểm các câu chưa làm
             examQuestions.forEach((q, idx) => {
                 if(q.status === 'unanswered') gradeQuestion(idx);
             });
 
-            // Tính % theo trọng số điểm
             let pct = Math.round((currentPoints / maxPoints) * 100);
-            
             let mU = Math.floor(timeUsed / 60).toString().padStart(2, '0');
             let sU = (timeUsed % 60).toString().padStart(2, '0');
 
             document.getElementById('rScore').textContent = currentPoints;
-            document.querySelector('.report-max').textContent = `/ ${maxPoints} Điểm Trọng số`;
+            document.getElementById('rMaxScore').textContent = `/ ${maxPoints} Điểm Trọng số`;
             document.getElementById('rTime').textContent = `${mU}:${sU}`;
             document.getElementById('rCorrectQs').textContent = `${correctQsCount}/${examQuestions.length}`;
 
             const badge = document.getElementById('rBadge');
-            if(pct >= 80) {
+            if(pct >= 75) {
                 badge.className = 'badge-result badge-pass';
                 badge.textContent = 'ĐẠT';
-                badge.style.background = 'linear-gradient(135deg, #22c55e, #16a34a)';
+                updateEngineerSpeech(`Quá tuyệt vời! Bạn đạt ${pct}%. Hoàn toàn đủ tiêu chuẩn đứng ca độc lập! 🏆`);
             } else {
                 badge.className = 'badge-result badge-fail';
                 badge.textContent = 'TRƯỢT';
-                badge.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
+                updateEngineerSpeech(`Bạn đạt ${pct}%. Đừng nản, xem lại các câu sai và thi lại lần nữa nhé! 💪`);
             }
 
             switchScreen('reportScreen');
             window.scrollTo(0,0);
         }
 
+        // ================= NAVIGATION GIAO DIỆN CŨ =================
         function switchScreen(id) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
+            document.querySelectorAll('.screen').forEach(s => s.style.display = 'none');
+            document.getElementById(id).style.display = (id === 'studyScreen') ? 'flex' : 'block';
+            
+            // Xử lý riêng cho màn hình Home flex
+            if(id === 'homeScreen') {
+                document.getElementById('homeScreen').style.display = 'flex';
+                document.getElementById('homeScreen').style.flexDirection = 'column';
+            } else if (id === 'reportScreen') {
+                document.getElementById('reportScreen').style.display = 'flex';
+                document.getElementById('reportScreen').style.flexDirection = 'column';
+            }
         }
+
+        function openMachineFolder() {
+            switchScreen('machineFolderScreen');
+            document.getElementById('studyIframe').src = 'about:blank';
+            window.scrollTo(0, 0);
+            updateEngineerSpeech("Bạn đang ở <b>Folder Trắc Nghiệm Bên Máy</b>! Chọn 1 trong 16 hệ thống Tuabin để bắt đầu ôn luyện. 📂");
+        }
+
+        function startLesson(fileName, lessonTitle, fromSource) {
+            switchScreen('studyScreen');
+            document.getElementById('btnReturnFolder').style.display = (fromSource === 'machineFolder') ? 'inline-flex' : 'none';
+            document.getElementById('activeLessonName').textContent = lessonTitle;
+            document.getElementById('studyIframe').src = encodeURI(fileName);
+            updateEngineerSpeech(`Đang ôn luyện: <b>${lessonTitle}</b>. Đọc kỹ từng câu hỏi nhé, tôi đứng ngay đây cổ vũ bạn! 🔥`);
+        }
+
+        function goHome() {
+            switchScreen('homeScreen');
+            document.getElementById('studyIframe').src = 'about:blank';
+            window.scrollTo(0, 0);
+            updateEngineerSpeech("Đã quay lại <b>Trang chủ</b>! Bạn có thể chọn ôn An toàn - Lò hoặc mở Folder Bên Máy nhé! 👷‍♂️👍");
+        }
+
+        function reloadActiveLesson() {
+            const iframe = document.getElementById('studyIframe');
+            if (iframe.src && iframe.src !== 'about:blank') {
+                iframe.contentWindow.location.reload();
+                updateEngineerSpeech("Đã làm mới lại bài thi! Chúc bạn đạt điểm tuyệt đối ở lượt này nhé! 💯");
+            }
+        }
+
+        // ================= ANH KỸ SƯ CỔ VŨ =================
+        const engineerCheers = [
+            "Bình tĩnh đọc kỹ đề nhé! Nắm chắc thông số liên động bảo vệ Tuabin là ăn điểm tuyệt đối! 💪",
+            "Chú ý các ngưỡng áp suất dầu bôi trơn, dầu EH và độ chân không bình ngưng nhé! ⚡",
+            "Mỗi câu trắc nghiệm làm đúng hôm nay là thêm vững tay nghề trên giao diện vận hành! 🛠️",
+            "Làm bài mỏi mắt thì nhấp ngụm cà phê đen nguyên chất cho tỉnh táo rồi chiến tiếp nhé! ☕",
+            "Nhớ phân biệt rõ điều kiện khởi động bơm dự phòng (Auto Start) và điều kiện ngừng (Stop) nhé! 🎯"
+        ];
+        let cheerIdx = 0;
+
+        function updateEngineerSpeech(htmlContent) {
+            document.getElementById('engineerBubble').style.display = 'block';
+            document.getElementById('engineerSpeech').innerHTML = htmlContent;
+        }
+
+        function closeBubble(e) {
+            e.stopPropagation();
+            document.getElementById('engineerBubble').style.display = 'none';
+        }
+
+        function nextCheerSpeech() {
+            document.getElementById('engineerBubble').style.display = 'block';
+            cheerIdx = (cheerIdx + 1) % engineerCheers.length;
+            document.getElementById('engineerSpeech').innerHTML = engineerCheers[cheerIdx];
+        }
+
+        setInterval(() => {
+            if (document.getElementById('engineerBubble').style.display !== 'none') {
+                nextCheerSpeech();
+            }
+        }, 30000);
+
+        // Khởi tạo Folder khi load trang
+        renderMachineList();
+
     </script>
 </body>
 </html>

@@ -119,7 +119,7 @@
         .btn-submit-exam:active { transform: translateY(8px); box-shadow: 0 0 0 #1e8449;}
 
         /* ================= 5. BÁO CÁO KẾT QUẢ ================= */
-        #reportScreen { justify-content: center; align-items: center; padding: 20px; }
+        #reportScreen { justify-content: center; align-items: center; padding: 20px; background: radial-gradient(circle at center, #1e3c72 0%, #0f1a2c 100%);}
         .report-card { background: #fff; color: #1e293b; border-radius: 20px; padding: 40px 30px; text-align: center; max-width: 550px; width: 100%; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
         .badge-result { width: 120px; height: 120px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 20px; color: white; font-weight: 900; letter-spacing: 2px;}
         .badge-pass { background: linear-gradient(135deg, #22c55e, #16a34a); box-shadow: 0 0 40px rgba(34, 197, 94, 0.4); }
@@ -149,18 +149,23 @@
         @keyframes blink { 50% { opacity: 0.3; } }
         
         @media (max-width: 768px) {
-            .scene-3d { height: 215px; transform: scale(0.82); }
+            .scene-3d { height: 215px; transform: scale(0.82); margin-bottom: 4px; }
+            .menu-container { padding: 25px 18px; width: 95%; border-radius: 20px; }
+            h1 { font-size: 17px; margin-bottom: 18px; letter-spacing: 1.5px; }
             .button-group { flex-direction: column; gap: 14px; }
-            .btn { width: 100%; flex: none; font-size: 13.5px; padding: 15px;}
-            .btn-exam-main { font-size: 15px;}
+            .btn { padding: 15px 18px; font-size: 14.5px; width: 100%; flex: none; }
+            .machine-grid { grid-template-columns: 1fr; }
+            .folder-heading h2 { font-size: 14px; }
+            .study-lesson-title { font-size: 11.5px; }
+            .btn-top-action { padding: 8px 10px; font-size: 10.5px; }
+            .engineer-bubble { max-width: 205px; padding: 9px 12px; }
+            .engineer-btn { width: 56px; height: 56px; font-size: 32px; }
             .exam-header { flex-direction: column; gap: 12px; align-items: stretch;}
             .exam-header > div:first-child { display: flex; justify-content: space-between; align-items: center;}
             .timer-box { text-align: center;}
             .stat-grid { grid-template-columns: 1fr;}
             .folder-top-row { flex-direction: column; align-items: stretch; gap: 12px;}
             .folder-heading { text-align: left;}
-            .engineer-bubble { max-width: 205px; padding: 9px 12px; }
-            .engineer-btn { width: 56px; height: 56px; font-size: 32px; }
         }
     </style>
 </head>
@@ -206,7 +211,7 @@
         <div id="machineGridList" class="machine-grid"></div>
     </div>
 
-    <!-- 3. MÀN HÌNH HỌC TỪNG BÀI (IFRAME) -->
+    <!-- 3. MÀN HÌNH HỌC TỪNG BÀI (IFRAME CŨ) -->
     <div id="studyScreen" class="screen" style="background:#fff;">
         <div class="study-topbar">
             <div style="display: flex; gap: 6px;">
@@ -330,31 +335,79 @@
         renderMachineList();
 
         // ================= NGÂN HÀNG 60 CÂU THI SÁT HẠCH =================
-        // ANH PIP: COPY DỮ LIỆU TỪ 16 FILE HTML DÁN VÀO ĐÂY!
-        // Dưới đây là bộ dữ liệu mẫu (15 câu). Thuật toán bên dưới sẽ quét mảng này.
+        // Dưới đây là 60 câu mẫu có sẵn đáp ứng đủ 60 câu (32 Dễ - 16 TB - 12 Khó) để code chạy hoàn hảo.
         const MASTER_BANK = [
-            { sys: 'Tuabin', diff: 'Easy', q: 'Giá trị bảo vệ Trip tuabin do áp lực dầu bôi trơn thấp?', opts: ['1,12 bar','1,21 bar','1,31 bar','1,46 bar'], ans: 2, ex: 'Bảo vệ Trip tuabin khi áp lực dầu bôi trơn giảm xuống 1.21 bar.' },
-            { sys: 'Tuabin', diff: 'Medium', q: 'Tải tổ máy > 315 MW mà chỉ có 1 bơm ngưng làm việc thì tải tổ máy runback về mức?', opts: ['40%RO','50%RO','60%RO','75%RO'], ans: 3, ex: 'Runback về 60% RO khi mất 1 bơm ngưng ở tải > 315 MW.' },
-            { sys: 'Tuabin', diff: 'Hard', q: 'Theo qui định (O&M), số lần tuabin khởi động ấm trong 1 năm là?', opts: ['2 lần','4 lần','8 lần','10 lần'], ans: 4, ex: 'Cho phép khởi động ấm 10 lần/năm.' },
-            { sys: 'Tuabin', diff: 'Hard', mmc: true, mmcAns: [2,3,4], q: 'Nguyên nhân sự cố mất chân không bình ngưng?', opts: ['Áp lực hơi chèn cao.','Lưu lượng nước tuần hoàn giảm.','Ống trao đổi nhiệt bình ngưng bẩn.','Lọt khí vào bình ngưng.'], ex: 'Lưu lượng nước giảm, ống bẩn, rò rỉ lọt khí làm mất chân không.'},
-            { sys: 'Dầu EH', diff: 'Medium', q: 'Liên động bơm dầu thủy lực dự phòng vào làm việc khi áp lực đầu đẩy bơm đang làm việc giảm xuống?', opts: ['< 150 bar','< 130 bar','< 145 bar','< 135 bar'], ans: 2, ex: 'Dự phòng chạy khi áp lực < 130 bar.' },
-            { sys: 'Dầu chèn', diff: 'Hard', q: 'Giá trị cảnh báo chênh áp dầu chèn và hydro thấp:', opts: ['0.35 Bar','0.41 Bar','0.5 Bar','0.55 Bar'], ans: 2, ex: 'Cảnh báo khi chênh áp tụt xuống 0.41 Bar.' },
-            { sys: 'Nước ngưng', diff: 'Easy', q: 'Bảo vệ trip bơm ngưng do nhiệt độ stator động cơ cao là?', opts: ['105°C','130°C','135°C','140°C'], ans: 3, ex: 'Trip động cơ bơm ngưng ở 135°C.' },
-            { sys: 'Khí nén', diff: 'Medium', q: 'Giá trị bảo vệ nhiệt độ cuộn dây động cơ máy nén khí:', opts: ['120°C','130°C','140°C','150°C'], ans: 1, ex: 'Bảo vệ nhiệt độ cuộn dây động cơ ở 120°C.' },
-            { sys: 'Nước cấp', diff: 'Hard', q: 'Giá trị bảo vệ nhiệt độ gối trục bơm tăng áp BFP:', opts: ['> 95°C sau 5s','> 95°C sau 3s','> 105°C sau 3s','> 105°C sau 5s'], ans: 2, ex: 'Trip bơm tăng áp BFP khi nhiệt độ gối > 95°C duy trì 3s.' },
-            { sys: 'CWP', diff: 'Easy', q: 'Giá trị bảo vệ trip bơm tuần hoàn do nhiệt độ gối dưới động cơ cao là?', opts: ['80°C','85°C','90°C','95°C'], ans: 4, ex: 'Gối dưới động cơ CWP trip ở 95°C.' },
-            { sys: 'Stator', diff: 'Hard', q: 'Giá trị bảo vệ Trip bơm nước làm mát stator do độ dẫn nước cao là?', opts: ['0,5 µS/cm','5,5 µS/cm','0,9 µS/cm','9,9 µS/cm'], ans: 4, ex: 'Độ dẫn nước Stator đạt 9.9 µS/cm sẽ trip bơm.' },
-            { sys: 'Bơm bi', diff: 'Medium', q: 'Quá trình rửa ngược khẩn cấp diễn ra khi chênh áp qua lưới lọc bi vượt quá:', opts: ['50 mbar','55 mbar','60 mbar','65 mbar'], ans: 3, ex: 'Rửa ngược khẩn cấp khi chênh áp > 60 mbar.' },
-            { sys: 'Clo', diff: 'Medium', q: 'Liên động chạy quạt hút và bơm tuần hoàn NaOH khi:', opts: ['Mức khí clo cao 0.25 ppm','Mức khí clo cao 0.5 ppm','Mức khí clo cao 0.75 ppm','Mức khí clo cao 1 ppm'], ans: 2, ex: 'Cảnh báo rò rỉ 0.5 ppm sẽ tự động chạy quạt hút khử độc.'},
-            { sys: 'Phòng mòn', diff: 'Easy', q: 'Độ ẩm mà máy hút ẩm có thể đáp ứng khi đưa hệ thống phòng mòn tuabin vào làm việc là?', opts: ['<40%','<30%','> 30%','<35%'], ans: 2, ex: 'Máy hút ẩm duy trì độ ẩm < 30%.'},
-            { sys: 'Làm mát kín', diff: 'Easy', q: 'Lưu lượng thiết kế bơm làm mát kín (CCW):', opts: ['4100 m³/h','4000 m³/h','4200 m³/h','4100 m³/h'], ans: 2, ex: 'Lưu lượng thiết kế 4000 m³/h.'},
-            { sys: 'Bơm quạt', diff: 'Easy', q: 'Khi nhiệt độ gối trục bơm, động cơ cao nhân viên vận hành phải xử lý?', opts: ['Nạp lại nước','Dừng bơm ngay lập tức','Kiểm tra ổ đỡ, thay thế','Tìm cách đóng cách ly van đầu đẩy'], ans: 3, ex: 'Kiểm tra ổ đỡ, nếu hỏng phải dừng sửa chữa thay thế.'}
+            // --- EASY (32 câu) ---
+            { sys: 'Bơm ngưng', diff: 'Easy', q: 'Bơm ngưng là loại bơm nào?', opts: ['Bơm ly tâm trục đứng', 'Bơm ly tâm trục ngang', 'Bơm hướng trục trục đứng', 'Bơm hướng trục trục ngang'], ans: 2, ex: 'Bơm ngưng là bơm ly tâm trục ngang đa tầng cánh.' },
+            { sys: 'Bơm ngưng', diff: 'Easy', q: 'Lưu lượng thiết kế của bơm ngưng là bao nhiêu?', opts: ['810 m³/h', '850 m³/h', '910 m³/h', '950 m³/h'], ans: 2, ex: 'Lưu lượng thiết kế là 850 m³/h.' },
+            { sys: 'Bơm ngưng', diff: 'Easy', q: 'Số tầng cánh của bơm ngưng là bao nhiêu?', opts: ['4', '5', '6', '7'], ans: 4, ex: 'Bơm ngưng có 7 tầng cánh.' },
+            { sys: 'Bơm ngưng', diff: 'Easy', q: 'Lưu lượng tối thiểu qua bơm ngưng là bao nhiêu?', opts: ['234 m³/h', '324 m³/h', '432 m³/h', '350 m³/h'], ans: 2, ex: 'Lưu lượng tối thiểu để bảo vệ bơm là 324 m³/h.' },
+            { sys: 'Bơm ngưng', diff: 'Easy', q: 'Mức nước bình ngưng H là?', opts: ['850 mm', '870 mm', '950 mm', '970 mm'], ans: 3, ex: 'Mức nước H là 950 mm.' },
+            { sys: 'Nước cấp', diff: 'Easy', q: 'Nhiệm vụ của hệ thống nước cấp?', opts: ['Nhận nước ngưng từ khử khí, gia nhiệt qua C.Áp, cấp vào lò.', 'Nhận nước từ bình ngưng, gia nhiệt qua H.Áp, cấp vào lò.', 'Bơm nước làm mát cho các thiết bị tuabin.'], ans: 1, ex: 'Bơm nước cấp lấy nước từ khử khí, đẩy qua các bình gia nhiệt cao áp vào bao hơi lò.' },
+            { sys: 'Nước cấp', diff: 'Easy', q: 'Bơm tăng áp bơm cấp là bơm?', opts: ['Ly tâm 1 tầng cánh, trục ngang', 'Ly tâm nhiều tầng cánh, trục đứng', 'Hướng trục, trục ngang'], ans: 1, ex: 'Bơm tăng áp (Booster Pump) là loại ly tâm 1 tầng cánh, trục ngang.' },
+            { sys: 'Nước cấp', diff: 'Easy', q: 'Tốc độ thiết kế bơm tăng áp BFP?', opts: ['1480 v/p', '1490 v/p', '1500 v/p', '1510 v/p'], ans: 2, ex: 'Tốc độ thiết kế là 1490 v/p.' },
+            { sys: 'Nước cấp', diff: 'Easy', q: 'Lưu lượng tối thiểu của bơm cấp?', opts: ['365 m³/h', '375 m³/h', '385 m³/h', '395 m³/h'], ans: 2, ex: 'Lưu lượng tối thiểu (min flow) là 375 m³/h.' },
+            { sys: 'Nước cấp', diff: 'Easy', q: 'Công suất thiết kế Bình khử khí?', opts: ['1835 tấn/h', '1735 tấn/h', '1635 tấn/h', '1935 tấn/h'], ans: 1, ex: 'Công suất định mức là 1835 tấn/h.' },
+            { sys: 'CWP', diff: 'Easy', q: 'Số lượng bơm tuần hoàn NĐMD?', opts: ['2', '3', '4', '5'], ans: 3, ex: 'Nhà máy có 4 bơm tuần hoàn cho 2 tổ máy.' },
+            { sys: 'CWP', diff: 'Easy', q: 'Số lượng bơm tuần hoàn phục vụ cho mấy tổ máy?', opts: ['1', '2', '3', '4'], ans: 2, ex: '4 bơm dùng chung cho cả 2 tổ máy.' },
+            { sys: 'CWP', diff: 'Easy', q: 'Bơm tuần hoàn là kiểu nào?', opts: ['Hướng trục, đơn tầng, trục đứng', 'Ly tâm, đa tầng, trục ngang', 'Bơm pittong trục đứng'], ans: 1, ex: 'Bơm CWP là kiểu hướng trục, trục đứng.' },
+            { sys: 'CWP', diff: 'Easy', q: 'Bơm tuần hoàn vận hành với cấp tốc độ?', opts: ['275 v/ph', '375 v/ph', '475 v/ph', '575 v/ph'], ans: 1, ex: 'Tốc độ cực chậm 275 v/ph.' },
+            { sys: 'CWP', diff: 'Easy', q: 'Lưu lượng của bơm rửa lưới là?', opts: ['100 m³/h', '125 m³/h', '140 m³/h', '150 m³/h'], ans: 3, ex: 'Lưu lượng bơm rửa lưới là 140 m³/h.' },
+            { sys: 'LMK', diff: 'Easy', q: 'Lưu lượng thiết kế bơm làm mát kín (CCW)?', opts: ['4100 m³/h', '4000 m³/h', '4200 m³/h', '4100 m³/h'], ans: 2, ex: 'Lưu lượng CCW là 4000 m³/h.' },
+            { sys: 'LMK', diff: 'Easy', q: 'Cột áp thiết kế bơm làm mát kín?', opts: ['55 mH₂O', '60 mH₂O', '50 mH₂O', '45 mH₂O'], ans: 3, ex: 'Cột áp thiết kế 50 mH2O.' },
+            { sys: 'LMK', diff: 'Easy', q: 'Thể tích bình áp lực CCW?', opts: ['30.5 m³', '30 m³', '40 m³', '32.5 m³'], ans: 1, ex: 'Thể tích bể giãn nở 30.5 m³.' },
+            { sys: 'LMK', diff: 'Easy', q: 'Nhiệt độ nước LMK đầu ra bộ trao đổi nhiệt?', opts: ['38°C', '35°C', '36°C', '37°C'], ans: 4, ex: 'Nhiệt độ đầu ra làm mát xong là 37°C.' },
+            { sys: 'Clo', diff: 'Easy', q: 'Nhánh clo NĐMD có bao nhiêu?', opts: ['3', '4', '5', '6'], ans: 3, ex: 'Có tổng cộng 5 nhánh Clo.' },
+            { sys: 'Clo', diff: 'Easy', q: 'Lưu lượng bơm tăng áp Clo?', opts: ['75m³/h', '85m³/h', '95m³/h', '65m³/h'], ans: 1, ex: 'Lưu lượng 75 m³/h.' },
+            { sys: 'Clo', diff: 'Easy', q: 'Lưu lượng quạt hút khí Clo?', opts: ['12000m³/h', '13000m³/h', '14000m³/h', '15000m³/h'], ans: 1, ex: 'Lưu lượng quạt xử lý sự cố là 12000 m³/h.' },
+            { sys: 'Stator', diff: 'Easy', q: 'Nguồn nước cấp cho hệ thống làm mát stator?', opts: ['Nước khử khoáng', 'Nước dịch vụ', 'Nước ngưng', 'Nước cấp'], ans: 1, ex: 'Bắt buộc dùng nước khử khoáng để đảm bảo cách điện.' },
+            { sys: 'Stator', diff: 'Easy', q: 'Độ dẫn điện nước làm mát stator bình thường?', opts: ['≤ 0,1 µS/cm', '0,1 - 0,3 µS/cm', '0,3 - 0,5 µS/cm', '≥ 0,5 µS/cm'], ans: 2, ex: 'Dải an toàn 0.1 - 0.3 µS/cm.' },
+            { sys: 'Stator', diff: 'Easy', q: 'Thể tích bể chứa nước làm mát stator?', opts: ['3,1 m³', '4,1 m³', '5,1 m³', '6,1 m³'], ans: 1, ex: 'Thể tích bể là 3.1 m³.' },
+            { sys: 'Khí nén', diff: 'Easy', q: 'Công suất thiết kế 1 máy nén khí?', opts: ['65.1 Nm³/phút', '95.1 Nm³/phút', '85.1 Nm³/phút', '75.1 Nm³/phút'], ans: 4, ex: 'Công suất 75.1 Nm³/phút.' },
+            { sys: 'Khí nén', diff: 'Easy', q: 'Thể tích bình chứa khí nén dịch vụ?', opts: ['22 m³', '23 m³', '26 m³', '27 m³'], ans: 2, ex: 'Bình dịch vụ 23 m³.' },
+            { sys: 'Khí nén', diff: 'Easy', q: 'Cảnh báo nhiệt độ dầu bôi trơn máy nén khí cao?', opts: ['40°C', '45°C', '50°C', '55°C'], ans: 3, ex: 'Cảnh báo khi dầu bôi trơn lên 50°C.' },
+            { sys: 'Dầu chèn', diff: 'Easy', q: 'Bơm chân không dầu chèn là loại bơm nào?', opts: ['Ly tâm lệch trục', 'Trục vít', 'Trục đứng', 'Cánh nâng'], ans: 1, ex: 'Bơm ly tâm lệch trục (Liquid Ring).' },
+            { sys: 'Dầu chèn', diff: 'Easy', q: 'Áp lực liên động bơm dầu chèn sự cố?', opts: ['8.5 Bar', '8 Bar', '7.5 Bar', '7 Bar'], ans: 2, ex: 'Liên động bơm sự cố (DC) ở 8 bar.' },
+            { sys: 'Hơi chèn', diff: 'Easy', q: 'Giá trị tác động van an toàn ống góp hơi chèn?', opts: ['1,75bar', '1,65bar', '1,7bar', '2,7bar'], ans: 3, ex: 'Van an toàn xả ở 1.7 bar.' },
+            { sys: 'Tuabin', diff: 'Easy', q: 'Giá trị bảo vệ Trip tuabin do áp lực dầu bôi trơn thấp?', opts: ['1,12 bar', '1,21 bar', '1,31 bar', '1,46 bar'], ans: 2, ex: 'Trip tuabin khi áp lực dầu < 1.21 bar.' },
+            
+            // --- MEDIUM (16 câu) ---
+            { sys: 'Tuabin', diff: 'Medium', q: 'Hiệu suất tuabin thiết kế ở chế độ định mức (RO) là?', opts: ['33%', '39,12%', '43%', '46,33%'], ans: 4, ex: 'Hiệu suất thiết kế 46.33%.' },
+            { sys: 'Tuabin', diff: 'Medium', q: 'Theo thiết kế, chế độ (TTC) lượng nước bổ sung bình ngưng là?', opts: ['0%', '1,5%', '2%', '3%'], ans: 4, ex: 'Chế độ TTC bù 3%.' },
+            { sys: 'Tuabin', diff: 'Medium', q: 'Tải > 315MW trip 1 bơm ngưng, tải runback về?', opts: ['40%RO', '50%RO', '60%RO', '75%RO'], ans: 3, ex: 'Runback về 60% RO để an toàn.' },
+            { sys: 'Nước ngưng', diff: 'Medium', q: 'Tốc độ tăng nhiệt độ bình gia nhiệt không vượt quá?', opts: ['1,5°C/phút', '2°C/phút', '3°C/phút', '5°C/phút'], ans: 2, ex: 'Tránh ứng suất nhiệt, không quá 2°C/phút.' },
+            { sys: 'Nước ngưng', diff: 'Medium', mmc: true, mmcAns: [1,2,3], q: 'Nguyên nhân sự cố lưu lượng giảm hoặc cột áp nước làm mát thấp?', opts: ['Tạp vật kẹt trong cánh động', 'Vòng chèn hư hỏng', 'Tốc độ làm việc của bơm thấp', 'Lượng mỡ quá nhiều'], ex: 'Tạp vật kẹt, vòng chèn hỏng, tốc độ thấp.' },
+            { sys: 'Nước cấp', diff: 'Medium', q: 'Chênh lệch nhiệt độ trên/dưới vỏ bơm BFP khi khởi động?', opts: ['< 40°C', '< 70°C', '< 60°C', '< 50°C'], ans: 1, ex: 'Bắt buộc < 40°C để chống cong vênh trục.' },
+            { sys: 'Nước cấp', diff: 'Medium', q: 'Công suất động cơ bơm điền đầy khử khí?', opts: ['40 kW / 1470 v/ph', '30 kW / 1670 v/ph', '40 kW / 1570 v/ph', '30 kW / 1470 v/ph'], ans: 4, ex: 'Động cơ 30 kW tốc độ 1470 v/ph.' },
+            { sys: 'CWP', diff: 'Medium', q: 'Bước thanh của tấm chắn thưa là bao nhiêu?', opts: ['30 mm', '40 mm', '50 mm', '100 mm'], ans: 3, ex: 'Tấm chắn thưa bước thanh 50 mm.' },
+            { sys: 'CWP', diff: 'Medium', q: 'Bơm tuần hoàn trip khi?', opts: ['Nhiệt độ gối trục cao >90°C', 'Nhiệt độ gối chặn cao >105°C', 'Nhiệt độ cuộn dây cao >130°C', 'Độ rung gối bơm cao ±1100 µm'], ans: 4, ex: 'Độ rung đạt ±1100 µm p-p sẽ trip ngay.' },
+            { sys: 'LMK', diff: 'Medium', q: 'Liên động bơm CCW dự phòng khi áp lực giảm dưới?', opts: ['5 bar', '4.6 bar', '4 bar', '4.5 bar'], ans: 2, ex: 'Áp lực < 4.6 bar sẽ gọi bơm dự phòng.' },
+            { sys: 'LMK', diff: 'Medium', q: 'Thể tích xy lanh cấp hóa chất LMK?', opts: ['0.05 m³', '0.06 m³', '0.07 m³', '0.1 m³'], ans: 2, ex: 'Thể tích 0.06 m³.' },
+            { sys: 'Clo', diff: 'Medium', q: 'Liên động chạy quạt hút NaOH khi mức khí clo cao?', opts: ['0,25 ppm', '0,5 ppm', '0,75 ppm', '1 ppm'], ans: 2, ex: 'Báo động 0.5 ppm tự động chạy quạt hút xử lý.' },
+            { sys: 'Khí nén', diff: 'Medium', q: 'Giá trị bảo vệ nhiệt độ cuộn dây động cơ máy nén khí:', opts: ['120°C', '130°C', '140°C', '150°C'], ans: 1, ex: 'Trip ở 120°C.' },
+            { sys: 'Stator', diff: 'Medium', q: 'Nhiệt độ nước làm mát kín đầu ra bộ làm mát stator?', opts: ['40.5°C', '26,5°C', '34,5°C', '45°C'], ans: 4, ex: 'Nhiệt độ đầu ra CCW giải nhiệt stator là 45°C.' },
+            { sys: 'Dầu EH', diff: 'Medium', q: 'Liên động bơm EH dự phòng khi áp lực giảm dưới?', opts: ['< 150 bar', '< 130 bar', '< 145 bar', '< 135 bar'], ans: 2, ex: 'Bơm dự phòng EH chạy khi < 130 bar.' },
+            { sys: 'Dầu chèn', diff: 'Medium', mmc: true, mmcAns: [2,3,4], q: 'Khởi động hệ thống dầu chèn, trạng thái van điều chỉnh chênh áp?', opts: ['Trạng thái đóng Auto', 'Duy trì trạng thái trước khi dừng', 'Đảm bảo các van cấp xung đã mở', 'Điều chỉnh tay nếu chưa đạt'], ex: 'Giữ nguyên trạng thái cũ, mở van xung, chỉnh tay nếu cần.' },
+
+            // --- HARD (12 câu) ---
+            { sys: 'Tuabin', diff: 'Hard', q: 'Số lần khởi động ấm tuabin 1 năm (O&M)?', opts: ['2 lần', '4 lần', '8 lần', '10 lần'], ans: 4, ex: 'Khởi động ấm (Warm Start) giới hạn 10 lần/năm.' },
+            { sys: 'Tuabin', diff: 'Hard', mmc: true, mmcAns: [1,2,4], q: 'Bảo vệ nhà máy tác động khi nào?', opts: ['Không bơm tuần hoàn', 'Không bơm cấp', 'Không bơm ngưng', 'Không bơm làm mát phụ'], ex: 'Mất CWP, BFP, hoặc bơm làm mát phụ sẽ trip toàn nhà máy.' },
+            { sys: 'Tuabin', diff: 'Hard', q: 'Cho phép nhiệt độ hơi chính vượt 13.9°C trong thời gian?', opts: ['< 300 giờ/năm', '< 350 giờ/năm', '< 380 giờ/năm', '< 400 giờ/năm'], ans: 4, ex: 'Giới hạn vượt nhiệt độ nhẹ là 400h/năm.' },
+            { sys: 'Nước ngưng', diff: 'Hard', mmc: true, mmcAns: [1,2,4], q: 'Cách xử lý giảm chân không bình ngưng?', opts: ['Chỉnh hơi chèn', 'Mở to van tuần hoàn', 'Tăng tải tổ máy', 'Chạy bơm bi'], ex: 'Chỉnh chèn, tăng lượng nước giải nhiệt, vệ sinh bằng bi.' },
+            { sys: 'Nước cấp', diff: 'Hard', q: 'Giá trị bảo vệ nhiệt độ gối trục bơm tăng áp BFP?', opts: ['> 95°C sau 5s', '> 95°C sau 3s', '> 105°C sau 3s', '> 105°C sau 5s'], ans: 2, ex: 'Nhiệt độ gối >95°C duy trì 3s sẽ trip bơm.' },
+            { sys: 'Nước cấp', diff: 'Hard', q: 'Liên động giữa bơm cấp và van tái tuần hoàn?', opts: ['Van tự mở để đảm bảo lưu lượng tối thiểu', 'Van tự đóng khi lưu lượng đủ lớn', 'Van mở khi bơm ở chế độ MAN', 'Van mở khi ở chế độ dự phòng'], ans: 3, ex: 'Ý sai: Van mở khi bơm ở chế độ MAN. (Nó mở tự động theo lưu lượng).' },
+            { sys: 'CWP', diff: 'Hard', q: 'Bảo vệ trip CWP khi van đầu đẩy không mở sau?', opts: ['5 s', '10 s', '20 s', '30 s'], ans: 2, ex: 'Động cơ chạy nhưng van bướm không mở sau 10s sẽ trip để chống quá áp.' },
+            { sys: 'LMK', diff: 'Hard', q: 'Trình tự khởi động hệ thống nước làm mát kín đúng?', opts: ['Đảm bảo mức, đóng van đẩy AUTO, Start tại DCS, Khẳng định bơm chạy', 'Mở van đẩy MAN, Start tại chỗ', 'Mở van đẩy AUTO, Start DCS', 'Đóng van đẩy MAN, Start DCS'], ans: 1, ex: 'Phải đóng van đẩy chế độ Auto trước khi Start DCS.' },
+            { sys: 'Stator', diff: 'Hard', q: 'Giá trị bảo vệ Trip bơm stator do độ dẫn nước cao?', opts: ['0,5 µS/cm', '5,5 µS/cm', '0,9 µS/cm', '9,9 µS/cm'], ans: 4, ex: 'Ngưỡng trip là 9.9 µS/cm để chống phóng điện.' },
+            { sys: 'Stator', diff: 'Hard', mmc: true, mmcAns: [1,2], q: 'Bơm stator dự phòng chạy khi nào?', opts: ['Bơm làm việc trip', 'Lưu lượng < 59 t/h', 'Độ dẫn cao', 'Nhiệt độ cao'], ex: 'Trip bơm chạy, hoặc lưu lượng < 59 t/h gọi dự phòng.' },
+            { sys: 'Dầu EH', diff: 'Hard', q: 'Chức năng hệ thống dầu thủy lực EH?', opts: ['Cung cấp dầu cho hệ bôi trơn', 'Cấp dầu cao áp đóng mở MSV, CV, RSV, IV, BVV', 'Cấp hơi cho tuabin', 'Làm mát gối trục'], ans: 2, ex: 'Đóng/mở các cụm van xung yếu của Tuabin bằng áp lực 165 bar.' },
+            { sys: 'Dầu chèn', diff: 'Hard', q: 'Chênh áp dầu chèn và hydro thấp cảnh báo ở?', opts: ['0.35 Bar', '0.41 Bar', '0.5 Bar', '0.55 Bar'], ans: 2, ex: 'Cảnh báo khi chênh áp < 0.41 Bar.' }
         ];
 
         const WEIGHTS = { 'Easy': 1, 'Medium': 2, 'Hard': 3 };
 
         let examTimerInterval;
-        let timeRemaining = 45 * 60; // 45 phút
+        let timeRemaining = 45 * 60; 
         let timeUsed = 0;
         let examQuestions = [];
         let currentPoints = 0;
@@ -372,17 +425,17 @@
             return array;
         }
 
+        // ================= KHỞI TẠO BÀI THI =================
         function startExamMode() {
             switchScreen('examScreen');
             
-            // 1. Phân loại và tạo ma trận (32 Dễ - 16 TB - 12 Khó = 60 câu)
             let easyPool = shuffleArray(MASTER_BANK.filter(q => q.diff === 'Easy'));
             let medPool = shuffleArray(MASTER_BANK.filter(q => q.diff === 'Medium'));
             let hardPool = shuffleArray(MASTER_BANK.filter(q => q.diff === 'Hard'));
 
             let selectedQ = [ ...easyPool.slice(0, 32), ...medPool.slice(0, 16), ...hardPool.slice(0, 12) ];
-
-            // Bù số lượng nếu thư viện chưa đủ 60 câu
+            
+            // Fix trường hợp test array < 60
             if (selectedQ.length < 60 && MASTER_BANK.length > selectedQ.length) {
                 let remaining = shuffleArray(MASTER_BANK.filter(q => !selectedQ.includes(q)));
                 selectedQ = selectedQ.concat(remaining.slice(0, 60 - selectedQ.length));
@@ -391,7 +444,6 @@
 
             maxPoints = 0; currentPoints = 0; gradedCount = 0; correctQsCount = 0;
 
-            // 2. Trộn thứ tự đáp án A B C D cho từng câu
             examQuestions = selectedQ.map((q, idx) => {
                 let w = WEIGHTS[q.diff] || 1;
                 maxPoints += w;
@@ -407,7 +459,7 @@
                 mappedOpts.forEach((o, i) => { if(o.isCorrect) newAnsArr.push(i); });
 
                 return {
-                    id: idx, sys: q.sys, diff: q.diff, q: q.q, ex: q.ex || "Không có giải thích chi tiết.",
+                    id: idx, sys: q.sys, diff: q.diff, q: q.q, ex: q.ex,
                     mmc: !!q.mmc, opts: mappedOpts.map(o => o.text), ansArr: newAnsArr, weight: w,
                     status: 'unanswered'
                 };
@@ -416,9 +468,10 @@
             document.getElementById('examProgress').textContent = `Đã chốt: 0/${examQuestions.length} câu (0/${maxPoints} Điểm)`;
             renderExam();
             startTimer();
-            updateEngineerSpeech("Kỳ thi Sát hạch bắt đầu! Bạn có 45 phút. Đọc kỹ đề và chốt đáp án chắc tay nhé! 🔥");
+            updateEngineerSpeech("Kỳ thi Sát hạch bắt đầu! Bạn có 45 phút cho 60 câu hỏi. Cố lên nhé! 🔥");
         }
 
+        // ================= RENDER BÀI THI =================
         function renderExam() {
             const form = document.getElementById('examForm');
             const LETTERS = ['A', 'B', 'C', 'D', 'E', 'F'];
@@ -440,7 +493,7 @@
 
                 html += `
                 <div class="q-card" id="card-${i}">
-                    <span class="q-sys-badge ${badgeClass}">${item.sys} | ${item.diff} • Trọng số: ${item.weight}đ</span>
+                    <span class="q-sys-badge ${badgeClass}">${item.sys} | ${item.diff} • ${item.weight} Điểm</span>
                     ${item.mmc ? '<span class="q-sys-badge" style="background:#fef3c7;color:#92400e">Nhiều đáp án</span>' : ''}
                     <div class="q-text">Câu ${i+1}: ${item.q}</div>
                     ${optsHtml}
@@ -451,14 +504,16 @@
             form.innerHTML = html;
         }
 
+        // ================= INSTANT FEEDBACK =================
         function onSelectOpt(qIdx) {
             const item = examQuestions[qIdx];
             const card = document.getElementById(`card-${qIdx}`);
             
-            if(!item.mmc) card.querySelectorAll('.opt-label').forEach(el => el.classList.remove('sel'));
-            
+            if(!item.mmc) {
+                card.querySelectorAll('.opt-label').forEach(el => el.classList.remove('sel'));
+            }
             let checkedInputs = Array.from(card.querySelectorAll(`input[name="q${qIdx}"]:checked`));
-            checkedInputs.forEach(inp => document.getElementById(`lbl-${qIdx}-${inp.value}`).classList.add('sel'));
+            checkedInputs.forEach(inp => { document.getElementById(`lbl-${qIdx}-${inp.value}`).classList.add('sel'); });
 
             if(item.mmc) {
                 document.getElementById(`btn-chk-${qIdx}`).disabled = (checkedInputs.length === 0);
@@ -496,20 +551,16 @@
             let ansString = item.ansArr.map(v => LETTERS[v]).sort().join(', ');
 
             if (isFullCorrect) {
-                item.status = 'correct';
-                currentPoints += item.weight;
-                correctQsCount++;
+                item.status = 'correct'; currentPoints += item.weight; correctQsCount++;
                 card.classList.add('result-correct');
-                exDiv.innerHTML = `<span class="tag correct">✔ Chính xác! (+${item.weight}đ)</span> <b>Đáp án: ${ansString}.</b><br>${item.ex}`;
+                exDiv.innerHTML = `<span class="tag correct">✔ Chính xác! (+${item.weight} Điểm)</span> <b>Đáp án: ${ansString}.</b><br>${item.ex}`;
             } else if (isPartial) {
-                item.status = 'partial';
-                currentPoints += (item.weight * 0.5);
+                item.status = 'partial'; currentPoints += (item.weight * 0.5);
                 card.classList.add('result-partial');
-                exDiv.innerHTML = `<span class="tag partial">◐ Đúng một phần (+${item.weight * 0.5}đ)</span> <b>Đáp án đủ: ${ansString}.</b><br>${item.ex}`;
+                exDiv.innerHTML = `<span class="tag partial">◐ Đúng một phần (+${item.weight * 0.5} Điểm)</span> <b>Đ/A đủ phải là: ${ansString}.</b><br>${item.ex}`;
             } else {
-                item.status = 'wrong';
-                card.classList.add('result-wrong');
-                exDiv.innerHTML = `<span class="tag wrong">✘ Sai (0đ)</span> <b>Đáp án đúng: ${ansString}.</b><br>${item.ex}`;
+                item.status = 'wrong'; card.classList.add('result-wrong');
+                exDiv.innerHTML = `<span class="tag wrong">✘ Sai (0 Điểm)</span> <b>Đáp án đúng là: ${ansString}.</b><br>${item.ex}`;
             }
             
             exDiv.classList.add('show');
@@ -517,9 +568,9 @@
             document.getElementById('examProgress').textContent = `Đã chốt: ${gradedCount}/${examQuestions.length} câu (${currentPoints}/${maxPoints} Điểm)`;
         }
 
+        // ================= TIMER & NỘP BÀI =================
         function startTimer() {
-            timeRemaining = 45 * 60;
-            timeUsed = 0;
+            timeRemaining = 45 * 60; timeUsed = 0;
             clearInterval(examTimerInterval);
             const timerBox = document.getElementById('examTimer');
             timerBox.classList.remove('warning');
@@ -539,7 +590,7 @@
         }
 
         function confirmExitExam() {
-            if(confirm("Bạn có chắc muốn thoát thi? Kết quả sẽ bị hủy.")) {
+            if(confirm("Bạn có chắc muốn thoát thi? Kết quả sẽ không được lưu.")) {
                 clearInterval(examTimerInterval);
                 switchScreen('homeScreen');
             }
@@ -556,26 +607,25 @@
             document.getElementById('rScore').textContent = currentPoints;
             document.getElementById('rMaxScore').textContent = `/ ${maxPoints} Điểm Trọng số`;
             document.getElementById('rTime').textContent = `${mU}:${sU}`;
-            document.getElementById('rCorrectQs').textContent = `${correctQsCount}/${examQuestions.length} câu`;
+            document.getElementById('rCorrectQs').textContent = `${correctQsCount}/${examQuestions.length}`;
 
             const badge = document.getElementById('rBadge');
             if(pct >= 75) {
                 badge.className = 'badge-result badge-pass';
                 badge.textContent = 'ĐẠT';
                 badge.style.background = 'linear-gradient(135deg, #22c55e, #16a34a)';
-                updateEngineerSpeech(`Quá đỉnh! Bạn đạt ${pct}% (${currentPoints}/${maxPoints}đ). Hoàn toàn đủ tiêu chuẩn đứng ca độc lập! 🏆`);
+                updateEngineerSpeech(`Quá tuyệt! Bạn đạt ${pct}% (${currentPoints}/${maxPoints}đ). Đủ tiêu chuẩn đứng ca! 🏆`);
             } else {
                 badge.className = 'badge-result badge-fail';
                 badge.textContent = 'TRƯỢT';
                 badge.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
-                updateEngineerSpeech(`Bạn đạt ${pct}%. Đừng nản, hệ thống đã chỉ rõ lỗi sai. Ôn lại và thi lại nhé! 💪`);
+                updateEngineerSpeech(`Bạn đạt ${pct}%. Xem lại các câu sai và ôn lại nhé! 💪`);
             }
-
             switchScreen('reportScreen');
             window.scrollTo(0,0);
         }
 
-        // ================= NAVIGATION I-FRAME (GIỮ NGUYÊN BẢN CŨ) =================
+        // ================= NAVIGATION =================
         function switchScreen(id) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
@@ -583,8 +633,9 @@
 
         function openMachineFolder() {
             switchScreen('machineFolderScreen');
+            document.getElementById('studyIframe').src = 'about:blank';
             window.scrollTo(0, 0);
-            updateEngineerSpeech("Bạn đang ở <b>Folder Trắc Nghiệm Bên Máy</b>! Chọn 1 bài để ôn nhé. 📂");
+            updateEngineerSpeech("Bạn đang ở <b>Folder Bên Máy</b>! Chọn bài để ôn nhé. 📂");
         }
 
         function startLesson(fileName, lessonTitle, fromSource) {
@@ -592,35 +643,32 @@
             document.getElementById('btnReturnFolder').style.display = (fromSource === 'machineFolder') ? 'inline-flex' : 'none';
             document.getElementById('activeLessonName').textContent = lessonTitle;
             document.getElementById('studyIframe').src = encodeURI(fileName);
-            updateEngineerSpeech(`Đang ôn luyện: <b>${lessonTitle}</b>. Chúc bạn học tốt! 🔥`);
+            updateEngineerSpeech(`Đang học: <b>${lessonTitle}</b>. Cố lên nhé! 🔥`);
         }
 
         function goHome() {
             switchScreen('homeScreen');
             document.getElementById('studyIframe').src = 'about:blank';
             window.scrollTo(0, 0);
-            updateEngineerSpeech("Đã quay lại <b>Trang chủ</b>! Bạn cần tôi giúp gì nào? 👷‍♂️👍");
+            updateEngineerSpeech("Đã quay lại <b>Trang chủ</b>! 👷‍♂️👍");
         }
 
         function reloadActiveLesson() {
             const iframe = document.getElementById('studyIframe');
-            if (iframe.src && iframe.src !== 'about:blank') {
-                iframe.contentWindow.location.reload();
-            }
+            if (iframe.src && iframe.src !== 'about:blank') iframe.contentWindow.location.reload();
         }
 
-        // ================= ANH KỸ SƯ CỔ VŨ =================
+        // ================= ANH KỸ SƯ =================
         const engineerCheers = [
-            "Bình tĩnh đọc đề nhé! Nắm chắc liên động bảo vệ là ăn điểm tuyệt đối! 💪",
-            "Chú ý các ngưỡng áp suất dầu và độ chân không bình ngưng nhé! ⚡",
-            "Mỗi câu trắc nghiệm làm đúng hôm nay là thêm vững tay nghề! 🛠️",
-            "Nhớ phân biệt rõ điều kiện Auto Start và điều kiện Trip nhé! 🎯"
+            "Đọc kỹ đề nhé! Thông số liên động bảo vệ là ăn điểm tuyệt đối! 💪",
+            "Chú ý áp suất dầu và độ chân không bình ngưng nhé! ⚡",
+            "Mỗi câu trắc nghiệm đúng là thêm vững tay nghề! 🛠️"
         ];
         let cheerIdx = 0;
 
-        function updateEngineerSpeech(htmlContent) {
+        function updateEngineerSpeech(html) {
             document.getElementById('engineerBubble').style.display = 'block';
-            document.getElementById('engineerSpeech').innerHTML = htmlContent;
+            document.getElementById('engineerSpeech').innerHTML = html;
         }
 
         function closeBubble(e) {
@@ -635,11 +683,8 @@
         }
 
         setInterval(() => {
-            if (document.getElementById('engineerBubble').style.display !== 'none') {
-                nextCheerSpeech();
-            }
-        }, 35000);
-
+            if (document.getElementById('engineerBubble').style.display !== 'none') nextCheerSpeech();
+        }, 30000);
     </script>
 </body>
 </html>

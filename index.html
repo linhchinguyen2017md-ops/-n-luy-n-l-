@@ -17,8 +17,6 @@
 
         /* ================= 1. TRANG CHỦ ================= */
         #homeScreen { justify-content: center; align-items: center; padding: 20px 15px 115px; }
-        
-        /* CSS 3D Boiler (Giữ nguyên) */
         .scene-3d { position: relative; width: 100%; height: 280px; display: flex; justify-content: center; align-items: flex-end; margin-bottom: 12px; }
         .boiler { position: relative; width: 150px; height: 200px; background: linear-gradient(135deg, #444 0%, #999 50%, #222 100%); border-radius: 15px 15px 5px 5px; box-shadow: inset -15px 0 20px rgba(0,0,0,0.6), inset 15px 0 20px rgba(255,255,255,0.2), 20px 25px 35px rgba(0,0,0,0.7); transform: rotateY(-20deg) rotateX(5deg); z-index: 2; animation: floatBoiler 4s ease-in-out infinite; }
         .boiler-top { position: absolute; top: -25px; left: 0; width: 150px; height: 35px; background: linear-gradient(90deg, #333 0%, #888 50%, #333 100%); border-radius: 50% / 100% 100% 0 0; box-shadow: 0 -5px 10px rgba(0,0,0,0.5); }
@@ -29,136 +27,173 @@
         .engineer { font-size: 115px; position: relative; z-index: 3; margin-left: -40px; filter: drop-shadow(10px 20px 15px rgba(0,0,0,0.8)); animation: floatEngineer 3.5s ease-in-out infinite alternate; transform: rotateY(15deg); }
         
         .menu-container { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); padding: 35px 40px; border-radius: 25px; border: 1px solid rgba(255, 255, 255, 0.15); box-shadow: 0 30px 60px rgba(0,0,0,0.6); text-align: center; width: 100%; max-width: 700px; transform: translateZ(40px); }
-        h1 { font-size: 23px; font-weight: 900; margin-bottom: 26px; text-transform: uppercase; letter-spacing: 2.5px; text-shadow: 0 4px 10px rgba(0,0,0,0.8); }
+        h1 { font-size: 23px; font-weight: 900; margin-bottom: 26px; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 4px 10px rgba(0,0,0,0.8); }
         
         .button-group { display: flex; gap: 18px; justify-content: center; flex-wrap: wrap; }
-        .btn { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 18px 28px; border-radius: 15px; font-family: inherit; font-size: 16px; font-weight: 800; color: white; border: none; cursor: pointer; transition: 0.2s; box-shadow: 0 10px 0 rgba(0,0,0,0.4); text-transform: uppercase; flex: 1 1 250px; }
+        .btn { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 18px 28px; border-radius: 15px; font-family: inherit; font-size: 15px; font-weight: 800; color: white; border: none; cursor: pointer; transition: 0.2s; box-shadow: 0 10px 0 rgba(0,0,0,0.4); text-transform: uppercase; flex: 1 1 250px; }
         .btn:active { transform: translateY(8px); box-shadow: 0 2px 0 rgba(0,0,0,0.4); }
-        .btn-exam { background: linear-gradient(135deg, #e74c3c, #c0392b); border-bottom: 4px solid #922b21; }
+        .btn-exam { background: linear-gradient(135deg, #e74c3c, #c0392b); border-bottom: 4px solid #922b21; flex: 1 1 100%; font-size: 18px;}
         .btn-theory { background: linear-gradient(135deg, #3498db, #2980b9); border-bottom: 4px solid #1a5276; }
-        .btn-machine-folder { background: linear-gradient(135deg, #f39c12, #d35400); border-bottom: 4px solid #a04000; flex: 1 1 100%; }
+        .btn-machine-folder { background: linear-gradient(135deg, #f39c12, #d35400); border-bottom: 4px solid #a04000; }
 
         /* ================= 2. FOLDER BÊN MÁY ================= */
         #machineFolderScreen { padding: 15px 14px 125px; max-width: 980px; margin: 0 auto; width: 100%; }
-        .folder-header-card { background: rgba(15, 26, 44, 0.92); backdrop-filter: blur(15px); border: 1px solid rgba(241, 196, 15, 0.35); border-radius: 20px; padding: 15px 16px; position: sticky; top: 10px; z-index: 25; margin-bottom: 18px; }
-        .folder-top-row { display: flex; justify-content: space-between; margin-bottom: 12px; }
+        .folder-header-card { background: rgba(15, 26, 44, 0.92); backdrop-filter: blur(15px); border: 1px solid rgba(241, 196, 15, 0.35); border-radius: 20px; padding: 15px 16px; position: sticky; top: 10px; z-index: 25; margin-bottom: 18px; display: flex; justify-content: space-between; align-items: center;}
         .btn-back { background: linear-gradient(135deg, #f1c40f, #e67e22); color: #0f1a2c; padding: 10px 16px; border-radius: 10px; font-weight: 900; border: none; cursor: pointer; box-shadow: 0 4px 0 #9c640c; }
         .btn-back:active { transform: translateY(3px); box-shadow: 0 1px 0 #9c640c; }
         .machine-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
-        .machine-card { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.16); border-radius: 16px; padding: 15px; display: flex; align-items: center; gap: 14px; cursor: pointer; color: #fff; text-align: left; }
-        .machine-card:hover { border-color: #f1c40f; background: rgba(255,255,255,0.14); }
+        .machine-card { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.16); border-radius: 16px; padding: 15px; display: flex; align-items: center; gap: 14px; cursor: pointer; color: #fff; text-align: left; transition: 0.2s; }
+        .machine-card:hover { border-color: #f1c40f; background: rgba(255,255,255,0.14); transform: translateY(-3px);}
         .machine-card-icon { width: 50px; height: 50px; border-radius: 12px; background: rgba(241,196,15,0.2); display: flex; align-items: center; justify-content: center; font-size: 24px; }
         
         /* ================= 3. HỌC TỪNG BÀI (IFRAME) ================= */
         #studyScreen { position: fixed; inset: 0; background: #fff; z-index: 50; }
         .study-topbar { background: #0b1322; padding: 10px; display: flex; justify-content: space-between; align-items: center; }
 
-        /* ================= 4. MÀN HÌNH THI SÁT HẠCH TỔNG HỢP ================= */
-        #examScreen { max-width: 900px; margin: 0 auto; width: 100%; padding: 20px 10px 100px; }
-        .exam-header { background: linear-gradient(135deg, #b91d47, #7a1228); padding: 15px 20px; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 10px; z-index: 30; box-shadow: 0 10px 20px rgba(0,0,0,0.5); border: 2px solid #ff4d6d; }
-        .timer-box { font-size: 24px; font-weight: 900; font-family: monospace; background: #000; padding: 5px 15px; border-radius: 8px; color: #00ff00; letter-spacing: 2px; }
-        .timer-box.warning { color: #ff0000; animation: blink 1s infinite; }
-        @keyframes blink { 50% { opacity: 0.5; } }
+        /* ================= 4. MÀN HÌNH THI SÁT HẠCH TỔNG HỢP (MA TRẬN & INSTANT FEEDBACK) ================= */
+        #examScreen { max-width: 900px; margin: 0 auto; width: 100%; padding: 15px 10px 100px; background: #f4f6f9; min-height: 100vh;}
+        .exam-header { background: linear-gradient(135deg, #0f1a2c, #1e3c72); padding: 15px 20px; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 10px; z-index: 30; box-shadow: 0 10px 20px rgba(0,0,0,0.3); border: 1px solid #3b82f6; }
+        .timer-box { font-size: 24px; font-weight: 900; font-family: monospace; background: #000; padding: 6px 15px; border-radius: 8px; color: #00ff00; letter-spacing: 2px; border: 2px solid #333;}
+        .timer-box.warning { color: #ff0000; border-color: #ff0000; animation: blink 1s infinite; }
+        .exam-progress { font-size: 13px; font-weight: 700; color: #93c5fd; margin-top: 5px;}
         
-        .q-card { background: #fff; color: #1a202c; border-radius: 12px; padding: 20px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-        .q-sys-badge { display: inline-block; background: #e2e8f0; color: #475569; font-size: 11px; font-weight: 800; padding: 3px 10px; border-radius: 10px; margin-bottom: 10px; text-transform: uppercase; }
+        .q-card { background: #fff; color: #1e293b; border-radius: 14px; padding: 22px; margin-bottom: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); border: 1px solid #e2e8f0; border-left: 5px solid #3b82f6; transition: 0.3s;}
+        .q-card.result-correct { border-left-color: #16a34a; box-shadow: 0 4px 15px rgba(22, 163, 74, 0.15);}
+        .q-card.result-partial { border-left-color: #d97706; box-shadow: 0 4px 15px rgba(217, 119, 6, 0.15);}
+        .q-card.result-wrong { border-left-color: #dc2626; box-shadow: 0 4px 15px rgba(220, 38, 38, 0.15);}
+        
+        .q-sys-badge { display: inline-block; background: #e0f2fe; color: #0369a1; font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 8px; margin-bottom: 12px; text-transform: uppercase; }
+        .q-sys-badge.easy { background: #dcfce7; color: #166534; }
+        .q-sys-badge.medium { background: #fef9c3; color: #854d0e; }
         .q-sys-badge.hard { background: #fee2e2; color: #991b1b; }
-        .q-text { font-weight: 700; font-size: 15px; margin-bottom: 15px; }
-        .opt-label { display: flex; align-items: flex-start; gap: 10px; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; margin-bottom: 8px; cursor: pointer; transition: 0.2s; }
-        .opt-label:hover { border-color: #cbd5e1; background: #f8fafc; }
-        .opt-label input { margin-top: 4px; accent-color: #b91d47; width: 16px; height: 16px; }
-        .opt-label.selected { border-color: #b91d47; background: #fff0f2; }
-        .opt-char { font-weight: 800; color: #b91d47; }
         
-        .btn-submit-exam { width: 100%; background: #27ae60; padding: 20px; font-size: 20px; box-shadow: 0 8px 0 #1e8449; margin-top: 20px; }
+        .q-text { font-weight: 700; font-size: 15px; margin-bottom: 16px; line-height: 1.5; color: #0f172a;}
+        
+        .opt-label { display: flex; align-items: flex-start; gap: 12px; padding: 12px 14px; border: 2px solid #e2e8f0; border-radius: 10px; margin-bottom: 10px; cursor: pointer; transition: 0.2s; background: #f8fafc;}
+        .opt-label:hover { border-color: #94a3b8; background: #f1f5f9; }
+        .opt-label input { margin-top: 4px; width: 16px; height: 16px; cursor: pointer;}
+        .opt-label.sel { border-color: #3b82f6; background: #eff6ff; }
+        .opt-label.correct { border-color: #16a34a; background: #ecfdf5; }
+        .opt-label.wrong { border-color: #dc2626; background: #fef2f2; }
+        .opt-label.missed { border-color: #d97706; background: #fffbeb; border-style: dashed; }
+        .opt-char { font-weight: 900; color: #3b82f6; min-width: 22px;}
+        .opt-label.correct .opt-char { color: #16a34a; }
+        .opt-label.wrong .opt-char { color: #dc2626; }
+        
+        .explain { display: none; margin-top: 15px; padding: 14px; border-radius: 10px; background: #f1f5f9; border-left: 4px solid #3b82f6; font-size: 13.5px; line-height: 1.5; color: #334155;}
+        .explain.show { display: block; animation: fadeIn 0.4s ease;}
+        .explain .tag { font-weight: 800; display: block; margin-bottom: 4px;}
+        .explain .tag.correct { color: #16a34a; }
+        .explain .tag.partial { color: #d97706; }
+        .explain .tag.wrong { color: #dc2626; }
+
+        .btn-check-mmc { background: #f59e0b; color: #fff; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 700; cursor: pointer; margin-top: 5px; transition: 0.2s; box-shadow: 0 4px 0 #b45309;}
+        .btn-check-mmc:active { transform: translateY(4px); box-shadow: 0 0 0 #b45309;}
+        .btn-check-mmc:disabled { background: #cbd5e1; box-shadow: 0 4px 0 #94a3b8; cursor: not-allowed; transform: none;}
+
+        .btn-submit-exam { width: 100%; background: #27ae60; padding: 20px; font-size: 20px; box-shadow: 0 8px 0 #1e8449; margin-top: 20px; text-transform: uppercase; letter-spacing: 1px;}
 
         /* ================= 5. BÁO CÁO KẾT QUẢ ================= */
         #reportScreen { justify-content: center; align-items: center; padding: 20px; }
-        .report-card { background: #fff; color: #1a202c; border-radius: 20px; padding: 40px 30px; text-align: center; max-width: 500px; width: 100%; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-        .badge-result { width: 100px; height: 100px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 40px; margin: 0 auto 20px; color: white; font-weight: 900; }
-        .badge-pass { background: #27ae60; box-shadow: 0 0 30px rgba(39, 174, 96, 0.5); }
-        .badge-fail { background: #e74c3c; box-shadow: 0 0 30px rgba(231, 76, 60, 0.5); }
-        .report-score { font-size: 48px; font-weight: 900; color: #0f1a2c; margin-bottom: 10px; }
-        .report-stats { display: flex; justify-content: space-around; background: #f8fafc; padding: 15px; border-radius: 12px; margin-bottom: 25px; font-weight: 700; color: #475569; }
+        .report-card { background: #fff; color: #1e293b; border-radius: 20px; padding: 40px 30px; text-align: center; max-width: 550px; width: 100%; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        .badge-result { width: 120px; height: 120px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 20px; color: white; font-weight: 900; letter-spacing: 2px;}
+        .badge-pass { background: linear-gradient(135deg, #22c55e, #16a34a); box-shadow: 0 0 40px rgba(34, 197, 94, 0.4); }
+        .badge-fail { background: linear-gradient(135deg, #ef4444, #dc2626); box-shadow: 0 0 40px rgba(239, 68, 68, 0.4); }
+        .report-score { font-size: 56px; font-weight: 900; color: #0f172a; margin-bottom: 5px; line-height: 1;}
+        .report-max { font-size: 20px; color: #64748b; font-weight: 700; margin-bottom: 25px;}
+        
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 30px;}
+        .stat-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 15px; }
+        .stat-val { font-size: 24px; font-weight: 800; color: #3b82f6; margin-top: 5px;}
 
         @keyframes floatBoiler { 0%, 100% { transform: rotateY(-20deg) rotateX(5deg) translateY(0); } 50% { transform: rotateY(-20deg) rotateX(5deg) translateY(-10px); } }
         @keyframes floatEngineer { 0% { transform: rotateY(15deg) translateY(0); } 100% { transform: rotateY(15deg) translateY(-18px); } }
         @keyframes gaugeNeedle { 0% { transform: rotate(-40deg); } 100% { transform: rotate(40deg); } }
         @keyframes steamRise { 0% { transform: translateY(0) scale(1); opacity: 0.8; } 100% { transform: translateY(-80px) scale(2.5); opacity: 0; } }
+        @keyframes blink { 50% { opacity: 0.3; } }
         
         @media (max-width: 768px) {
             .scene-3d { height: 215px; transform: scale(0.82); }
             .button-group { flex-direction: column; }
             .btn { width: 100%; flex: none; }
-            .exam-header { flex-direction: column; gap: 10px; }
+            .exam-header { flex-direction: column; gap: 12px; align-items: stretch;}
+            .exam-header > div:first-child { display: flex; justify-content: space-between; align-items: center;}
+            .timer-box { text-align: center;}
+            .stat-grid { grid-template-columns: 1fr;}
         }
     </style>
 </head>
 <body>
 
-    <!-- ================= 1. TRANG CHỦ ================= -->
+    <!-- 1. TRANG CHỦ -->
     <div id="homeScreen" class="screen active">
         <div class="scene-3d">
             <div class="boiler"><div class="boiler-top"></div><div class="gauge"></div><div class="pipe"></div><div class="steam"></div></div>
             <div class="engineer">👷‍♂️</div>
         </div>
-
         <div class="menu-container">
             <h1>Hệ Thống Đào Tạo NĐMD</h1>
             <div class="button-group">
-                <button type="button" onclick="startExamMode()" class="btn btn-exam">🏆 THI SÁT HẠCH TỔNG HỢP</button>
-                <button type="button" onclick="alert('Chức năng đang cập nhật!')" class="btn btn-theory">📚 Lý Thuyết An Toàn</button>
-                <button type="button" onclick="switchScreen('machineFolderScreen')" class="btn btn-machine-folder">📂 Ôn Luyện Từng Hệ Thống Bên Máy</button>
+                <button onclick="startExamMode()" class="btn btn-exam">🏆 THI SÁT HẠCH TỔNG HỢP (60 CÂU)</button>
+                <button onclick="switchScreen('machineFolderScreen')" class="btn btn-machine-folder">📂 Ôn Luyện 16 Hệ Thống Tuabin</button>
+                <button onclick="alert('Module An Toàn đang được cập nhật!')" class="btn btn-theory">📚 Lý Thuyết An Toàn</button>
             </div>
         </div>
     </div>
 
-    <!-- ================= 2. FOLDER BÊN MÁY ================= -->
+    <!-- 2. FOLDER BÊN MÁY -->
     <div id="machineFolderScreen" class="screen">
         <div class="folder-header-card">
-            <div class="folder-top-row">
-                <button onclick="switchScreen('homeScreen')" class="btn-back">⬅ Trang chủ</button>
-                <div style="text-align: right; color:#f1c40f; font-weight:900;">16 CHUYÊN ĐỀ TUABIN</div>
-            </div>
+            <button onclick="switchScreen('homeScreen')" class="btn-back">⬅ Trang chủ</button>
+            <div style="text-align: right; color:#f1c40f; font-weight:900;">16 CHUYÊN ĐỀ TUABIN</div>
         </div>
-        <div id="machineGridList" class="machine-grid">
-            <!-- Render từ JS -->
-        </div>
+        <div id="machineGridList" class="machine-grid"></div>
     </div>
 
-    <!-- ================= 3. MÀN HÌNH HỌC TỪNG BÀI ================= -->
+    <!-- 3. MÀN HÌNH HỌC TỪNG BÀI -->
     <div id="studyScreen" class="screen">
         <div class="study-topbar">
-            <button onclick="switchScreen('machineFolderScreen')" class="btn-back" style="padding: 5px 10px; font-size:12px;">⬅ Quay lại Folder</button>
+            <button onclick="switchScreen('machineFolderScreen')" class="btn-back" style="padding: 5px 10px; font-size:12px;">⬅ Quay lại</button>
             <div id="lessonTitle" style="color:#f1c40f; font-weight:800; font-size:14px;"></div>
         </div>
         <iframe id="studyIframe" style="width:100%; flex:1; border:none;"></iframe>
     </div>
 
-    <!-- ================= 4. MÀN HÌNH THI SÁT HẠCH ================= -->
+    <!-- 4. MÀN HÌNH THI SÁT HẠCH TỔNG HỢP (60 CÂU - ĐÁP ÁN TRỰC TIẾP) -->
     <div id="examScreen" class="screen">
         <div class="exam-header">
             <div>
-                <button onclick="confirmExitExam()" class="btn-back" style="padding: 6px 12px; font-size:12px;">✖ Thoát</button>
-                <span style="font-weight:900; margin-left:15px; font-size:18px;">KỲ THI SÁT HẠCH VẬN HÀNH</span>
+                <button onclick="confirmExitExam()" class="btn-back" style="padding: 8px 14px; font-size:13px;">✖ Thoát Thi</button>
+                <div style="margin-top:8px;">
+                    <span style="font-weight:900; font-size:18px; color:#fff;">SÁT HẠCH TỔNG HỢP</span>
+                    <div id="examProgress" class="exam-progress">Đã chấm: 0/60 câu (0 Điểm)</div>
+                </div>
             </div>
             <div id="examTimer" class="timer-box">45:00</div>
         </div>
         <div id="examForm" style="margin-top:20px;"></div>
-        <button onclick="submitExam()" class="btn btn-submit-exam">Xong! Nộp Bài Ngay</button>
+        <button id="btnSubmitExam" onclick="finishExam()" class="btn btn-submit-exam">NỘP BÀI KẾT THÚC</button>
     </div>
 
-    <!-- ================= 5. BÁO CÁO KẾT QUẢ THI ================= -->
+    <!-- 5. BÁO CÁO KẾT QUẢ THI -->
     <div id="reportScreen" class="screen">
         <div class="report-card">
             <div id="rBadge" class="badge-result badge-pass">ĐẠT</div>
-            <div id="rScore" class="report-score">45/50</div>
-            <p style="font-weight:700; color:#94a3b8; margin-bottom:20px;">Điểm quy đổi: <span id="rPercent" style="color:#0f1a2c;">90%</span></p>
-            <div class="report-stats">
-                <div>⏱ Thời gian: <br><span id="rTime" style="color:#e74c3c;">12:34</span></div>
-                <div>❌ Sai: <br><span id="rWrong" style="color:#e74c3c;">5 câu</span></div>
+            <div style="font-weight:800; color:#64748b; letter-spacing:1px; text-transform:uppercase;">Tổng Điểm Đạt Được</div>
+            <div id="rScore" class="report-score">85</div>
+            <div class="report-max">/ 100 Điểm</div>
+            
+            <div class="stat-grid">
+                <div class="stat-box">
+                    <div style="font-size:12px; font-weight:700; color:#64748b;">Thời gian làm bài</div>
+                    <div id="rTime" class="stat-val" style="color:#0f172a;">12:34</div>
+                </div>
+                <div class="stat-box">
+                    <div style="font-size:12px; font-weight:700; color:#64748b;">Số câu Trả lời Đúng</div>
+                    <div id="rCorrectQs" class="stat-val" style="color:#16a34a;">50/60</div>
+                </div>
             </div>
-            <button onclick="switchScreen('homeScreen')" class="btn btn-machine-folder" style="width:100%; padding:15px;">🏠 Về Trang Chủ</button>
+            <button onclick="switchScreen('homeScreen')" class="btn btn-machine-folder" style="width:100%; padding:18px;">🏠 Về Trang Chủ</button>
         </div>
     </div>
 
@@ -198,27 +233,41 @@
         }
         initFolder();
 
-        // ================= NGÂN HÀNG CÂU HỎI TỔNG HỢP (MẪU) =================
-        // Anh Pip copy toàn bộ các biến QUESTIONS từ 16 file vào mảng khổng lồ này.
-        // Dưới đây là dữ liệu mẫu trích từ các file trước đó để test thuật toán.
+        // ================= NGÂN HÀNG CÂU HỎI TỔNG HỢP =================
+        // Dưới đây là 16 câu mẫu đại diện cho Easy/Medium/Hard.
+        // Anh Pip copy 100% dữ liệu mảng QUESTIONS từ 16 file dán nối tiếp vào mảng MASTER_BANK này.
+        // Thuật toán sẽ tự động dò, phân loại và bốc đúng 60 câu theo ma trận!
         const MASTER_BANK = [
-            { sys: 'Tuabin', diff: 'Hard', q: 'Theo qui định (O&M), số lần tuabin khởi động ấm trong 1 năm là?', opts: ['2 lần','4 lần','8 lần','10 lần'], ans: 4 },
-            { sys: 'Tuabin', diff: 'Easy', q: 'Giá trị bảo vệ Trip tuabin do áp lực dầu bôi trơn thấp?', opts: ['1,12 bar','1,21 bar','1,31 bar','1,46 bar'], ans: 2 },
-            { sys: 'Dầu EH', diff: 'Medium', q: 'Liên động bơm dầu thủy lực dự phòng vào làm việc khi áp lực đầu đẩy bơm đang làm việc giảm xuống?', opts: ['< 150 bar','< 130 bar','< 145 bar','< 135 bar'], ans: 2 },
-            { sys: 'Dầu chèn', diff: 'Hard', q: 'Giá trị cảnh báo chênh áp dầu chèn và hydro thấp:', opts: ['0.35 Bar','0.41 Bar','0.5 Bar','0.55 Bar'], ans: 2 },
-            { sys: 'Nước ngưng', diff: 'Easy', q: 'Bảo vệ trip bơm ngưng do nhiệt độ stator động cơ cao là?', opts: ['105°C','130°C','135°C','140°C'], ans: 3 },
-            { sys: 'Khí nén', diff: 'Medium', q: 'Giá trị bảo vệ nhiệt độ cuộn dây động cơ máy nén khí:', opts: ['120°C','130°C','140°C','150°C'], ans: 1 },
-            { sys: 'Nước cấp', diff: 'Hard', q: 'Giá trị bảo vệ nhiệt độ gối trục bơm tăng áp BFP:', opts: ['> 95°C sau 5s','> 95°C sau 3s','> 105°C sau 3s','> 105°C sau 5s'], ans: 2 },
-            { sys: 'CWP', diff: 'Easy', q: 'Giá trị bảo vệ trip bơm tuần hoàn do nhiệt độ gối dưới động cơ cao là?', opts: ['80°C','85°C','90°C','95°C'], ans: 4 },
-            { sys: 'Stator', diff: 'Hard', q: 'Giá trị bảo vệ Trip bơm nước làm mát stator do độ dẫn nước cao là?', opts: ['0,5 µS/cm','5,5 µS/cm','0,9 µS/cm','9,9 µS/cm'], ans: 4 },
-            { sys: 'Bơm bi', diff: 'Medium', q: 'Quá trình rửa ngược khẩn cấp diễn ra khi chênh áp qua lưới lọc bi vượt quá:', opts: ['50 mbar','55 mbar','60 mbar','65 mbar'], ans: 3 }
+            { sys: 'Tuabin', diff: 'Easy', q: 'Giá trị bảo vệ Trip tuabin do áp lực dầu bôi trơn thấp?', opts: ['1,12 bar','1,21 bar','1,31 bar','1,46 bar'], ans: 2, ex: 'Bảo vệ Trip tuabin khi áp lực dầu bôi trơn giảm xuống 1.21 bar.' },
+            { sys: 'Tuabin', diff: 'Medium', q: 'Tải tổ máy > 315 MW mà chỉ có 1 bơm ngưng làm việc thì tải tổ máy runback về mức?', opts: ['40%RO','50%RO','60%RO','75%RO'], ans: 3, ex: 'Runback về 60% RO khi mất 1 bơm ngưng ở tải > 315 MW.' },
+            { sys: 'Tuabin', diff: 'Hard', q: 'Theo qui định (O&M), số lần tuabin khởi động ấm trong 1 năm là?', opts: ['2 lần','4 lần','8 lần','10 lần'], ans: 4, ex: 'Cho phép khởi động ấm 10 lần/năm.' },
+            { sys: 'Tuabin', diff: 'Hard', mmc: true, mmcAns: [2,3,4], q: 'Nguyên nhân sự cố mất chân không bình ngưng?', opts: ['Áp lực hơi chèn cao.','Lưu lượng nước tuần hoàn giảm.','Ống trao đổi nhiệt bình ngưng bẩn.','Lọt khí vào bình ngưng.'], ex: 'Lưu lượng nước giảm, ống bẩn, rò rỉ lọt khí làm mất chân không.'},
+            { sys: 'Dầu EH', diff: 'Medium', q: 'Liên động bơm dầu thủy lực dự phòng vào làm việc khi áp lực đầu đẩy bơm đang làm việc giảm xuống?', opts: ['< 150 bar','< 130 bar','< 145 bar','< 135 bar'], ans: 2, ex: 'Dự phòng chạy khi áp lực < 130 bar.' },
+            { sys: 'Dầu chèn', diff: 'Hard', q: 'Giá trị cảnh báo chênh áp dầu chèn và hydro thấp:', opts: ['0.35 Bar','0.41 Bar','0.5 Bar','0.55 Bar'], ans: 2, ex: 'Cảnh báo khi chênh áp tụt xuống 0.41 Bar.' },
+            { sys: 'Nước ngưng', diff: 'Easy', q: 'Bảo vệ trip bơm ngưng do nhiệt độ stator động cơ cao là?', opts: ['105°C','130°C','135°C','140°C'], ans: 3, ex: 'Trip động cơ bơm ngưng ở 135°C.' },
+            { sys: 'Khí nén', diff: 'Medium', q: 'Giá trị bảo vệ nhiệt độ cuộn dây động cơ máy nén khí:', opts: ['120°C','130°C','140°C','150°C'], ans: 1, ex: 'Bảo vệ nhiệt độ cuộn dây động cơ ở 120°C.' },
+            { sys: 'Nước cấp', diff: 'Hard', q: 'Giá trị bảo vệ nhiệt độ gối trục bơm tăng áp BFP:', opts: ['> 95°C sau 5s','> 95°C sau 3s','> 105°C sau 3s','> 105°C sau 5s'], ans: 2, ex: 'Trip bơm tăng áp BFP khi nhiệt độ gối > 95°C duy trì 3s.' },
+            { sys: 'CWP', diff: 'Easy', q: 'Giá trị bảo vệ trip bơm tuần hoàn do nhiệt độ gối dưới động cơ cao là?', opts: ['80°C','85°C','90°C','95°C'], ans: 4, ex: 'Gối dưới động cơ CWP trip ở 95°C.' },
+            { sys: 'Stator', diff: 'Hard', q: 'Giá trị bảo vệ Trip bơm nước làm mát stator do độ dẫn nước cao là?', opts: ['0,5 µS/cm','5,5 µS/cm','0,9 µS/cm','9,9 µS/cm'], ans: 4, ex: 'Độ dẫn nước Stator đạt 9.9 µS/cm sẽ trip bơm.' },
+            { sys: 'Bơm bi', diff: 'Medium', q: 'Quá trình rửa ngược khẩn cấp diễn ra khi chênh áp qua lưới lọc bi vượt quá:', opts: ['50 mbar','55 mbar','60 mbar','65 mbar'], ans: 3, ex: 'Rửa ngược khẩn cấp khi chênh áp > 60 mbar.' },
+            { sys: 'Clo', diff: 'Medium', q: 'Liên động chạy quạt hút và bơm tuần hoàn NaOH khi:', opts: ['Mức khí clo cao 0.25 ppm','Mức khí clo cao 0.5 ppm','Mức khí clo cao 0.75 ppm','Mức khí clo cao 1 ppm'], ans: 2, ex: 'Cảnh báo rò rỉ 0.5 ppm sẽ tự động chạy quạt hút khử độc.'},
+            { sys: 'Phòng mòn', diff: 'Easy', q: 'Độ ẩm mà máy hút ẩm có thể đáp ứng khi đưa hệ thống phòng mòn tuabin vào làm việc là?', opts: ['<40%','<30%','> 30%','<35%'], ans: 2, ex: 'Máy hút ẩm duy trì độ ẩm < 30%.'},
+            { sys: 'Làm mát kín', diff: 'Easy', q: 'Lưu lượng thiết kế bơm làm mát kín (CCW):', opts: ['4100 m³/h','4000 m³/h','4200 m³/h','4100 m³/h'], ans: 2, ex: 'Lưu lượng thiết kế 4000 m³/h.'},
+            { sys: 'Bơm quạt', diff: 'Easy', q: 'Khi nhiệt độ gối trục bơm, động cơ cao nhân viên vận hành phải xử lý?', opts: ['Nạp lại nước','Dừng bơm ngay lập tức','Kiểm tra ổ đỡ, thay thế','Tìm cách đóng cách ly van đầu đẩy'], ans: 3, ex: 'Kiểm tra ổ đỡ, nếu hỏng phải dừng sửa chữa thay thế.'}
         ];
 
-        // ================= LOGIC THI SÁT HẠCH =================
+        // Trọng số điểm
+        const WEIGHTS = { 'Easy': 1, 'Medium': 2, 'Hard': 3 };
+
+        // State bài thi
         let examTimerInterval;
         let timeRemaining = 45 * 60; // 45 phút
         let timeUsed = 0;
-        let currentExamQuestions = [];
+        let examQuestions = []; // 60 câu đã chọn và trộn
+        let currentPoints = 0;
+        let maxPoints = 0;
+        let gradedCount = 0;
+        let correctQsCount = 0;
 
         function shuffleArray(array) {
             let cur = array.length, rnd;
@@ -230,76 +279,185 @@
             return array;
         }
 
+        // ================= SINH MA TRẬN 60 CÂU & TRỘN ĐÁP ÁN =================
         function startExamMode() {
             switchScreen('examScreen');
             
-            // 1. Lấy ngẫu nhiên N câu (Ví dụ 10 câu cho bản demo, thực tế anh để 50)
-            let shuffledBank = shuffleArray([...MASTER_BANK]);
-            let selectedQ = shuffledBank.slice(0, 10); 
+            // Phân loại ngân hàng theo độ khó
+            let easyPool = shuffleArray(MASTER_BANK.filter(q => q.diff === 'Easy'));
+            let medPool = shuffleArray(MASTER_BANK.filter(q => q.diff === 'Medium'));
+            let hardPool = shuffleArray(MASTER_BANK.filter(q => q.diff === 'Hard'));
 
-            // 2. Trộn đáp án từng câu và bám vết đáp án đúng
-            currentExamQuestions = selectedQ.map(q => {
-                // Đóng gói text đáp án và cờ "isCorrect" (q.ans là base 1)
-                let mappedOpts = q.opts.map((text, idx) => ({
+            // Ma trận chuẩn: 32 Dễ (32đ) + 16 Trung bình (32đ) + 12 Khó (36đ) = 60 câu (100 điểm)
+            // Nếu ngân hàng không đủ, lấy hết số có thể và bù bằng các câu còn lại.
+            let selectedQ = [
+                ...easyPool.slice(0, 32),
+                ...medPool.slice(0, 16),
+                ...hardPool.slice(0, 12)
+            ];
+
+            // Dự phòng nếu MASTER_BANK < 60 câu (đang dùng data mẫu)
+            if (selectedQ.length < 60 && MASTER_BANK.length > selectedQ.length) {
+                let remaining = shuffleArray(MASTER_BANK.filter(q => !selectedQ.includes(q)));
+                selectedQ = selectedQ.concat(remaining.slice(0, 60 - selectedQ.length));
+            }
+            
+            // Trộn ngẫu nhiên thứ tự 60 câu
+            selectedQ = shuffleArray(selectedQ);
+
+            maxPoints = 0;
+            currentPoints = 0;
+            gradedCount = 0;
+            correctQsCount = 0;
+
+            // Xử lý đảo đáp án cho từng câu
+            examQuestions = selectedQ.map((q, idx) => {
+                let w = WEIGHTS[q.diff] || 1;
+                maxPoints += w;
+
+                // Đóng gói text và cờ đúng/sai
+                let mappedOpts = q.opts.map((text, i) => ({
                     text: text,
-                    isCorrect: q.mmc ? q.mmcAns.includes(idx + 1) : (q.ans === idx + 1)
+                    isCorrect: q.mmc ? q.mmcAns.includes(i + 1) : (q.ans === i + 1)
                 }));
                 
-                shuffleArray(mappedOpts); // Trộn A,B,C,D
+                // ĐẢO NGẪU NHIÊN A, B, C, D
+                shuffleArray(mappedOpts); 
                 
-                // Cập nhật lại chỉ số đáp án đúng mới (base 1)
-                let newAns = q.mmc 
-                    ? mappedOpts.map((o, i) => o.isCorrect ? i+1 : null).filter(x => x)
-                    : mappedOpts.findIndex(o => o.isCorrect) + 1;
+                // Dò lại vị trí đáp án đúng sau khi đảo (Base 0 để dễ xử lý JS)
+                let newAnsArr = [];
+                mappedOpts.forEach((o, i) => { if(o.isCorrect) newAnsArr.push(i); });
 
                 return {
-                    sys: q.sys, diff: q.diff, q: q.q, mmc: q.mmc,
+                    id: idx,
+                    sys: q.sys,
+                    diff: q.diff,
+                    q: q.q,
+                    ex: q.ex || "Không có giải thích chi tiết.",
+                    mmc: !!q.mmc,
                     opts: mappedOpts.map(o => o.text),
-                    ans: newAns, mmcAns: q.mmc ? newAns : null
+                    ansArr: newAnsArr, // Mảng index đúng
+                    weight: w,
+                    status: 'unanswered' // 'correct', 'partial', 'wrong'
                 };
             });
 
+            document.getElementById('examProgress').textContent = `Đã làm: 0/${examQuestions.length} câu (0/${maxPoints} Điểm)`;
             renderExam();
             startTimer();
         }
 
+        // ================= RENDER GIAO DIỆN BÀI THI =================
         function renderExam() {
             const form = document.getElementById('examForm');
             const LETTERS = ['A', 'B', 'C', 'D'];
             let html = '';
 
-            currentExamQuestions.forEach((item, i) => {
+            examQuestions.forEach((item, i) => {
                 const type = item.mmc ? 'checkbox' : 'radio';
-                const badgeClass = item.diff === 'Hard' ? 'hard' : '';
+                const badgeClass = item.diff === 'Hard' ? 'hard' : (item.diff === 'Medium' ? 'medium' : 'easy');
                 
                 let optsHtml = item.opts.map((optText, j) => `
-                    <label class="opt-label" id="el-opt-${i}-${j}">
-                        <input type="${type}" name="q${i}" value="${j+1}" onchange="selectOpt(this, ${i})">
+                    <label class="opt-label" id="lbl-${i}-${j}">
+                        <input type="${type}" name="q${i}" value="${j}" onchange="onSelectOpt(${i})">
                         <span class="opt-char">${LETTERS[j]}.</span>
                         <span>${optText}</span>
                     </label>
                 `).join('');
 
+                let mmcBtn = item.mmc ? `<button type="button" id="btn-chk-${i}" class="btn-check-mmc" onclick="gradeQuestion(${i})" disabled>Chốt đáp án</button>` : '';
+
                 html += `
-                <div class="q-card" id="el-q-${i}">
-                    <span class="q-sys-badge ${badgeClass}">${item.sys} | ${item.diff}</span>
+                <div class="q-card" id="card-${i}">
+                    <span class="q-sys-badge ${badgeClass}">${item.sys} | ${item.diff} • ${item.weight} Điểm</span>
                     ${item.mmc ? '<span class="q-sys-badge" style="background:#fef3c7;color:#92400e">Nhiều đáp án</span>' : ''}
                     <div class="q-text">Câu ${i+1}: ${item.q}</div>
                     ${optsHtml}
+                    ${mmcBtn}
+                    <div class="explain" id="ex-${i}"></div>
                 </div>`;
             });
             form.innerHTML = html;
         }
 
-        function selectOpt(inputEl, qIdx) {
-            // Hiệu ứng bôi màu khi chọn
-            const container = document.getElementById(`el-q-${qIdx}`);
-            if(inputEl.type === 'radio') {
-                container.querySelectorAll('.opt-label').forEach(el => el.classList.remove('selected'));
+        // ================= LOGIC CHẤM ĐIỂM TRỰC TIẾP (INSTANT FEEDBACK) =================
+        function onSelectOpt(qIdx) {
+            const item = examQuestions[qIdx];
+            const card = document.getElementById(`card-${qIdx}`);
+            
+            // Xử lý bôi màu thẻ label khi click
+            if(!item.mmc) {
+                card.querySelectorAll('.opt-label').forEach(el => el.classList.remove('sel'));
             }
-            inputEl.closest('.opt-label').classList.toggle('selected', inputEl.checked);
+            let checkedInputs = Array.from(card.querySelectorAll(`input[name="q${qIdx}"]:checked`));
+            checkedInputs.forEach(inp => {
+                document.getElementById(`lbl-${qIdx}-${inp.value}`).classList.add('sel');
+            });
+
+            if(item.mmc) {
+                // Kích hoạt nút "Chốt đáp án"
+                document.getElementById(`btn-chk-${qIdx}`).disabled = (checkedInputs.length === 0);
+            } else {
+                // Nếu là Radio (1 đáp án) -> Chấm điểm luôn
+                gradeQuestion(qIdx);
+            }
         }
 
+        function gradeQuestion(qIdx) {
+            const item = examQuestions[qIdx];
+            if(item.status !== 'unanswered') return; // Đã chấm rồi thì bỏ qua
+
+            const card = document.getElementById(`card-${qIdx}`);
+            const exDiv = document.getElementById(`ex-${qIdx}`);
+            const LETTERS = ['A', 'B', 'C', 'D'];
+            
+            // Khóa Input
+            card.querySelectorAll('input').forEach(inp => inp.disabled = true);
+            if(item.mmc) document.getElementById(`btn-chk-${qIdx}`).style.display = 'none';
+
+            let checkedVals = Array.from(card.querySelectorAll(`input[name="q${qIdx}"]:checked`)).map(el => parseInt(el.value));
+            
+            // Bôi màu đáp án
+            item.opts.forEach((_, j) => {
+                const lbl = document.getElementById(`lbl-${qIdx}-${j}`);
+                lbl.classList.remove('sel');
+                let isCorrectAns = item.ansArr.includes(j);
+                let isUserChecked = checkedVals.includes(j);
+
+                if (isCorrectAns && isUserChecked) lbl.classList.add('correct');
+                else if (isCorrectAns && !isUserChecked) lbl.classList.add('missed'); // Lỡ bỏ sót
+                else if (!isCorrectAns && isUserChecked) lbl.classList.add('wrong'); // Chọn sai
+            });
+
+            // Đánh giá
+            let isFullCorrect = (checkedVals.length === item.ansArr.length) && item.ansArr.every(v => checkedVals.includes(v));
+            let isPartial = item.mmc && checkedVals.some(v => item.ansArr.includes(v));
+            
+            let ansString = item.ansArr.map(v => LETTERS[v]).sort().join(', ');
+
+            if (isFullCorrect) {
+                item.status = 'correct';
+                currentPoints += item.weight;
+                correctQsCount++;
+                card.classList.add('result-correct');
+                exDiv.innerHTML = `<span class="tag correct">✔ Chính xác! (+${item.weight} Điểm)</span> <b>Đáp án: ${ansString}.</b><br>${item.ex}`;
+            } else if (isPartial) {
+                item.status = 'partial';
+                currentPoints += (item.weight * 0.5); // Đúng 1 phần được nửa điểm
+                card.classList.add('result-partial');
+                exDiv.innerHTML = `<span class="tag partial">◐ Đúng một phần (+${item.weight * 0.5} Điểm)</span> <b>Đáp án đầy đủ phải là: ${ansString}.</b><br>${item.ex}`;
+            } else {
+                item.status = 'wrong';
+                card.classList.add('result-wrong');
+                exDiv.innerHTML = `<span class="tag wrong">✘ Sai (0 Điểm)</span> <b>Đáp án đúng là: ${ansString}.</b><br>${item.ex}`;
+            }
+            
+            exDiv.classList.add('show');
+            gradedCount++;
+            document.getElementById('examProgress').textContent = `Đã chốt: ${gradedCount}/${examQuestions.length} câu (${currentPoints}/${maxPoints} Điểm)`;
+        }
+
+        // ================= TIMER & SUBMIT =================
         function startTimer() {
             timeRemaining = 45 * 60;
             timeUsed = 0;
@@ -315,73 +473,60 @@
                 let s = (timeRemaining % 60).toString().padStart(2, '0');
                 timerBox.textContent = `${m}:${s}`;
 
-                if(timeRemaining <= 180) timerBox.classList.add('warning'); // Dưới 3 phút nháy đỏ
+                if(timeRemaining <= 180) timerBox.classList.add('warning'); // Nháy đỏ 3 phút cuối
                 
                 if (timeRemaining <= 0) {
                     clearInterval(examTimerInterval);
-                    submitExam();
+                    alert("Đã hết 45 phút! Hệ thống sẽ tự động thu bài.");
+                    finishExam();
                 }
             }, 1000);
         }
 
         function confirmExitExam() {
-            if(confirm("Bạn có chắc muốn thoát? Kết quả bài làm sẽ không được lưu.")) {
+            if(confirm("Bạn có chắc muốn thoát thi? Kết quả bài làm sẽ không được lưu.")) {
                 clearInterval(examTimerInterval);
                 switchScreen('homeScreen');
             }
         }
 
-        function submitExam() {
+        function finishExam() {
             clearInterval(examTimerInterval);
-            let correctCount = 0;
-
-            currentExamQuestions.forEach((q, i) => {
-                let inputs = document.querySelectorAll(`input[name="q${i}"]:checked`);
-                let userAns = Array.from(inputs).map(inp => parseInt(inp.value));
-                
-                if (q.mmc) {
-                    let isCorrect = (userAns.length === q.mmcAns.length) && userAns.every(val => q.mmcAns.includes(val));
-                    if (isCorrect) correctCount++;
-                } else {
-                    if (userAns[0] === q.ans) correctCount++;
-                }
+            
+            // Ép chấm điểm các câu chưa làm (0 điểm)
+            examQuestions.forEach((q, idx) => {
+                if(q.status === 'unanswered') gradeQuestion(idx);
             });
 
-            const total = currentExamQuestions.length;
-            const pct = Math.round((correctCount / total) * 100);
+            // Tính % theo trọng số điểm
+            let pct = Math.round((currentPoints / maxPoints) * 100);
             
-            // Format Time Used
             let mU = Math.floor(timeUsed / 60).toString().padStart(2, '0');
             let sU = (timeUsed % 60).toString().padStart(2, '0');
 
-            document.getElementById('rScore').textContent = `${correctCount}/${total}`;
-            document.getElementById('rPercent').textContent = `${pct}%`;
+            document.getElementById('rScore').textContent = currentPoints;
+            document.querySelector('.report-max').textContent = `/ ${maxPoints} Điểm Trọng số`;
             document.getElementById('rTime').textContent = `${mU}:${sU}`;
-            document.getElementById('rWrong').textContent = `${total - correctCount} câu`;
+            document.getElementById('rCorrectQs').textContent = `${correctQsCount}/${examQuestions.length}`;
 
             const badge = document.getElementById('rBadge');
             if(pct >= 80) {
                 badge.className = 'badge-result badge-pass';
                 badge.textContent = 'ĐẠT';
+                badge.style.background = 'linear-gradient(135deg, #22c55e, #16a34a)';
             } else {
                 badge.className = 'badge-result badge-fail';
                 badge.textContent = 'TRƯỢT';
+                badge.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
             }
 
             switchScreen('reportScreen');
             window.scrollTo(0,0);
         }
 
-        // ================= NAVIGATION =================
         function switchScreen(id) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-        }
-
-        function openLesson(file, title) {
-            switchScreen('studyScreen');
-            document.getElementById('lessonTitle').textContent = title;
-            document.getElementById('studyIframe').src = encodeURI(file);
         }
     </script>
 </body>
